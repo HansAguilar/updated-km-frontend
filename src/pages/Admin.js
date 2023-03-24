@@ -1,15 +1,14 @@
 import React,{ useState, useEffect } from 'react';
 import PageHeader from '../components/PageHeader';
 import { IoAdd } from 'react-icons/io5';
-// import { AiFillPrinter } from 'react-icons/ai';
-// import FileIcons from '../components/FileIcons';
+import { AiFillPrinter } from 'react-icons/ai';
+import FileIcons from '../components/FileIcons';
 import Table from '../components/AdminTable';
 import Modal from '../components/AdminModal';
 import axios from 'axios';
 import Pagination from '../components/Pagination';
-// import { useNavigate } from 'react-router-dom';
-// import ExcelButton from '../components/ExcelButton';
-// import PDFButton from '../components/PDFButton';
+import ExcelButton from '../components/ExcelButton';
+import PDFButton from '../components/PDFButton';
 
 function Admin() {
   const [ show, setModal ] = useState(false);
@@ -35,7 +34,7 @@ function Admin() {
   }
 
   const filteredAdminList = adminList.filter((admin)=>
-    (admin.adminFirstname+admin.adminMiddlename+admin.adminLastname+admin.address+admin.birthday).toLowerCase().includes(search)
+    (admin.firstname+admin.middlename+admin.lastname+admin.address+admin.birthday).toLowerCase().includes(search)
   )
   return (
     <div className=' h-screen overflow-hidden relative '>
@@ -51,9 +50,9 @@ function Admin() {
            {/*Searchbar and files*/}
            <div className=' w-full p-4 flex justify-between '>
               <div className=' inline-flex gap-2  '>
-                  {/* <ExcelButton user={patients} title={"patients"} />
-                  <PDFButton data={patients} />
-                  <FileIcons Icon={AiFillPrinter} title={"Print"} /> */}
+                  <ExcelButton users={adminList} title={"admin-report"} />
+                  <PDFButton data={adminList} />
+                  <FileIcons Icon={AiFillPrinter} title={"Print"} />
               </div>    
               <input
                   type='text'

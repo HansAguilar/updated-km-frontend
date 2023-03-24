@@ -4,7 +4,7 @@ import { RiFileExcel2Fill } from 'react-icons/ri';
 import { utils, writeFile } from 'xlsx';
 
 function ExcelButton({users,title}) {
-  const fields = ["patientId", "firstname", "middlename", "lastname", "gender", "address","email","phoneNumber", "age", "birthday"];
+  const fields = ["firstname", "middlename", "lastname", "gender", "address","email","contactNumber", "age", "birthday"];
 
   const filteredPatients = users.map((user)=>{
     const filteredData = {};

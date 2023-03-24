@@ -3,7 +3,7 @@ import React,{useState} from 'react';
 
 function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo}) {
 
-    const [profile, setProfile] = useState(" ");
+    const [profile, setProfile] = useState("");
 
     const handleFormChange = (e) =>{
         setAdminInfo({
@@ -54,6 +54,9 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo}) {
         const isLegalAge = isOver18(adminInfo.birthday);
         if(isLegalAge) return alert("Invalid Age!");
     
+        if(!profile){
+          return setProfile(adminInfo.profile);
+        }
         const data = { 
             adminFirstname: adminInfo.adminFirstname,
             adminMiddlename: adminInfo.adminMiddlename,
@@ -63,7 +66,7 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo}) {
             email: adminInfo.email,
             gender:  adminInfo.gender,
             contactNumber:  adminInfo.contactNumber,
-            profile:profile
+            profile: profile
         };
         submitData(data);
       }
@@ -118,7 +121,7 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo}) {
                 </form>
                 <img src={!profile ? adminInfo.profile : profile} alt="Dentist" className=' mt-5 w-52 h-52 '/>
                 <div className='flex flex-col mt-3'>
-                    <input type="file" className=' text-sm py-2 focus:outline-none focus:shadow-md  ' onChange={(e)=>handleProfile(e)}/>
+                    <input type="file" name='profile' className=' text-sm py-2 focus:outline-none focus:shadow-md  ' onChange={(e)=>handleProfile(e)}/>
                   </div>
                 <hr/>
                 <div className='mt-3 flex justify-end gap-2'>

@@ -62,7 +62,6 @@ function PDFFile({data}) {
       <Document >
         <Page style={styles.body} >
           <View style={styles.tableHeader} >
-            <Text style={styles.tableHeaderText}>Patient Id</Text>
             <Text style={styles.tableHeaderText}>Name</Text>
             <Text style={styles.tableHeaderText}>Gender</Text>
             <Text style={styles.tableHeaderText}>Address</Text>
@@ -72,9 +71,8 @@ function PDFFile({data}) {
             <Text style={styles.tableHeaderText}>Birthday</Text>
           </View>
           {
-            data.map((val)=>
-              <View style={styles.tableBody} key={val.patientId}>
-                <Text style={styles.tableBodyText}>{val.patientId}</Text>
+            data.map((val,idx)=>
+              <View style={styles.tableBody} key={idx}>
                 <Text style={styles.tableBodyText}>{`${val.firstname} ${val.middlename} ${val.lastname}`}</Text>
                 <Text style={styles.tableBodyText}>{val.gender}</Text>
                 <Text style={styles.tableBodyText}>{val.address}</Text>

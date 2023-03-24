@@ -47,6 +47,9 @@ function UpdateDentistModal({show, setModal, setData, data}) {
     }
     const isLegalAge = isOver18(data.birthday);
     if(isLegalAge) return alert("Invalid Age!");
+    if(!profile){
+      return setProfile(data.profile);
+    }
 
     const newData = {
       fullname: data.fullname,

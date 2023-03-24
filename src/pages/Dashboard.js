@@ -44,6 +44,7 @@ function Dashboard() {
     fetchAllPatient();
   },[]);
 
+  console.log(admin);
   if(loading)return <h1>Loading...</h1>
   return (
       <div className='w-full h-screen bg-gray-100 flex z-10 '>
