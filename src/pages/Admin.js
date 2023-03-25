@@ -18,6 +18,10 @@ function Admin() {
   const tableHeaders = [ "profile", "fullname", "address","gender", "contact number", "email", "role", "status", "actions" ];
   const pageNumber = [];
 
+  for(let x = 1; x <= Math.ceil(adminList.length/8);x++){
+    pageNumber.push(x);
+  }
+
   const fetchAdminList = async() =>{
     try {
       const response = await axios.get("http://localhost:8080/api/v1/admin/")
@@ -38,7 +42,7 @@ function Admin() {
   )
   return (
     <div className=' h-screen overflow-hidden relative '>
-      <Modal show={show} setModal={setModal} />
+      <Modal show={show} setModal={setModal} type="admin" />
       <PageHeader link={'Admin'} />
       <div className=' w-full flex flex-col justify-center p-4 '> 
         <div className=' w-full bg-white h-auto rounded-xl shadow-lg'>

@@ -31,11 +31,6 @@ function Sidebar({toggleBar, children}) {
             icon: <SidebarIcon Icon={FaUserCog} />
         },
         {
-            path: '/admin/dashboard/messages',
-            name: 'Messages',
-            icon: <SidebarIcon Icon={AiFillMessage} />
-        },
-        {
             path: '/admin/dashboard/schedule',
             name: 'Schedule',
             icon: <SidebarIcon Icon={MdSchedule} />
@@ -44,6 +39,16 @@ function Sidebar({toggleBar, children}) {
             path: '/admin/dashboard/appointments',
             name: 'Appointments',
             icon: <SidebarIcon Icon={AiOutlineSchedule} />
+        },
+        {
+            path: '/admin/dashboard/schedule',
+            name: 'Schedule',
+            icon: <SidebarIcon Icon={MdSchedule} />
+        },
+        {
+            path: '/admin/dashboard/messages',
+            name: 'Messages',
+            icon: <SidebarIcon Icon={AiFillMessage} />
         },
         {
             path: '/admin/dashboard/services',

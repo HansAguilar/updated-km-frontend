@@ -1,8 +1,7 @@
 import axios from 'axios';
-import React,{useState} from 'react';
+import React from 'react';
 
 function UpdateDentistModal({show, setModal, setData, data}) {
-  const [profile, setProfile] = useState("");
 
   const handleFormChange = (e) =>{
     setData({
@@ -16,7 +15,7 @@ function UpdateDentistModal({show, setModal, setData, data}) {
     if(e.target.files[0]){
       reader.readAsDataURL(e.target.files[0]);
       reader.onload = e =>{
-        setProfile(e.target.result);
+        setData({...data, profile: e.target.result});
       }
     }
   }
@@ -47,8 +46,9 @@ function UpdateDentistModal({show, setModal, setData, data}) {
     }
     const isLegalAge = isOver18(data.birthday);
     if(isLegalAge) return alert("Invalid Age!");
-    if(!profile){
-      return setProfile(data.profile);
+    const regex = /^09\d{9}$/;
+    if(!regex.test(data.contactNumber)){
+      return alert("Contact number must be 11-digit and must start with 09");
     }
 
     const newData = {
@@ -59,7 +59,7 @@ function UpdateDentistModal({show, setModal, setData, data}) {
       contactNumber: data.contactNumber,
       email: data.email,
       specialty: data.specialty,
-      profile: profile
+      profile: data.profile
     }
     submitData(newData);
   }
@@ -107,7 +107,7 @@ function UpdateDentistModal({show, setModal, setData, data}) {
                 <input type="text" name="specialty" value={data.specialty} placeholder='ex. Oral surgery' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)}/>
               </div>
             </form>
-            <img src={!profile ? data.profile : profile} alt="Dentist" className=' mt-5 w-52 h-52 '/>
+            <img src={data.profile } alt="Dentist" className=' mt-5 w-52 h-52 '/>
             <div className='flex '>
                 <input type="file" name="profile" className=' text-sm py-2 focus:outline-none focus:shadow-md  ' onChange={(e)=>handleProfile(e)}/>
               </div>

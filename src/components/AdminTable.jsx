@@ -7,15 +7,15 @@ function AdminTable({tableHeaders, results, search, currentPage }) {
 
   const [ updateModel, setUpdateModal] = useState(false);
   const [adminInfo, setAdminInfo] = useState({
-        adminId:"",
-        adminFirstname:"",
-        adminMiddlename:"",
-        adminLastname:"",
+        userId:"",
+        firstname:"",
+        middlename:"",
+        lastname:"",
         address:"",
         birthday:"",
         email:"",
         gender:"",
-        phoneNumber:"",
+        contactNumber:"",
         profile:""
   });
   const disableAccountBtn = async (id, disable) => {
@@ -35,15 +35,15 @@ function AdminTable({tableHeaders, results, search, currentPage }) {
 const update = ( adminId,firstname,middlename,lastname,address,birthday,email,gender,contactNumber,profile) =>{
     setAdminInfo({
         ...adminInfo,
-        adminId: adminId,
-        adminFirstname:firstname,
-        adminMiddlename:middlename,
-        adminLastname:lastname,
+        userId: adminId,
+        firstname:firstname,
+        middlename:middlename,
+        lastname:lastname,
         address:address,
         birthday: birthday,
         email:email,
         gender: gender,
-        phoneNumber: contactNumber,
+        contactNumber: contactNumber,
         profile:profile
 })
 setUpdateModal(true);
@@ -51,7 +51,7 @@ setUpdateModal(true);
 
   return (
    <>
-    <UpdateAdminModal show={updateModel} setModal={setUpdateModal} setAdminInfo={setAdminInfo} adminInfo={adminInfo} />
+    <UpdateAdminModal show={updateModel} setModal={setUpdateModal} setAdminInfo={setAdminInfo} adminInfo={adminInfo} type="admin"/>
     <div className=' h-[550px] px-4 py-3 overflow-auto '>
         
         <table className='w-full  '>
@@ -133,7 +133,7 @@ setUpdateModal(true);
                                 <img src={result.profile} className=' w-11 h-11 rounded-full border border-gray-400 border-2 ' alt="User" />
                             </td>
                             <td className=' text-center capitalize '>
-                                {`${result.firstname} ${result.middlename !== "" ? result.middlename.charAt(0).concat(".") : '' } ${result.lastname}`}
+                                {`${result.firstname} ${!result.middlename ? "" : result.middlename.charAt(0).concat(".")  } ${result.lastname}`}
                             </td>
                             <td className='text-center'>
                                 {result.address}

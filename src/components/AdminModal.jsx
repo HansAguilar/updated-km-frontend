@@ -1,11 +1,11 @@
 import axios from 'axios';
 import React,{useState} from 'react';
 
-function AdminModal({show, setModal}) {
+function AdminModal({show, setModal, type}) {
     const [ adminInfo, setAdminInfo ] = useState({
-      adminFirstname:"",
-      adminMiddlename:"",
-      adminLastname:"",
+      firstname:"",
+      middlename:"",
+      lastname:"",
       birthday:"",
       address:"",
       gender:"",
@@ -37,7 +37,7 @@ function AdminModal({show, setModal}) {
   
     const submitData = async(data) =>{
       try{
-        const response = await axios.post("http://localhost:8080/api/v1/admin/registration",data,{
+        const response = await axios.post(`http://localhost:8080/api/v1/${type}/registration`,data,{
           headers: { Accept: "application/json", }
         });
         if(response.data){
@@ -56,7 +56,7 @@ function AdminModal({show, setModal}) {
       return age < 18;
     }
     const btnSubmit = () =>{
-      if(!adminInfo.adminFirstname ||!adminInfo.adminLastname || !adminInfo.birthday || !adminInfo.address || !adminInfo.gender || !adminInfo.contactNumber || !adminInfo.email || !adminInfo.username || !adminInfo.password || !adminInfo.confirmPassword || !profile){
+      if(!adminInfo.firstname ||!adminInfo.lastname || !adminInfo.birthday || !adminInfo.address || !adminInfo.gender || !adminInfo.contactNumber || !adminInfo.email || !adminInfo.username || !adminInfo.password || !adminInfo.confirmPassword || !profile){
         return alert("Fill up empty field!");
       }
       if(adminInfo.password !== adminInfo.confirmPassword ){
@@ -64,6 +64,11 @@ function AdminModal({show, setModal}) {
       }
       const isLegalAge = isOver18(adminInfo.birthday);
       if(isLegalAge) return alert("Invalid Age!");
+
+      const regex = /^09\d{9}$/;
+      if(!regex.test(adminInfo.contactNumber)){
+        return alert("Contact number must be 11-digit and must start with 09");
+      }
   
       const data = { ...adminInfo, profile };
       submitData(data);
@@ -74,22 +79,22 @@ function AdminModal({show, setModal}) {
           <div className=" z-50">
             <div className="m-auto w-[550px] h-auto p-8 bg-white rounded-lg shadow-lg">
               <div className="text-left py-4">
-                <h2 className="text-xl font-bold mb-2">Add Admin</h2>
+                <h2 className="text-xl font-bold capitalize mb-2">{`Add ${type}`}</h2>
                 <hr />
               </div>
   
               <form action="post" className='grid grid-cols-2 gap-3 ' >
                 <div className='flex flex-col'>
-                  <label htmlFor="adminFirstname">Firstname</label>
-                  <input type="text" name="adminFirstname" value={adminInfo.adminFirstname} placeholder='ex. John' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
+                  <label htmlFor="firstname">Firstname</label>
+                  <input type="text" name="firstname" value={adminInfo.firstname} placeholder='ex. John' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
                 </div>
                 <div className='flex flex-col'>
-                  <label htmlFor="adminMiddlename">Middlename</label>
-                  <input type="text" name="adminMiddlename" value={adminInfo.adminMiddlename} placeholder='ex. Cruz' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
+                  <label htmlFor="middlename">Middlename</label>
+                  <input type="text" name="middlename" value={adminInfo.middlename} placeholder='ex. Cruz' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
                 </div>
                 <div className='flex flex-col'>
-                  <label htmlFor="adminLastname">Lastname</label>
-                  <input type="text" name="adminLastname" value={adminInfo.adminLastname} placeholder='ex. Dimaguiba' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
+                  <label htmlFor="lastname">Lastname</label>
+                  <input type="text" name="lastname" value={adminInfo.lastname} placeholder='ex. Dimaguiba' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
                 </div>
                 <div className='flex flex-col'>
                   <label htmlFor="birthday">Birthday</label>

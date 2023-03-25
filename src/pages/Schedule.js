@@ -4,7 +4,7 @@ import { IoAdd } from 'react-icons/io5';
 // import { AiFillPrinter } from 'react-icons/ai';
 // import FileIcons from '../components/FileIcons';
 // import Table from '../components/Table';
-import Modal from '../components/Modal';
+import Modal from '../components/ScheduleModal';
 // import Pagination from '../components/Pagination';
 // import { useNavigate } from 'react-router-dom';
 // import ExcelButton from '../components/ExcelButton';
@@ -13,6 +13,7 @@ import Modal from '../components/Modal';
 function Schedule() {
   const [ show, setModal ] = useState(false);
   const [ search, setSearch ] = useState("");
+
   const searchHandle = (e) =>{ 
     setSearch(e.target.value);
   }

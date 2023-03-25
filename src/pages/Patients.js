@@ -4,9 +4,8 @@ import { IoAdd } from 'react-icons/io5';
 import { AiFillPrinter } from 'react-icons/ai';
 import FileIcons from '../components/FileIcons';
 import Table from '../components/Table';
-import Modal from '../components/Modal';
+import Modal from '../components/AdminModal';
 import Pagination from '../components/Pagination';
-import { useNavigate } from 'react-router-dom';
 import ExcelButton from '../components/ExcelButton';
 import PDFButton from '../components/PDFButton';
 
@@ -15,7 +14,6 @@ import PDFButton from '../components/PDFButton';
     const [ show, setModal ] = useState(false);
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ search, setSearch ] = useState("");
-    const navigate = useNavigate();
     const pageNumber = [];
     
     for(let x = 1; x <= Math.ceil(patients.length/8);x++){
@@ -30,14 +28,9 @@ import PDFButton from '../components/PDFButton';
        (val.firstname+val.middlename+val.lastname+val.birthday+val.phoneNumber+val.email).toLowerCase()
       .includes(search.toLowerCase())
     );
-
-    const updatePatient = (id) =>{
-      navigate(`/admin/dashboard/patient/update/${id}`)
-    }
-
     return (
       <div className=' h-screen overflow-hidden relative '>
-          <Modal show={show} setModal={setModal} />
+          <Modal show={show} setModal={setModal} type="patient" />
           <PageHeader link={'patient'} />
           
           <div className=' w-full flex flex-col justify-center p-4 '> 
@@ -66,7 +59,7 @@ import PDFButton from '../components/PDFButton';
                       />
                     </div>
                     {/*Tables*/}
-                    <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredPatient : patients  } search={search} currentPage={currentPage} update={updatePatient} />
+                    <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredPatient : patients  } search={search} currentPage={currentPage} />
                     {/*Pagination */}
                     <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
                   <div>

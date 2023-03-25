@@ -1,8 +1,39 @@
 import axios from 'axios';
-import React from 'react';
+import React,{useState} from 'react';
 import {AiFillEdit, AiOutlineFolderView} from 'react-icons/ai';
+import Modal from './UpdateAdminModal';
 
-function Table({tableHeaders, results, search, currentPage, update }) {
+function Table({tableHeaders, results, search, currentPage }) {
+    const [ updateModel, setUpdateModal] = useState(false);
+    const [patient, setPatientInfo] = useState({
+        userId:"",
+        firstname:"",
+        middlename:"",
+        lastname:"",
+        address:"",
+        birthday:"",
+        email:"",
+        gender:"",
+        contactNumber:"",
+        profile:""
+  });
+const update = ( patientId,firstname,middlename,lastname,address,birthday,email,gender,contactNumber,profile) =>{
+    setPatientInfo({
+        ...patient,
+        userId: patientId,
+        firstname:firstname,
+        middlename:middlename,
+        lastname:lastname,
+        address:address,
+        birthday: birthday,
+        email:email,
+        gender: gender,
+        contactNumber: contactNumber,
+        profile:profile
+})
+setUpdateModal(true);
+}
+
 
   const disableAccountBtn = async (id, disable) => {
     try {
@@ -19,6 +50,8 @@ function Table({tableHeaders, results, search, currentPage, update }) {
 };
 
   return (
+   <>
+    <Modal show={updateModel} setModal={setUpdateModal} setAdminInfo={setPatientInfo} adminInfo={patient} type="patient" />
     <div className=' h-[550px] px-4 py-3 overflow-auto '>
         <table className='w-full  '>
             {/*Head*/}
@@ -91,7 +124,7 @@ function Table({tableHeaders, results, search, currentPage, update }) {
                                 {result.gender}
                             </td>
                             <td className='text-center'>
-                                {result.phoneNumber}
+                                {result.contactNumber}
                             </td>
                             <td className='text-center'>
                                 {result.email}
@@ -103,7 +136,18 @@ function Table({tableHeaders, results, search, currentPage, update }) {
                                 }   
                             </td>
                             <td className=' h-auto relative bottom-2 w-auto flex items-start justify-center gap-3'>
-                                <p className=' px-5 py-2 rounded-md bg-blue-500 text-white cursor-pointer hover:shadow-md flex' onClick={()=>update(result.patientId)}><AiFillEdit size={25} />&nbsp;Update</p>
+                                <p className=' px-5 py-2 rounded-md bg-blue-500 text-white cursor-pointer hover:shadow-md flex' onClick={()=>update(
+                                    result.patientId,
+                                    result.firstname,
+                                    result.middlename,
+                                    result.lastname,
+                                    result.address,
+                                    result.birthday,
+                                    result.email,
+                                    result.gender,
+                                    result.contactNumber,
+                                    result.profile
+                                )}><AiFillEdit size={25} />&nbsp;Update</p>
                                 <p className=' px-5 py-2 rounded-md bg-gray-500 text-white cursor-pointer hover:shadow-md flex' onClick={()=>update(result.patientId)}><AiOutlineFolderView size={25} />&nbsp;View</p> 
                             </td>
                         </tr>
@@ -112,6 +156,7 @@ function Table({tableHeaders, results, search, currentPage, update }) {
             </tbody>
         </table>
     </div>
+   </>
   )
 }
 

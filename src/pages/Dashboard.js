@@ -11,10 +11,8 @@ import Schedule from './Schedule';
 import Services from './Services';
 import Messages from './Messages';
 import Header from '../components/Header';
-import UpdatePatient from './UpdatePatient';
 import axios from 'axios';
 import PageNotFound from './PageNotFound';
-import UserDetails from './UserDetails';
 
 function Dashboard() {
   const [ admin, setAdmin ] = useState({});
@@ -50,7 +48,7 @@ function Dashboard() {
       <div className='w-full h-screen bg-gray-100 flex z-10 '>
         <Sidebar toggleBar={toggleBar} />
         <div className=' flex flex-grow flex-col bg-gray-200 '>
-          <Header name={admin.adminFirstname} toggleBar={toggleBar} setToggleBar={setToggleBar} />
+          <Header name={admin.firstname} toggleBar={toggleBar} setToggleBar={setToggleBar} />
           <Routes>
                   <Route element={
                   <Home patients={patients.length}  />} 
@@ -59,6 +57,10 @@ function Dashboard() {
                   <Route element={
                   <Admin  />
                   } path='/admin' />
+
+                  <Route element={
+                  <Schedule />
+                  } path='/schedule' />
 
                   <Route element={
                   <Appointments />
@@ -72,27 +74,14 @@ function Dashboard() {
                   <Dentist />
                   } path='/dentist' />
 
-                  <Route path='/patient'>
-                    <Route element={
-                    <Patients patients={patients} />
-                    } path='/patient/' />
-                    <Route
-                      element={<UpdatePatient />} 
-                      path='/patient/update/:id'
-                    />
-                    <Route
-                      element={<UserDetails />} 
-                      path='/patient/patient-details/:id'
-                    />
-                  </Route>
+                  <Route 
+                  path='/patient' 
+                  element={<Patients patients={patients}/>} 
+                  />
 
                   <Route element={
                   <Profile />
                   } path='/profile' />
-
-                  <Route element={
-                  <Schedule />
-                  } path='/schedule' />
 
                   <Route element={
                   <Services />

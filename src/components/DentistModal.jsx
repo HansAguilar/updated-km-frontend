@@ -63,6 +63,11 @@ function DenstistModal({show, setModal}) {
     const isLegalAge = isOver18(dentistInfo.birthday);
     if(isLegalAge) return alert("Invalid Age!");
 
+    const regex = /^09\d{9}$/;
+    if(!regex.test(dentistInfo.contactNumber)){
+      return alert("Contact number must be 11-digit");
+    }
+
     const data = { ...dentistInfo, profile };
     submitData(data);
   }

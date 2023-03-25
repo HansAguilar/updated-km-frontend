@@ -1,9 +1,7 @@
 import axios from 'axios';
-import React,{useState} from 'react';
+import React from 'react';
 
-function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo}) {
-
-    const [profile, setProfile] = useState("");
+function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo, type}) {
 
     const handleFormChange = (e) =>{
         setAdminInfo({
@@ -18,24 +16,11 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo}) {
         if(e.target.files[0]){
           reader.readAsDataURL(e.target.files[0]);
           reader.onload = e =>{
-            setProfile(e.target.result);
+            setAdminInfo({...adminInfo, profile:e.target.result});
           }
         }
       }
     
-      const submitData = async(data) =>{
-        try{
-          const response = await axios.put(`http://localhost:8080/api/v1/admin/update/${adminInfo.adminId}`,data,{
-            headers: { Accept: "application/json", }
-          });
-          if(response.data){
-            alert(response.data.message);
-            window.location.reload();
-          }
-        }catch(err){
-          console.log(err);
-        };
-      }
       const isOver18 = (dob) =>{
         const birthday = new Date(dob);
         const ageDiff = Date.now() - birthday.getTime();
@@ -43,33 +28,57 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo}) {
         const age = Math.abs(ageDate.getUTCFullYear-1970);
         return age < 18;
       }
-      const btnSubmit = () =>{
-        if(!adminInfo.adminFirstname ||!adminInfo.adminLastname || !adminInfo.birthday || !adminInfo.address || !adminInfo.gender || !adminInfo.contactNumber || !adminInfo.email){
+      const btnSubmit = async () => {
+        try {
+          if (
+            !adminInfo.firstname ||
+            !adminInfo.lastname ||
+            !adminInfo.birthday ||
+            !adminInfo.address ||
+            !adminInfo.gender ||
+            !adminInfo.contactNumber ||
+            !adminInfo.email
+          ) {
             console.log(adminInfo);
-          return alert("Fill up empty field!");
-        }
-        if(adminInfo.password !== adminInfo.confirmPassword ){
-          return alert("Mismatch password and confirmpassword");
-        }
-        const isLegalAge = isOver18(adminInfo.birthday);
-        if(isLegalAge) return alert("Invalid Age!");
-    
-        if(!profile){
-          return setProfile(adminInfo.profile);
-        }
-        const data = { 
-            adminFirstname: adminInfo.adminFirstname,
-            adminMiddlename: adminInfo.adminMiddlename,
-            adminLastname: adminInfo.adminLastname,
+            return alert("Fill up empty field!");
+          }
+          if (adminInfo.password !== adminInfo.confirmPassword) {
+            return alert("Mismatch password and confirmpassword");
+          }
+          const isLegalAge = isOver18(adminInfo.birthday);
+          if (isLegalAge) return alert("Invalid Age!");
+
+          const regex = /^09\d{9}$/;
+          if(!regex.test(adminInfo.contactNumber)){
+            return alert("Contact number must be 11-digit and must start with 09");
+          }
+
+          const data = {
+            firstname: adminInfo.firstname,
+            middlename: adminInfo.middlename,
+            lastname: adminInfo.lastname,
             address: adminInfo.address,
-            birthday:  adminInfo.birthday,
+            birthday: adminInfo.birthday,
             email: adminInfo.email,
-            gender:  adminInfo.gender,
-            contactNumber:  adminInfo.contactNumber,
-            profile: profile
-        };
-        submitData(data);
-      }
+            gender: adminInfo.gender,
+            contactNumber: adminInfo.contactNumber,
+            profile: adminInfo.profile,
+          };
+          const response = await axios.put(
+            `http://localhost:8080/api/v1/${type}/update/${adminInfo.userId}`,
+            data,
+            {
+              headers: { Accept: "application/json" },
+            }
+          );
+          if (response.data) {
+            alert(response.data.message);
+            window.location.reload();
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      };
     
       console.log(adminInfo);
       return (
@@ -77,22 +86,22 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo}) {
             <div className=" z-50">
               <div className="m-auto w-[550px] h-auto p-8 bg-white rounded-lg shadow-lg">
                 <div className="text-left py-4">
-                  <h2 className="text-xl font-bold mb-2">Add Admin</h2>
+                  <h2 className="text-xl font-bold capitalize mb-2">{`Update ${type}`}</h2>
                   <hr />
                 </div>
     
                 <form action="post" className='grid grid-cols-2 gap-3 ' >
                   <div className='flex flex-col'>
-                    <label htmlFor="adminFirstname">Firstname</label>
-                    <input type="text" name="adminFirstname" value={adminInfo.adminFirstname} placeholder='ex. John' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
+                    <label htmlFor="firstname">Firstname</label>
+                    <input type="text" name="firstname" value={adminInfo.firstname} placeholder='ex. John' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
                   </div>
                   <div className='flex flex-col'>
-                    <label htmlFor="adminMiddlename">Middlename</label>
-                    <input type="text" name="adminMiddlename" value={adminInfo.adminMiddlename} placeholder='ex. Cruz' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
+                    <label htmlFor="middlename">Middlename</label>
+                    <input type="text" name="middlename" value={adminInfo.middlename} placeholder='ex. Cruz' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
                   </div>
                   <div className='flex flex-col'>
-                    <label htmlFor="adminLastname">Lastname</label>
-                    <input type="text" name="adminLastname" value={adminInfo.adminLastname} placeholder='ex. Dimaguiba' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
+                    <label htmlFor="lastname">Lastname</label>
+                    <input type="text" name="lastname" value={adminInfo.lastname} placeholder='ex. Dimaguiba' className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)} />
                   </div>
                   <div className='flex flex-col'>
                     <label htmlFor="birthday">Birthday</label>
@@ -119,7 +128,7 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo}) {
                   </div>
                   
                 </form>
-                <img src={!profile ? adminInfo.profile : profile} alt="Dentist" className=' mt-5 w-52 h-52 '/>
+                <img src={adminInfo.profile} alt="Dentist" className=' mt-5 w-52 h-52 '/>
                 <div className='flex flex-col mt-3'>
                     <input type="file" name='profile' className=' text-sm py-2 focus:outline-none focus:shadow-md  ' onChange={(e)=>handleProfile(e)}/>
                   </div>

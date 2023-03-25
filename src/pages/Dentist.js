@@ -18,6 +18,10 @@ function Dentist() {
   const tableHeaders = [ "profile", "fullname", "address","gender", "contact number", "email", "specialty", "status", "actions" ];
   const pageNumber = [];
 
+  for(let x = 1; x <= Math.ceil(dentistList.length/8);x++){
+    pageNumber.push(x);
+  }
+
   const searchHandle = (e) =>{ 
     setSearch(e.target.value);
   }
