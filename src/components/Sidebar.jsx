@@ -41,19 +41,14 @@ function Sidebar({toggleBar, children}) {
             icon: <SidebarIcon Icon={AiOutlineSchedule} />
         },
         {
-            path: '/admin/dashboard/schedule',
-            name: 'Schedule',
-            icon: <SidebarIcon Icon={MdSchedule} />
+            path: '/admin/dashboard/services',
+            name: 'Services',
+            icon: <SidebarIcon Icon={MdOutlineMedicalServices} />
         },
         {
             path: '/admin/dashboard/messages',
             name: 'Messages',
             icon: <SidebarIcon Icon={AiFillMessage} />
-        },
-        {
-            path: '/admin/dashboard/services',
-            name: 'Services',
-            icon: <SidebarIcon Icon={MdOutlineMedicalServices} />
         },
         {
             path: '/admin/dashboard/profile',

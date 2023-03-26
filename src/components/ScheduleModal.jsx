@@ -6,8 +6,6 @@ function ScheduleModal({show, setModal}) {
     const [ schedule, setSchedule ] = useState({
         date: "",
         timeStart: "",
-        timeEnd:"",
-        timeDuration: "10",
         dentistId:""
     });
 
@@ -34,12 +32,25 @@ function ScheduleModal({show, setModal}) {
             ...schedule,
             date: "",
             timeStart: "",
-            timeEnd:"",
-            timeDuration: "",
             dentistId:""
         });
         setModal(false);
     }
+
+    const btnSubmit = async() => {
+      if(!schedule.dentistId || !schedule.date)return alert("Fill up empty field");
+      const time = new Date(`${schedule.date}T${schedule.timeStart}`);
+      setSchedule({...schedule, timeStart:time})
+      try {
+        const response = await axios.post("http://localhost:8080/api/v1/schedule/", schedule);
+        if(response.data){
+          alert(response.data.message);
+          window.location.reload();
+        }
+      } catch (error) {
+        alert(error.response.data.message)
+      }
+    };
 
       console.log(schedule)
   return (
@@ -55,8 +66,10 @@ function ScheduleModal({show, setModal}) {
             <select name='dentistId' value={schedule.dentistId} className=' border px-4 p-3 focus:outline-none ' onChange={(e)=>handleOnChange(e)} >
                 <option value="" disabled >Choose an option...</option>
                 {
-                    dentists.map((dentist, index)=>(
-                        <option className=' px-4 py-3 ' value={dentist.dentistId} key={index} >Dr. {dentist.fullname}</option>
+                    dentists
+                    .filter(val => val.verified !== false)
+                    .map((dentist, index)=>(
+                      <option className=' px-4 py-3 ' value={dentist.dentistId} key={index} >Dr. {dentist.fullname}</option>
                     ))
                 }
             </select>
@@ -65,29 +78,28 @@ function ScheduleModal({show, setModal}) {
             <input type="date" name='date' value={schedule.date} className=' w-full border p-2'  onChange={(e)=>handleOnChange(e)}/>
 
             <div className=' w-[450px] flex gap-3 '>
-                <div  className='flex flex-col gap-2 w-1/2 '>
+                <div  className='flex flex-col gap-2 w-full '>
                     <label htmlFor="timeStart" className='font-bold text-gray-700'>Appointment Start Time</label>
-                    <input type="time" name='timeStart' value={schedule.timeStart} className=' w-full border p-2' placeholder='Enter firstname' onChange={(e)=>handleOnChange(e)}/>
-                </div>
-                <div className='flex flex-col gap-2 w-1/2 '>
-                    <label htmlFor="timeEnd" className='font-bold text-gray-700'>Appointment End Time</label>
-                    <input type="time" name='timeEnd'value={schedule.timeEnd} className=' w-full border p-2' placeholder='Enter firstname' onChange={(e)=>handleOnChange(e)}/>
+                    <select name='timeStart' value={schedule.start} className=' border px-4 p-3 focus:outline-none ' onChange={(e)=>handleOnChange(e)} >
+                      <option value="08:00:00">08:00 Am</option>
+                      <option value="09:00:00">09:00 Am</option>
+                      <option value="10:00:00">10:00 Am</option>
+                      <option value="11:00:00">11:00 Am</option>
+                      <option value="12:00:00">12:00 Am</option>
+                      <option value="01:00:00">01:00 Pm</option>
+                      <option value="02:00:00">02:00 Pm</option>
+                      <option value="03:00:00">03:00 Pm</option>
+                      <option value="04:00:00">04:00 Pm</option>
+                      <option value="05:00:00">05:00 Pm</option>
+                  </select>
                 </div>
             </div>
-            
-            <label htmlFor="timeDuration" className=' font-bold text-gray-700 '>Appointment Duration</label>
-            <select name='timeDuration' value={schedule.timeDuration} className=' border px-4 p-3 focus:outline-none ' onChange={(e)=>handleOnChange(e)} >
-                <option value="10">10 Min</option>
-                <option value="15">15 Min</option>
-                <option value="20">20 Min</option>
-                <option value="30">30 Min</option>
-            </select>
 
           </form>
         </div>
         <div className="flex justify-end pt-2">
             <button className="bg-cyan-500 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded" 
-            
+            onClick={btnSubmit}
             >
             Submit
           </button>
