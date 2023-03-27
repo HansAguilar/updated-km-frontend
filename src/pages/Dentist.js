@@ -9,6 +9,7 @@ import Pagination from '../components/Pagination';
 import DentistTable from '../components/DentistTable';
 import DentistExcelButton from '../components/DentistExcelButton';
 import PDFButton from '../components/PDFButton';
+import { DENTIST_LINK } from '../ApiLinks';
 
 function Dentist() {
   const [ show, setModal ] = useState(false);
@@ -28,7 +29,7 @@ function Dentist() {
 
   const fetchDentist = async() =>{
     try{
-      const response = await axios.get("http://localhost:8080/api/v1/dentist/");
+      const response = await axios.get(DENTIST_LINK);
       if(response.data){
         setDentistList(response.data);
       }

@@ -7,7 +7,6 @@ import Appointments from './Appointments';
 import Dentist from './Dentist';
 import Patients from './Patients';
 import Profile from './Profile';
-import Schedule from './Schedule';
 import Services from './Services';
 import Messages from './Messages';
 import Header from '../components/Header';
@@ -57,10 +56,6 @@ function Dashboard() {
                   <Route element={
                   <Admin  />
                   } path='/admin' />
-
-                  <Route element={
-                  <Schedule />
-                  } path='/schedule' />
 
                   <Route element={
                   <Appointments />

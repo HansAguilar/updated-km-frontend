@@ -1,11 +1,13 @@
-import React,{ useState } from 'react';
+import React,{ useState, useEffect } from 'react';
 import PageHeader from '../components/PageHeader';
 import { IoAdd } from 'react-icons/io5';
+import { SERVICES_LINK } from "../ApiLinks";
 // import { AiFillPrinter } from 'react-icons/ai';
 // import FileIcons from '../components/FileIcons';
-// import Table from '../components/Table';
-import Modal from '../components/Modal';
-// import Pagination from '../components/Pagination';
+import Table from '../components/ServiceTable';
+import Modal from '../components/ServicesModal';
+import axios from 'axios';
+import Pagination from '../components/Pagination';
 // import { useNavigate } from 'react-router-dom';
 // import ExcelButton from '../components/ExcelButton';
 // import PDFButton from '../components/PDFButton';
@@ -13,10 +15,36 @@ import Modal from '../components/Modal';
 function Services() {
   const [ show, setModal ] = useState(false);
   const [ search, setSearch ] = useState("");
+  const [serviceList, setServiceList] = useState([]);
+  const [ currentPage, setCurrentPage ] = useState(1);
+  const tableHeaders = [ "Service Name", "Service Type", "Service Duration", "Service Price", "Status", "Action"];
+  const pageNumber = [];
+
+  for(let x = 1; x <= Math.ceil(serviceList.length/8);x++){
+    pageNumber.push(x);
+  }
+
+  useEffect(()=>{
+    const fetchServices = async()=>{
+      try {
+        const response = await axios.get(SERVICES_LINK);
+        if(response.data){
+          setServiceList(response.data);
+        }
+      } catch (error) { console.log(error) }
+    }
+    fetchServices();
+  },[])
+
   const searchHandle = (e) =>{ 
     setSearch(e.target.value);
   }
-  console.log(search);
+
+  const filteredServices = serviceList.filter(val=>
+    (val.name+val.type+val.duration+val.price).toLowerCase().includes(search)
+    );
+
+  console.log(serviceList);
   return (
     <div className=' h-screen overflow-hidden relative '>
       <Modal show={show} setModal={setModal} />
@@ -43,10 +71,11 @@ function Services() {
                   onChange={(e)=>searchHandle(e)}
                 />
 
-              {/* <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredPatient : patients  } search={search} currentPage={currentPage} update={updatePatient} /> 
-              <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
-              */}
+              
+    
             </div>
+            <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredServices : serviceList  } search={search} currentPage={currentPage} /> 
+              <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
         </div>
       </div>
     </div>

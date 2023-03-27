@@ -3,7 +3,7 @@ import SidebarIcon from './SidebarIcon';
 import { NavLink } from 'react-router-dom';
 import { AiFillHome, AiFillMessage, AiOutlineSchedule } from 'react-icons/ai';
 import { FaUserAlt, FaUserCog, FaUserMd} from 'react-icons/fa';
-import { MdSchedule, MdOutlineMedicalServices } from 'react-icons/md';
+import { MdOutlineMedicalServices } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 import { RiLogoutBoxFill } from 'react-icons/ri';
 import logo from '../assets/small-logo.jpg';
@@ -31,20 +31,15 @@ function Sidebar({toggleBar, children}) {
             icon: <SidebarIcon Icon={FaUserCog} />
         },
         {
-            path: '/admin/dashboard/schedule',
-            name: 'Schedule',
-            icon: <SidebarIcon Icon={MdSchedule} />
+            path: '/admin/dashboard/services',
+            name: 'Services',
+            icon: <SidebarIcon Icon={MdOutlineMedicalServices} />
         },
         {
             path: '/admin/dashboard/appointments',
             name: 'Appointments',
             icon: <SidebarIcon Icon={AiOutlineSchedule} />
-        },
-        {
-            path: '/admin/dashboard/services',
-            name: 'Services',
-            icon: <SidebarIcon Icon={MdOutlineMedicalServices} />
-        },
+        }, 
         {
             path: '/admin/dashboard/messages',
             name: 'Messages',
