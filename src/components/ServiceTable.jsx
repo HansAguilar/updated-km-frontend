@@ -1,7 +1,8 @@
-import React,{useState, useEffect} from 'react';
-import {AiFillEdit, AiOutlineFolderView} from 'react-icons/ai';
-import UpdateDentistModal from './UpdateDentistModal';
+import React,{useState} from 'react';
+import {AiFillEdit, AiFillDelete} from 'react-icons/ai';
+import UpdateDentistModal from './UpdateServicesModal';
 import axios from 'axios';
+import { SERVICES_LINK } from '../ApiLinks';
 
 function ServiceTable({tableHeaders, results, search, currentPage }) {
     const [update, setUpdateModal] = useState(false);
@@ -18,7 +19,7 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
         try {
             
             const newDisableInformation = { id: id, verified: disable };
-            await axios.post(`http://localhost:8080/api/v1/dentist/disable`, newDisableInformation, {
+            await axios.post(`${SERVICES_LINK}disable`, newDisableInformation, {
                 headers: { Accept: 'application/json' },
             });
             alert(`Disable${disable ? '' : 'd'} Account Successfully!`);
@@ -27,6 +28,18 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
             console.log(err);
         }
     };
+
+    const deleteButton = async(id) =>{
+        try {
+            const response = await axios.delete(SERVICES_LINK+`${id}`)
+            if(response.data){
+                alert(response.data.message);
+                window.location.reload();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const updateBtn = (serviceId,name,type,description,duration,price ) =>{
         setData({
@@ -62,11 +75,11 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
                     search.length > 0 ? 
                     results
                     .map((result)=>(
-                        <tr className='' key={result.serviceId}>
+                        <tr className='mt-2 ' key={result.serviceId}>
                             <td className=' text-center capitalize '>
                                 {result.name}
                             </td>
-                            <td className='text-center'>
+                            <td className='text-center capitalize'>
                                 {result.type}
                             </td>
                             <td className='text-center'>
@@ -77,27 +90,23 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
                             </td>
                             <td className='text-center'>
                                 {
-                                result.status ? 
+                                result.isAvailable ? 
                                 <p 
-                                className=' px-4 py-2 cursor-pointer bg-cyan-600 text-white '
+                                className=' px-1 py-2 cursor-pointer rounded-md bg-cyan-500 text-white '
+                                onClick={()=>disableAccountBtn(result.serviceId, false)}
                                 >
                                     Disable
                                 </p>
                                 : <p 
-                                className=' px-4 py-2 cursor-pointer bg-red-600 text-white '
+                                className=' px-1 py-2 cursor-pointer rounded-md bg-red-500 text-white '
+                                onClick={()=>disableAccountBtn(result.serviceId, true)}
                                 >
                                     Available
                                 </p>
                                 }
                             </td>
-                            {/* <td className=' text-center '>
-                                {result.verified ? 
-                                    <p className=' px-2 py-2 rounded-md bg-cyan-500 text-white cursor-pointer hover:shadow-md ' onClick={()=>disableAccountBtn(result.dentistId, false)}>Active</p> : 
-                                    <p className=' px-2 py-2 rounded-md bg-red-500 text-white cursor-pointer hover:shadow-md '  onClick={()=>disableAccountBtn(result.dentistId, true)}>Inactive</p> 
-                                }   
-                            </td> */}
-                            <td className=' h-auto relative bottom-2 w-auto flex items-start justify-center gap-3'>
-                                <p className=' px-5 py-2 rounded-md bg-blue-500 text-white cursor-pointer hover:shadow-md flex' onClick={()=>updateBtn(
+                            <td className=' h-auto relative w-auto flex items-end justify-center gap-3'>
+                                <p className=' px-5 py-2 rounded-md bg-cyan-500 text-white cursor-pointer hover:shadow-md flex' onClick={()=>updateBtn(
                                     result.serviceId,
                                     result.name,
                                     result.type,
@@ -105,7 +114,7 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
                                     result.duration,
                                     result.price
                                 )}><AiFillEdit size={25} />&nbsp;Update</p>
-                                <p className=' px-5 py-2 rounded-md bg-gray-500 text-white cursor-pointer hover:shadow-md flex'><AiOutlineFolderView size={25} />&nbsp;View</p> 
+                                <p className=' px-5 py-2 rounded-md bg-red-500 text-white cursor-pointer hover:shadow-md flex' onClick={()=>deleteButton(result.serviceId)}><AiFillDelete size={25} />&nbsp;Delete</p> 
                             </td>
                         </tr>))
                     : results
@@ -127,25 +136,21 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
                             </td>
                             <td className='text-center'>
                                 {
-                                result.status ? 
+                                result.isAvailable ? 
                                 <p 
-                                className=' px-1 py-2 cursor-pointer bg-cyan-600 text-white '
+                                className=' px-1 py-2 cursor-pointer rounded-md bg-cyan-500 text-white '
+                                onClick={()=>disableAccountBtn(result.serviceId, false)}
                                 >
                                     Disable
                                 </p>
                                 : <p 
-                                className=' px-1 py-2 cursor-pointer rounded-md bg-red-600 text-white '
+                                className=' px-1 py-2 cursor-pointer rounded-md bg-red-500 text-white '
+                                onClick={()=>disableAccountBtn(result.serviceId, true)}
                                 >
                                     Available
                                 </p>
                                 }
                             </td>
-                            {/* <td className=' text-center '>
-                                {result.verified ? 
-                                    <p className=' px-2 py-2 rounded-md bg-cyan-500 text-white cursor-pointer hover:shadow-md ' onClick={()=>disableAccountBtn(result.dentistId, false)}>Active</p> : 
-                                    <p className=' px-2 py-2 rounded-md bg-red-500 text-white cursor-pointer hover:shadow-md '  onClick={()=>disableAccountBtn(result.dentistId, true)}>Inactive</p> 
-                                }   
-                            </td> */}
                             <td className=' h-auto relative w-auto flex items-end justify-center gap-3'>
                                 <p className=' px-5 py-2 rounded-md bg-cyan-500 text-white cursor-pointer hover:shadow-md flex' onClick={()=>updateBtn(
                                     result.serviceId,
@@ -155,7 +160,7 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
                                     result.duration,
                                     result.price
                                 )}><AiFillEdit size={25} />&nbsp;Update</p>
-                                <p className=' px-5 py-2 rounded-md bg-gray-500 text-white cursor-pointer hover:shadow-md flex'><AiOutlineFolderView size={25} />&nbsp;View</p> 
+                                <p className=' px-5 py-2 rounded-md bg-red-500 text-white cursor-pointer hover:shadow-md flex' onClick={()=>deleteButton(result.serviceId)}><AiFillDelete size={25} />&nbsp;Delete</p> 
                             </td>
                         </tr>
                     ))
