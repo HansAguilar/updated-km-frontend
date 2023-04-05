@@ -1,11 +1,12 @@
 import React,{ useState, useEffect } from 'react';
 import PageHeader from '../components/PageHeader';
 import { IoAdd } from 'react-icons/io5';
-import { SERVICES_LINK } from "../ApiLinks";
+import { APPOINTMENT_LINK } from "../ApiLinks";
 // import { AiFillPrinter } from 'react-icons/ai';
 // import FileIcons from '../components/FileIcons';
-import Table from '../components/ServiceTable';
+import Table from '../components/AppointmentTable';
 import Modal from '../components/AppointmentModal';
+import CovidTestModal from '../components/CovidServiceModal';
 import axios from 'axios';
 import Pagination from '../components/Pagination';
 // import { useNavigate } from 'react-router-dom';
@@ -14,22 +15,37 @@ import Pagination from '../components/Pagination';
 
 function Appointments() {
   const [ show, setModal ] = useState(false);
+  const [ covidShow, setCovidModal ] = useState(false);
   const [ search, setSearch ] = useState("");
-  const [serviceList, setServiceList] = useState([]);
+  const [appointmentList, setAppointmentList] = useState([])
   const [ currentPage, setCurrentPage ] = useState(1);
-  const tableHeaders = [ "Service Name", "Service Type", "Service Duration", "Service Price", "Status", "Action"];
+  const tableHeaders = [ "Patient Name", "Date Submitted", "Appointment Date", "Appointment Start", "Status","Appointment End", "Action"];
   const pageNumber = [];
+  const [appointment, setAppointment] = useState({
+    patient: '',
+    patientId:"",
+    dentist: '',
+    dentistId:"",
+    serviceValue: "",
+    serviceSelected:[],
+    date:"",
+    timeStart: " ",
+    timeEnd:" ",
+    totalAmount:0.00,
+    method: "",
+    type: ""
+  });
 
-  for(let x = 1; x <= Math.ceil(serviceList.length/8);x++){
+  for(let x = 1; x <= Math.ceil(appointmentList.length/8);x++){
     pageNumber.push(x);
   }
 
   useEffect(()=>{
     const fetchServices = async()=>{
       try {
-        const response = await axios.get(SERVICES_LINK);
+        const response = await axios.get(APPOINTMENT_LINK);
         if(response.data){
-          setServiceList(response.data);
+          setAppointmentList(response.data);
         }
       } catch (error) { console.log(error) }
     }
@@ -40,14 +56,15 @@ function Appointments() {
     setSearch(e.target.value);
   }
 
-  const filteredServices = serviceList.filter(val=>
-    (val.name+val.type+val.duration+val.price).toLowerCase().includes(search)
+  const filteredServices = appointmentList.filter(val=>
+    (val.patient.firstname+val.patient.middlename+val.patient.lastname).toLowerCase().includes(search)
     );
 
-  console.log(serviceList);
+    console.log(appointmentList);
   return (
     <div className=' h-screen overflow-hidden relative '>
-      <Modal show={show} setModal={setModal} />
+      <Modal show={show} setModal={setModal} setCovidModal={setCovidModal} appointment={appointment} setAppointment={setAppointment} />
+      <CovidTestModal show={covidShow} setModal={setCovidModal} setAddModal={setModal} data={appointment} />
       <PageHeader link={'Appointment'} />
       <div className=' w-full flex flex-col justify-center p-4 '> 
         <div className=' w-full bg-white h-auto rounded-xl shadow-lg'>
@@ -74,7 +91,7 @@ function Appointments() {
               
     
             </div>
-            <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredServices : serviceList  } search={search} currentPage={currentPage} /> 
+            <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredServices : appointmentList  } search={search} currentPage={currentPage} /> 
               <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
         </div>
       </div>

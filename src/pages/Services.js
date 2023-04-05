@@ -36,6 +36,7 @@ function Services() {
     fetchServices();
   },[])
 
+  console.log(serviceList);
   const searchHandle = (e) =>{ 
     setSearch(e.target.value);
   }

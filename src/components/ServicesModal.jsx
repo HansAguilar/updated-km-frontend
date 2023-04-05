@@ -42,7 +42,6 @@ function ServicesModal({show, setModal}) {
       });
     setModal(false);
   }
-  console.log(services);
   return (
     <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 z-40 flex justify-center items-center ${show ? '': 'hidden'}`}>
         <div className=" z-50">

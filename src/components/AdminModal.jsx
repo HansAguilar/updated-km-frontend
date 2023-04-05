@@ -13,8 +13,14 @@ function AdminModal({show, setModal, type}) {
       email:"",
       username:"",
       password:"",
-      confirmPassword:""
+      confirmPassword:"",
+      haveInsurance: "no"
     });
+    const [insurance, setInsurance] = useState({
+      card:" ",
+      company: " ",
+      cardNumber: " ",
+    })
     const [profile, setProfile] = useState("");
   
     const handleFormChange = (e) =>{
@@ -23,6 +29,10 @@ function AdminModal({show, setModal, type}) {
         [e.target.name]: e.target.value
       })
       
+    }
+
+    const handleInsuranceChange = (e) =>{
+      setInsurance({...insurance, [e.target.name]:e.target.value})
     }
 
     const handleProfile = (e) =>{
@@ -59,6 +69,9 @@ function AdminModal({show, setModal, type}) {
       if(!adminInfo.firstname ||!adminInfo.lastname || !adminInfo.birthday || !adminInfo.address || !adminInfo.gender || !adminInfo.contactNumber || !adminInfo.email || !adminInfo.username || !adminInfo.password || !adminInfo.confirmPassword || !profile){
         return alert("Fill up empty field!");
       }
+      if(type === "patient" && adminInfo.haveInsurance === "yes" && !insurance.card || !insurance.cardNumber || !insurance.company){
+        return alert("Fill up empty field!");
+      }
       if(adminInfo.password !== adminInfo.confirmPassword ){
         return alert("Mismatch password and confirmpassword");
       }
@@ -69,15 +82,24 @@ function AdminModal({show, setModal, type}) {
       if(!regex.test(adminInfo.contactNumber)){
         return alert("Contact number must be 11-digit and must start with 09");
       }
-  
-      const data = { ...adminInfo, profile };
+      let data = { };
+      if(type === "patient"){
+        data = { ...adminInfo, ...insurance, profile};
+        console.log("data: ");
+        console.log(data);
+        submitData(data);
+      }else{ 
+      data = { ...adminInfo, profile };
       submitData(data);
+     }
+      
     }
   
+    console.log(adminInfo)
     return (
       <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 z-40 flex flex-grow justify-center items-center ${show ? '': 'hidden'}`}>
           <div className=" z-50">
-            <div className="m-auto w-[550px] h-auto p-8 bg-white rounded-lg shadow-lg">
+            <div className="m-auto w-[550px] h-[700px] overflow-auto p-8 bg-white rounded-lg shadow-lg">
               <div className="text-left py-4">
                 <h2 className="text-xl font-bold capitalize mb-2">{`Add ${type}`}</h2>
                 <hr />
@@ -133,6 +155,45 @@ function AdminModal({show, setModal, type}) {
                   <input type="password" name="confirmPassword" value={adminInfo.confirmPassword} className=' text-sm px-4 py-2 focus:outline-none focus:shadow-md border ' onChange={(e)=>handleFormChange(e)}/>
                 </div>
                 
+                  {
+                    type !== "patient" ? " ":
+                    <div className='flex flex-col'>
+                      <label htmlFor='haveInsurance'>Do you have HMO? </label>
+                      <select name="haveInsurance" value={adminInfo.haveInsurance} className='px-4 py-2 text-sm focus:outline-none focus:shadow-md border' onChange={(e)=>handleFormChange(e)}>
+                        <option value="yes">Yes</option>
+                        <option value="no" >No</option>
+                      </select>
+                    </div>
+                  }
+                  {
+                    adminInfo.haveInsurance === "yes" ? 
+                    <>
+                    <div className='flex flex-col'>
+                          <label htmlFor="card">HMO Card</label>
+                          <select name="card" value={insurance.card} className='px-4 py-2 text-sm focus:outline-none focus:shadow-md border' onChange={(e)=>handleInsuranceChange(e)}>
+                            <option value=" " disabled>Select Insurance Card...</option>
+                            <option value="Cocolife Health Care">Cocolife Health Care</option>
+                            <option value="Inlife Insular Health Care">Inlife Insular Health Care</option>
+                            <option value="Health Partners Dental Access, Inc.">Health Partners Dental Access, Inc.</option>
+                            <option value="Maxicare">Maxicare</option>
+                            <option value="eTiQa">eTiQa</option>
+                            <option value="PhilCare">PhilCare</option>
+                            <option value="Health Maintenance, Inc.">Health Maintenance, Inc.</option>
+                            <option value="Generali">Generali</option>
+                            <option value="Health Access">Health Access</option>
+                          </select>
+                        </div>
+                        <div className='flex flex-col'>
+                        <label htmlFor="cardNumber">HMO Card Number</label>
+                        <input type="text" name="cardNumber" value={insurance.cardNumber} className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleInsuranceChange(e)}/>
+                      </div>
+                      <div className='flex flex-col'>
+                        <label htmlFor="company">Company</label>
+                        <input type="text" name="company" value={insurance.company} className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleInsuranceChange(e)}/>
+                      </div>
+                  </>
+                  : " "
+                  }
               </form>
               <div className='flex flex-col mt-3'>
                   <label htmlFor="file">Upload</label>
