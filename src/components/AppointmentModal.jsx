@@ -3,27 +3,29 @@ import React, { useState, useEffect } from 'react';
 import { SERVICES_LINK, PATIENT_LINK, DENTIST_LINK } from '../ApiLinks';
 import {CiCircleRemove} from "react-icons/ci"
 
-function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppointment }) {
+function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppointment, filteredAppointments }) {
   const [patients, setPatients] = useState([]);
   const [services, setServices] = useState([]);
   const [active, setActive] = useState("");
   const [dentists, setDentists] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
 
-  const timeStartList = [
-    { timeValue:"09:00 Am", timeStart: "09:00:00" },
-    { timeValue:"09:30 Am", timeStart: "09:30:00" },
-    { timeValue:"10:00 Am", timeStart: "10:00:00" },
-    { timeValue:"10:30 Am", timeStart: "10:30:00" },
-    { timeValue:"11:00 Am", timeStart: "11:00:00" },
-    { timeValue:"11:30 Am", timeStart: "11:30:00" },
-    { timeValue:"01:00 Pm", timeStart: "13:00:00" },
-    { timeValue:"01:30 Pm", timeStart: "13:30:00" },
-    { timeValue:"02:00 Pm", timeStart: "14:00:00" },
-    { timeValue:"02:30 Pm", timeStart: "14:30:00" },
-    { timeValue:"03:00 Pm", timeStart: "15:00:00" },
-    { timeValue:"03:30 Pm", timeStart: "15:30:00" },
-  ]
+  let [timeStartList, setTimeStartList] = useState(
+    [
+      { timeValue:"09:00 Am", timeStart: "09:00:00" },
+      { timeValue:"09:30 Am", timeStart: "09:30:00" },
+      { timeValue:"10:00 Am", timeStart: "10:00:00" },
+      { timeValue:"10:30 Am", timeStart: "10:30:00" },
+      { timeValue:"11:00 Am", timeStart: "11:00:00" },
+      { timeValue:"11:30 Am", timeStart: "11:30:00" },
+      { timeValue:"01:00 Pm", timeStart: "01:00:00" },
+      { timeValue:"01:30 Pm", timeStart: "01:30:00" },
+      { timeValue:"02:00 Pm", timeStart: "02:00:00" },
+      { timeValue:"02:30 Pm", timeStart: "02:30:00" },
+      { timeValue:"03:00 Pm", timeStart: "03:00:00" },
+      { timeValue:"03:30 Pm", timeStart: "03:30:00" },
+    ]
+  );
 
   const fetchPatient = async () => {
     try {
@@ -98,14 +100,59 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
       )
       setSuggestions(filteredService)
       setActive("service")
-      }
+    }
+
+    // DATE LOGIC
+    if (e.target.name === "date") {
+      
+      const newTimeList = [
+        { timeValue: "09:00 Am", timeStart: "09:00:00" },
+        { timeValue: "09:30 Am", timeStart: "09:30:00" },
+        { timeValue: "10:00 Am", timeStart: "10:00:00" },
+        { timeValue: "10:30 Am", timeStart: "10:30:00" },
+        { timeValue: "11:00 Am", timeStart: "11:00:00" },
+        { timeValue: "11:30 Am", timeStart: "11:30:00" },
+        { timeValue: "01:00 Pm", timeStart: "01:00:00" },
+        { timeValue: "01:30 Pm", timeStart: "01:30:00" },
+        { timeValue: "02:00 Pm", timeStart: "02:00:00" },
+        { timeValue: "02:30 Pm", timeStart: "02:30:00" },
+        { timeValue: "03:00 Pm", timeStart: "03:00:00" },
+        { timeValue: "03:30 Pm", timeStart: "03:30:00" },
+      ];
+      
+      setTimeStartList([...newTimeList]);
+      setTimeStartList(prevTimeStartList => {
+        let updatedTimeStartList = [...newTimeList];
+        const getAppointmentDate = filteredAppointments.filter((value)=>{
+          return value.status === "APPROVED" && value.date === e.target.value;
+        });
+
+       if(getAppointmentDate.length > 0){
+        const indexesToRemove =[];
+        for(let x = 0; x < getAppointmentDate.length; x++){
+          const start = prevTimeStartList.findIndex((value)=>{
+            return value.timeStart === getAppointmentDate[x].timeStart;
+          });
+          const end = prevTimeStartList.findIndex((value)=>{
+            return value.timeStart === getAppointmentDate[x].timeEnd;
+          })
+          indexesToRemove.push(start, end-1);
+        }
+
+        updatedTimeStartList = updatedTimeStartList.filter((_, index)=>{
+          return !indexesToRemove.includes(index);
+        })
+       }
+
+       return updatedTimeStartList;
+      })
+    }
         
         setAppointment({
           ...appointment,
           [e.target.name]: e.target.value
         });
       };
-
   const nextButton = async () => {
 
     if(!appointment.patient || !appointment.dentist || appointment.serviceSelected.length < 1 || !appointment.date || !appointment.timeStart){

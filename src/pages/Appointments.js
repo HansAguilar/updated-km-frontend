@@ -60,10 +60,18 @@ function Appointments() {
     (val.patient.firstname+val.patient.middlename+val.patient.lastname).toLowerCase().includes(search)
     );
 
-    console.log(appointmentList);
+    const filteredAppointments = appointmentList.map((appointment) => {
+      return {
+        date: appointment.appointmentDate,
+        timeStart: appointment.timeStart,
+        timeEnd: appointment.timeEnd,
+        status: appointment.status
+      };
+    });
+    
   return (
     <div className=' h-screen overflow-hidden relative '>
-      <Modal show={show} setModal={setModal} setCovidModal={setCovidModal} appointment={appointment} setAppointment={setAppointment} />
+      <Modal show={show} setModal={setModal} setCovidModal={setCovidModal} appointment={appointment} setAppointment={setAppointment} filteredAppointments={filteredAppointments} />
       <CovidTestModal show={covidShow} setModal={setCovidModal} setAddModal={setModal} data={appointment} />
       <PageHeader link={'Appointment'} />
       <div className=' w-full flex flex-col justify-center p-4 '> 

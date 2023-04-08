@@ -1,13 +1,35 @@
+import axios from 'axios';
 import React,{useState} from 'react';
+import { APPOINTMENT_LINK } from '../ApiLinks';
 import {AiFillEdit, AiOutlineFolderView,AiFillDelete} from 'react-icons/ai';
 
 function AppointmentTable({tableHeaders,results,search,currentPage}) {
-  const [status, setStatus] = useState({
-    selectedStatus: "",
-    isSelected: false,
-    remarks: "PENDING"
-  });
- console.log(status);
+    const [status, setStatus] = useState({
+        selectedId: null,
+        remarks: "PENDING",
+        isSelected: false
+      });
+      const statusSubmit = async(id, value) =>{
+        try {
+            const response = await axios.put(`${APPOINTMENT_LINK}status/${id}/${value}`);
+            if(response.data){
+                alert(response.data.message);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+      }
+      const deleteAppointment = async(id) =>{
+        try {
+            const response = await axios.delete(`${APPOINTMENT_LINK}${id}`);
+            if(response.data){
+                alert(response.data.message);
+                window.location.reload();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+      }
   return (
     <>
     <div className=' h-[550px] px-4 py-3 overflow-auto '>
@@ -45,32 +67,43 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
                             <td>
                                 {result.timeEnd}
                             </td>
-                            <td className=' capitalize px-10 '>
-                                <p className={` ${ 
-                                    status.remarks === "PENDING" ? "bg-orange-500"
-                                    : status.remarks === "APPROVED" ? "bg-green-500"
-                                    : "bg-red-500"
-                                } ${ status.selectedStatus && status.selectedStatus === result.appointmentId && !status.isSelected ? " ": "hidden"} rounded-full text-white py-1 cursor-pointer `} onClick={()=>setStatus({...status,
-                                    selectedStatus: result.appointmentId,
-                                    isSelected: true,
-                                })} >{status.remarks.toLowerCase()}</p>
-                                {
-                                    status.selectedStatus === result.appointmentId && status.isSelected && result.status === "PENDING" ?
-                                    <select name="status" value={result.st} className=' px-6 py-2 border focus:outline ' onChange={(e)=>setStatus({
-                                        ...status,
-                                        remarks: e.target.value,
-                                        isSelected:false
-                                    })}>
-                                        <option value="PENDING" disabled>Pending</option>
-                                        <option value="APPROVED" >Approved</option>
-                                        <option value="FAILED">Cancel</option>
+                            <td className='capitalize px-10'>
+                                { status.selectedId === result.appointmentId && result.status !== "CANCELLED" ? (
+                                    <select
+                                    name="status"
+                                    value={result.status}
+                                    className='px-6 py-2 border focus:outline'
+                                    onChange={(e) => {
+                                        statusSubmit(result.appointmentId, e.target.value);
+                                        window.location.reload();
+                                        // console.log(result.appointmentId,"",e.target.value);
+                                    }}
+                                    onBlur={()=>setStatus({...status, selectedId:null})}
+                                    >
+                                    <option value="PENDING" disabled>Pending</option>
+                                    <option value="APPROVED" >Approved</option>
+                                    <option value="CANCELLED">Cancel</option>
                                     </select>
-                                    : " "
-                                }
-                            </td>
+                                ) : (
+                                    <p
+                                    className={`${
+                                        result.status === "PENDING" ? "bg-orange-500"
+                                        : result.status === "APPROVED" ? "bg-green-500"
+                                        : "bg-red-500"
+                                    } rounded-full text-white py-1 cursor-pointer`}
+                                    onClick={() => setStatus({
+                                        selectedId: result.appointmentId,
+                                        remarks: result.status,
+                                        isSelected:true,
+                                    })}
+                                    >
+                                    {result.status.toLowerCase()}
+                                    </p>
+                                )}
+                                </td>
                             <td className=' h-16 w-full text-white flex gap-1 items-center justify-center text-center '>
                                 <p className=' bg-cyan-500 px-6 py-2 rounded-md cursor-pointer hover:shadow-md inline-flex '><AiFillEdit size={25} />&nbsp;Update</p>
-                                <p className=' bg-red-500 px-6 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex'><AiFillDelete size={25} />&nbsp;Delete</p>
+                                <p className=' bg-red-500 px-6 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex' onClick={()=>deleteAppointment(result.appointmentId)}><AiFillDelete size={25} />&nbsp;Delete</p>
                                 <p className=' bg-gray-500 px-6 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex'><AiOutlineFolderView size={25} />&nbsp;View</p>
                             </td>
                         </tr>
