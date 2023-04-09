@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React,{useState} from 'react';
+import { IoAddSharp, IoRemoveOutline} from 'react-icons/io5';
 
 function AdminModal({show, setModal, type}) {
     const [ adminInfo, setAdminInfo ] = useState({
@@ -16,14 +17,23 @@ function AdminModal({show, setModal, type}) {
       confirmPassword:"",
       haveInsurance: "no"
     });
-    const [insurance, setInsurance] = useState({
-      card:" ",
-      company: " ",
-      cardNumber: " ",
-    })
+
     const [profile, setProfile] = useState("");
+    const [numberOfComponents, setNumberOfComponents] = useState(1);
+    const [insuranceInfo, setInsuranceInfo] = useState([{card: "", cardNumber: "", company: ""}]);
+
+    const handleInsuranceChange = (e, index) => {
+      const { name, value } = e.target;
+      const updatedInsurance = [...insuranceInfo];
+      updatedInsurance[index] = {...updatedInsurance[index], [name]: value};
+      setInsuranceInfo(updatedInsurance);
+    };
   
     const handleFormChange = (e) =>{
+      if(e.target.name === "haveInsurance" && e.target.value === "no"){
+        setInsuranceInfo([{card: "", cardNumber: "", company: ""}]);
+        setNumberOfComponents(1);
+      }
       setAdminInfo({
         ...adminInfo,
         [e.target.name]: e.target.value
@@ -31,10 +41,7 @@ function AdminModal({show, setModal, type}) {
       
     }
 
-    const handleInsuranceChange = (e) =>{
-      setInsurance({...insurance, [e.target.name]:e.target.value})
-    }
-
+    console.log(insuranceInfo)
     const handleProfile = (e) =>{
       const reader = new FileReader();
       if(e.target.files[0]){
@@ -69,9 +76,9 @@ function AdminModal({show, setModal, type}) {
       if(!adminInfo.firstname ||!adminInfo.lastname || !adminInfo.birthday || !adminInfo.address || !adminInfo.gender || !adminInfo.contactNumber || !adminInfo.email || !adminInfo.username || !adminInfo.password || !adminInfo.confirmPassword || !profile){
         return alert("Fill up empty field!");
       }
-      if(type === "patient" && adminInfo.haveInsurance === "yes" && !insurance.card || !insurance.cardNumber || !insurance.company){
-        return alert("Fill up empty field!");
-      }
+      // if((type === "patient" && adminInfo.haveInsurance === "yes" )&& (!insurance.card || !insurance.cardNumber || !insurance.company)){
+      //   return alert("Fill up empty field!");
+      // }
       if(adminInfo.password !== adminInfo.confirmPassword ){
         return alert("Mismatch password and confirmpassword");
       }
@@ -84,7 +91,7 @@ function AdminModal({show, setModal, type}) {
       }
       let data = { };
       if(type === "patient"){
-        data = { ...adminInfo, ...insurance, profile};
+        data = { ...adminInfo,  profile};
         console.log("data: ");
         console.log(data);
         submitData(data);
@@ -165,13 +172,39 @@ function AdminModal({show, setModal, type}) {
                       </select>
                     </div>
                   }
-                  {
-                    adminInfo.haveInsurance === "yes" ? 
-                    <>
-                    <div className='flex flex-col'>
+                  {[...Array(numberOfComponents)].map((_, index) => (
+                  <div key={index}>
+                    {adminInfo.haveInsurance === "yes" ? (
+                      <>
+                        <div className='flex flex-col'>
+
+                          <div className=' w-full flex justify-end gap-1 '>
+                            <button onClick={(e) =>{
+                            e.preventDefault();
+                            setNumberOfComponents(numberOfComponents + 1);
+                            setInsuranceInfo([...insuranceInfo, {card: "", cardNumber: "", company: ""}]);}}
+                            className=' p-1 bg-cyan-500 rounded-full text-white hover:shadow-2xl '
+                            ><IoAddSharp size={15} /></button>
+
+                            <button 
+                            className=' p-1 bg-red-500 rounded-full text-white hover:shadow-2xl'
+                            onClick={(e)=>{
+                              e.preventDefault();
+                              if(numberOfComponents === 1 ){
+                                return alert("You can't remove input field");
+                              }
+                              const updatedList = insuranceInfo;
+                                updatedList.splice(index, 1);
+                                setInsuranceInfo([...updatedList]);
+                                setNumberOfComponents(numberOfComponents-1);
+                            }}
+                            ><IoRemoveOutline size={15} /></button>
+                          </div>
+
+
                           <label htmlFor="card">HMO Card</label>
-                          <select name="card" value={insurance.card} className='px-4 py-2 text-sm focus:outline-none focus:shadow-md border' onChange={(e)=>handleInsuranceChange(e)}>
-                            <option value=" " disabled>Select Insurance Card...</option>
+                          <select name="card" value={insuranceInfo[index].card} className='px-4 py-2 text-sm focus:outline-none focus:shadow-md border' onChange={(e)=>handleInsuranceChange(e, index)}>
+                            <option value="" disabled>Select Insurance Card...</option>
                             <option value="Cocolife Health Care">Cocolife Health Care</option>
                             <option value="Inlife Insular Health Care">Inlife Insular Health Care</option>
                             <option value="Health Partners Dental Access, Inc.">Health Partners Dental Access, Inc.</option>
@@ -184,16 +217,18 @@ function AdminModal({show, setModal, type}) {
                           </select>
                         </div>
                         <div className='flex flex-col'>
-                        <label htmlFor="cardNumber">HMO Card Number</label>
-                        <input type="text" name="cardNumber" value={insurance.cardNumber} className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleInsuranceChange(e)}/>
-                      </div>
-                      <div className='flex flex-col'>
-                        <label htmlFor="company">Company</label>
-                        <input type="text" name="company" value={insurance.company} className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleInsuranceChange(e)}/>
-                      </div>
-                  </>
-                  : " "
-                  }
+                          <label htmlFor="cardNumber">HMO Card Number</label>
+                          <input type="text" name="cardNumber" value={insuranceInfo[index].cardNumber} className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleInsuranceChange(e, index)}/>
+                        </div>
+                        <div className='flex flex-col'>
+                          <label htmlFor="company">Company <span className=' text-xs '>(if none please type N/A)</span></label>
+                          <input type="text" name="company" value={insuranceInfo[index].company} className=' px-4 py-2 text-sm focus:outline-none focus:shadow-md border ' onChange={(e)=>handleInsuranceChange(e, index)}/>
+                        </div>
+                      </>
+                    ) : null}
+                  </div>
+                ))}
+
               </form>
               <div className='flex flex-col mt-3'>
                   <label htmlFor="file">Upload</label>

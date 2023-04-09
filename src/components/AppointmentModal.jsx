@@ -18,12 +18,14 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
       { timeValue:"10:30 Am", timeStart: "10:30:00" },
       { timeValue:"11:00 Am", timeStart: "11:00:00" },
       { timeValue:"11:30 Am", timeStart: "11:30:00" },
+      { timeValue:"12:00 Am", timeStart: "12:00:00" },
       { timeValue:"01:00 Pm", timeStart: "01:00:00" },
       { timeValue:"01:30 Pm", timeStart: "01:30:00" },
       { timeValue:"02:00 Pm", timeStart: "02:00:00" },
       { timeValue:"02:30 Pm", timeStart: "02:30:00" },
       { timeValue:"03:00 Pm", timeStart: "03:00:00" },
       { timeValue:"03:30 Pm", timeStart: "03:30:00" },
+      { timeValue:"04:00 Pm", timeStart: "04:00:00" },
     ]
   );
 
@@ -104,7 +106,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
 
     // DATE LOGIC
     if (e.target.name === "date") {
-      
+
       const newTimeList = [
         { timeValue: "09:00 Am", timeStart: "09:00:00" },
         { timeValue: "09:30 Am", timeStart: "09:30:00" },
@@ -112,12 +114,14 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
         { timeValue: "10:30 Am", timeStart: "10:30:00" },
         { timeValue: "11:00 Am", timeStart: "11:00:00" },
         { timeValue: "11:30 Am", timeStart: "11:30:00" },
+        { timeValue: "12:00 Am", timeStart: "12:00:00" },
         { timeValue: "01:00 Pm", timeStart: "01:00:00" },
         { timeValue: "01:30 Pm", timeStart: "01:30:00" },
         { timeValue: "02:00 Pm", timeStart: "02:00:00" },
         { timeValue: "02:30 Pm", timeStart: "02:30:00" },
         { timeValue: "03:00 Pm", timeStart: "03:00:00" },
         { timeValue: "03:30 Pm", timeStart: "03:30:00" },
+        { timeValue: "04:00 Pm", timeStart: "04:00:00" },
       ];
       
       setTimeStartList([...newTimeList]);
@@ -388,7 +392,11 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                 <select name="timeStart" value={appointment.timeStart} onChange={(e) => handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
                   <option value=" " disabled >Choose time...</option>
                   {
-                    timeStartList.map((val, index)=>(
+                    timeStartList
+                    .filter((val)=>{
+                      return val.timeStart !== "12:00:00" && val.timeStart !== "04:00:00";
+                    })
+                    .map((val, index)=>(
                       <option value={val.timeStart} key={index}
                       
                       >{val.timeValue}</option>
