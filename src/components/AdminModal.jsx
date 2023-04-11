@@ -91,9 +91,8 @@ function AdminModal({show, setModal, type}) {
       }
       let data = { };
       if(type === "patient"){
-        data = { ...adminInfo,  profile};
-        console.log("data: ");
-        console.log(data);
+        data = { ...adminInfo, insuranceInfo,  profile};
+        console.log("data: ",data);
         submitData(data);
       }else{ 
       data = { ...adminInfo, profile };

@@ -12,6 +12,7 @@ import Messages from './Messages';
 import Header from '../components/Header';
 import axios from 'axios';
 import PageNotFound from './PageNotFound';
+import History from './History';
 
 function Dashboard() {
   const [ admin, setAdmin ] = useState({});
@@ -76,6 +77,10 @@ function Dashboard() {
                   <Route element={
                   <Profile />
                   } path='/profile' />
+
+                  <Route element={
+                  <History />
+                  } path='/history' />
 
                   <Route element={
                   <Services />

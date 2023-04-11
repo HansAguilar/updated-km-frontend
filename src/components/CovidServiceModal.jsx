@@ -22,9 +22,9 @@ function CovidServiceModal({show, setModal, setAddModal, data}) {
       timeEnd: data.timeEnd,
       totalAmount: data.totalAmount,
       method: data.method,
-      type: data.type
+      type: data.type,
+      insuranceId: data.insuranceId
     }
-    console.log(newData)
     try {
         const response = await axios.post(APPOINTMENT_LINK, newData);
         if(response.data){

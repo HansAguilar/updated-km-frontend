@@ -2,16 +2,31 @@ import axios from 'axios';
 import React,{useState} from 'react';
 import { APPOINTMENT_LINK } from '../ApiLinks';
 import {AiFillEdit, AiOutlineFolderView,AiFillDelete} from 'react-icons/ai';
+import UpdateAppointmentModal from './UpdateAppointmentModal';
 
-function AppointmentTable({tableHeaders,results,search,currentPage}) {
+function AppointmentTable({tableHeaders,results,search,currentPage,setCancelModal, description}) {
+    const [update, setUpdate] = useState(false);
+    
+    const [appointmentData, setAppointmentData] = useState({
+        dentist: "",
+        dentalServices: "",
+        timeStart: "",
+        appointmentDate: "",
+        appointmentId: ""
+    })
     const [status, setStatus] = useState({
         selectedId: null,
         remarks: "PENDING",
         isSelected: false
       });
-      const statusSubmit = async(id, value) =>{
+      const statusSubmit = async( id, value, reason) =>{
+        console.log()
         try {
-            const response = await axios.put(`${APPOINTMENT_LINK}status/${id}/${value}`);
+            const data = {
+                status: value,
+                description: !reason ? description : reason
+            }
+            const response = await axios.put(`${APPOINTMENT_LINK}status/${id}`,data);
             if(response.data){
                 alert(response.data.message);
             }
@@ -19,20 +34,37 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
             console.log(error);
         }
       }
-      const deleteAppointment = async(id) =>{
+      const deleteAppointment = async(id, result) =>{
         try {
+            if(result === "APPROVED"){
+                return alert("You can't remove this appointment!")
+            }
             const response = await axios.delete(`${APPOINTMENT_LINK}${id}`);
             if(response.data){
                 alert(response.data.message);
                 window.location.reload();
             }
         } catch (error) {
-            console.log(error);
+            alert(error.response.data.message);
         }
+      }
+      const updateButton= (dentist, dentalServices, timeStart, appointmentDate, appointmentId) =>{
+        setAppointmentData({
+            dentist: dentist.fullname,
+            dentistId: dentist.dentistId,
+            serviceSelected: dentalServices,
+            serviceValue: "",
+            timeStart: timeStart,
+            appointmentDate: appointmentDate,
+            appointmentId: appointmentId
+        })
+        console.log(appointmentData);
+        setUpdate(true);
       }
   return (
     <>
     <div className=' h-[550px] px-4 py-3 overflow-auto '>
+        <UpdateAppointmentModal show={update} setShow={setUpdate} setAppointmentData={setAppointmentData} appointmentData={appointmentData} />
         <table className='w-full  '>
             {/*Head*/}
             <thead className=' bg-gray-100 '>
@@ -68,13 +100,17 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
                                 {result.timeEnd}
                             </td>
                             <td className='capitalize px-10'>
-                                { status.selectedId === result.appointmentId && result.status !== "CANCELLED" ? (
+                                { status.selectedId === result.appointmentId && result.status !== "CANCELLED" && result.status !== "DONE" ? (
                                     <select
                                     name="status"
                                     value={result.status}
                                     className='px-6 py-2 border focus:outline'
                                     onChange={(e) => {
-                                        statusSubmit(result.appointmentId, e.target.value);
+                                        let reason = null; 
+                                        if(e.target.value === "CANCELLED"){
+                                            reason  = prompt("Reason of appointment cancellation");
+                                        }
+                                        statusSubmit(result.appointmentId, e.target.value, reason);
                                         window.location.reload();
                                         // console.log(result.appointmentId,"",e.target.value);
                                     }}
@@ -82,29 +118,50 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
                                     >
                                     <option value="PENDING" disabled>Pending</option>
                                     <option value="APPROVED" >Approved</option>
-                                    <option value="CANCELLED">Cancel</option>
+                                    {
+                                        result.status === "APPROVED" ?
+                                        <option value="DONE" >Done</option>
+                                        : ""
+                                    }
+                                    <option value="CANCELLED" >Cancel</option>
                                     </select>
                                 ) : (
                                     <p
                                     className={`${
                                         result.status === "PENDING" ? "bg-orange-500"
                                         : result.status === "APPROVED" ? "bg-green-500"
+                                        : result.status === "DONE" ? "bg-cyan-500"
                                         : "bg-red-500"
                                     } rounded-full text-white py-1 cursor-pointer`}
-                                    onClick={() => setStatus({
+                                    onClick={() =>{
+                                        setStatus({
                                         selectedId: result.appointmentId,
                                         remarks: result.status,
                                         isSelected:true,
                                     })}
+                                    }
                                     >
                                     {result.status.toLowerCase()}
                                     </p>
                                 )}
                                 </td>
-                            <td className=' h-16 w-full text-white flex gap-1 items-center justify-center text-center '>
-                                <p className=' bg-cyan-500 px-6 py-2 rounded-md cursor-pointer hover:shadow-md inline-flex '><AiFillEdit size={25} />&nbsp;Update</p>
-                                <p className=' bg-red-500 px-6 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex' onClick={()=>deleteAppointment(result.appointmentId)}><AiFillDelete size={25} />&nbsp;Delete</p>
-                                <p className=' bg-gray-500 px-6 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex'><AiOutlineFolderView size={25} />&nbsp;View</p>
+                            <td className=' text-center '>
+                                {
+                                    result.doneReadingTC ?
+                                    <input type="checkbox" checked/>:
+                                    <input type="checkbox" />
+                                }
+                            </td>
+                            <td className=' h-16 text-white flex gap-1 items-center justify-center text-center '>
+                                <p className=' bg-cyan-500 px-4 py-2 rounded-md cursor-pointer hover:shadow-md inline-flex ' onClick={()=>updateButton(
+                                    result.dentist,
+                                    result.dentalServices,
+                                    result.timeStart,
+                                    result.appointmentDate,
+                                    result.appointmentId
+                                    )}><AiFillEdit size={25} />&nbsp;Update</p>
+                                <p className=' bg-red-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex' onClick={()=>deleteAppointment(result.appointmentId, result.status)}><AiFillDelete size={25} />&nbsp;Delete</p>
+                                <p className=' bg-gray-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex'><AiOutlineFolderView size={25} />&nbsp;View</p>
                             </td>
                         </tr>
                     ))

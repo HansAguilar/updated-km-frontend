@@ -9,7 +9,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
   const [active, setActive] = useState("");
   const [dentists, setDentists] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
-
+  const [insuranceList, setInsuranceList] = useState([]);
   let [timeStartList, setTimeStartList] = useState(
     [
       { timeValue:"09:00 Am", timeStart: "09:00:00" },
@@ -169,7 +169,6 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
     if(selectedDate < current){
       return alert("You can't select previous date")
     }
-    console.log(current < appointment.date)
     const end = calculateTotalTime();
     const data ={
       timeEnd: end.toLocaleTimeString().split(':').map(val => val.padStart(2,'0')).join(':')
@@ -264,6 +263,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                             patient: (patient.firstname+" "+patient.middlename+" "+patient.lastname),
                             patientId: patient.patientId
                           });
+                          setInsuranceList([...patient.insurance]);
                           setSuggestions([]);
                         }}
                       >
@@ -421,8 +421,43 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                         <option value="e-payment/paymaya">Paymaya</option>
                       </optgroup>
                       <option value="cash">Cash</option>
-                      <option value="hmo">Health Insurance</option>
+                      {
+                        insuranceList.length > 0 ? (
+                          <option value="hmo">Health Insurance</option>
+                        )
+                        :""
+                      }
                     </select>
+                    </div>
+                    
+                      {
+                        appointment.method==="hmo" && insuranceList.length > 0 ? 
+                        <div className=' mb-2 flex flex-col gap-1 relative '>
+                          <label htmlFor='insuranceId' className='font-bold text-gray-600 '>
+                            Insurance Card
+                          </label>
+                          <select name="insuranceId" value={appointment.insuranceId} onChange={(e)=>handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
+                          <option value="" disabled >Select your insurance card...</option>
+                          {
+                            insuranceList.map((val)=>(
+                              <option value={val.insuranceId} key={val.insuranceId} >{val.card}</option>
+                            ))
+                          }
+                          </select>
+                        </div>
+                        :""
+                      }
+                    <div className=' mb-2 flex flex-col gap-1 relative '>
+                      <label htmlFor='serviceValue' className='font-bold text-gray-600 '>
+                        Payment Type
+                      </label>
+                      <select name="type" value={appointment.type} onChange={(e) => handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
+                        <option value="" disabled >Select time...</option>
+                        <option value="full-payment">Full Payment</option>
+                        {
+                          appointment.method !== "hmo" && appointment.totalAmount >= 40000 ? <option value="installment">Installment</option> : ""
+                        }
+                      </select>
                     </div>
                     <div className=' mb-2 flex flex-col gap-1 relative '>
                       <label htmlFor='serviceValue' className='font-bold text-gray-600 '>
@@ -436,18 +471,6 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                         className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '
                         onChange={(e) => handleOnChange(e)}
                       />
-                    </div>
-                    <div className=' mb-2 flex flex-col gap-1 relative '>
-                      <label htmlFor='serviceValue' className='font-bold text-gray-600 '>
-                        Payment Type
-                      </label>
-                      <select name="type" value={appointment.type} onChange={(e) => handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
-                        <option value="" disabled >Select time...</option>
-                        <option value="full-payment">Full Payment</option>
-                        {
-                          appointment.method !== "hmo" && appointment.totalAmount >= 40000 ? <option value="installment">Installment</option> : ""
-                        }
-                      </select>
                     </div>
                 </form>
               </div>
