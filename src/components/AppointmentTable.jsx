@@ -4,9 +4,12 @@ import { APPOINTMENT_LINK } from '../ApiLinks';
 import {AiFillEdit, AiOutlineFolderView,AiFillDelete} from 'react-icons/ai';
 import UpdateAppointmentModal from './UpdateAppointmentModal';
 
-function AppointmentTable({tableHeaders,results,search,currentPage,setCancelModal, description}) {
+function AppointmentTable({tableHeaders,results,search,currentPage,setCancelModal, statusSubmit, status1, setStatus1}) {
     const [update, setUpdate] = useState(false);
-    
+    const [statusValue, setStatusValue] = useState({
+        isClick: false,
+        statusCode: ""
+    });
     const [appointmentData, setAppointmentData] = useState({
         dentist: "",
         dentalServices: "",
@@ -19,21 +22,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage,setCancelModa
         remarks: "PENDING",
         isSelected: false
       });
-      const statusSubmit = async( id, value, reason) =>{
-        console.log()
-        try {
-            const data = {
-                status: value,
-                description: !reason ? description : reason
-            }
-            const response = await axios.put(`${APPOINTMENT_LINK}status/${id}`,data);
-            if(response.data){
-                alert(response.data.message);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-      }
+      
       const deleteAppointment = async(id, result) =>{
         try {
             if(result === "APPROVED"){
@@ -58,9 +47,9 @@ function AppointmentTable({tableHeaders,results,search,currentPage,setCancelModa
             appointmentDate: appointmentDate,
             appointmentId: appointmentId
         })
-        console.log(appointmentData);
         setUpdate(true);
       }
+      console.log(results);
   return (
     <>
     <div className=' h-[550px] px-4 py-3 overflow-auto '>
@@ -71,7 +60,20 @@ function AppointmentTable({tableHeaders,results,search,currentPage,setCancelModa
                 <tr className=" text-gray-600">
                 {
                     tableHeaders.map((header, index)=>(
-                        <th className='py-3 px-2 capitalize' key={index}>{header}</th>
+                        <>
+                        {
+                            header === "Status" ? 
+                            <>
+                            <th className={`py-3 px-2 capitalize cursor-pointer ${statusValue.isClick ? "hidden":""}`} key={index} onClick={()=>setStatusValue({...statusValue, isClick: true})}>{header}</th>
+                            {/* {
+                                statusValue.isClick ? <select value={}>
+
+                                </select>
+                            } */}
+                            </>
+                            : <th className='py-3 px-2 capitalize' key={index}>{header}</th>
+                        }
+                        </>
                     ))
                 }
                 </tr>
@@ -81,6 +83,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage,setCancelModa
             <tbody className='h-auto p-6 '>
                {
                     results
+                    // .filter((val)=>{ return statusValue.statusCode !== "" ? val.status === statusValue.statusCode : (val.status === "APPROVED" || val.status === "PENDING") })
                     .slice((currentPage*8)-8, currentPage*8)
                     .map((result)=>(
                         <tr key={result.appointmentId} className=' text-center h-16 '>
@@ -106,11 +109,18 @@ function AppointmentTable({tableHeaders,results,search,currentPage,setCancelModa
                                     value={result.status}
                                     className='px-6 py-2 border focus:outline'
                                     onChange={(e) => {
-                                        let reason = null; 
                                         if(e.target.value === "CANCELLED"){
-                                            reason  = prompt("Reason of appointment cancellation");
+                                            setStatus1({...status1,
+                                                id: result.appointmentId,
+                                                status: "CANCELLED"
+                                            })
+                                            return setCancelModal(true);
                                         }
-                                        statusSubmit(result.appointmentId, e.target.value, reason);
+                                        setStatus1({...status1,
+                                            id: result.appointmentId,
+                                            status: e.target.value
+                                        })
+                                        statusSubmit();
                                         window.location.reload();
                                         // console.log(result.appointmentId,"",e.target.value);
                                     }}

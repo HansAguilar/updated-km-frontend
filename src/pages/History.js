@@ -16,6 +16,9 @@ function History() {
     setSearch(e.target.value);
   }
 
+  for(let x = 1; x <= Math.ceil(historyList.length/8);x++){
+    pageNumber.push(x);
+  }
   const filteredHistory = historyList.filter((val)=>
     (val.name+val.appointmentDate).toLowerCase().includes(search.toLowerCase())
   )

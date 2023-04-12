@@ -20,13 +20,17 @@ function Appointments() {
   const [ show, setModal ] = useState(false);
   const [ covidShow, setCovidModal ] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
-  const [description, setDescription] = useState(" ");
   const [ search, setSearch ] = useState("");
   const navigate = useNavigate();
   const [appointmentList, setAppointmentList] = useState([]);
   const [ currentPage, setCurrentPage ] = useState(1);
-  const tableHeaders = [ "Patient Name", "Date Submitted", "Appointment Date", "Appointment Start", "Status","Appointment End", "ATC", "Action"];
+  const tableHeaders = [ "Patient Name", "Date Submitted", "Appointment Date", "Appointment Start", "Appointment End", "Status","ATC", "Action"];
   const pageNumber = [];
+  const [status, setStatus] = useState({
+    id:"",
+    status: "",
+    description: ""
+})
   const [appointment, setAppointment] = useState({
     patient: '',
     patientId:"",
@@ -75,13 +79,25 @@ function Appointments() {
         status: appointment.status
       };
     });
+    const statusSubmit = async() =>{
+      try {
+          console.log(status);
+          const response = await axios.put(`${APPOINTMENT_LINK}status/${status.id}`,status);
+          if(response.data){
+              alert(response.data.message);
+              window.location.reload();
+          }
+      } catch (error) {
+          console.log(error);
+      }
+    }
     
     console.log(appointmentList)
   return (
     <div className=' h-screen overflow-hidden relative '>
       <Modal show={show} setModal={setModal} setCovidModal={setCovidModal} appointment={appointment} setAppointment={setAppointment} filteredAppointments={filteredAppointments} />
       <CovidTestModal show={covidShow} setModal={setCovidModal} setAddModal={setModal} data={appointment} />
-      <CancelModal show={cancelModal} setShow={setCancelModal} description={description} setDescription={setDescription} />
+      <CancelModal show={cancelModal} setShow={setCancelModal} status={status} setStatus={setStatus} statusSubmit={statusSubmit} />
       <PageHeader link={'Appointment'} />
       <div className=' w-full flex flex-col justify-center p-4 '> 
         <div className=' w-full bg-white h-auto rounded-xl shadow-lg'>
@@ -111,7 +127,7 @@ function Appointments() {
               
     
             </div>
-            <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredServices : appointmentList  } search={search} currentPage={currentPage} setCancelModal={setCancelModal} description={description}/> 
+            <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredServices : appointmentList  } search={search} currentPage={currentPage} setCancelModal={setCancelModal} statusSubmit={statusSubmit} status1={status} setStatus1={setStatus}/> 
               <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
         </div>
       </div>
