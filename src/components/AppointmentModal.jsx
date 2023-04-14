@@ -157,6 +157,8 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
           [e.target.name]: e.target.value
         });
       };
+
+      console.log(patients)
   const nextButton = async () => {
 
     if(!appointment.patient || !appointment.dentist || appointment.serviceSelected.length < 1 || !appointment.date || !appointment.timeStart){

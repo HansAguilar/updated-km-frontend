@@ -1,9 +1,25 @@
-import React from 'react'
+import axios from 'axios';
+import React from 'react';
+import { APPOINTMENT_LINK } from '../ApiLinks';
 
-function CancelModal({show, setShow,status, setStatus, statusSubmit}) {
-  const handleOnChange = (e) =>{
-    setStatus({...status, [e.target.name] : e.target.value});
-  } 
+function CancelModal({show, setShow,status,setStatus}) {
+  const submitButton = async(e)=>{
+    e.preventDefault();
+    const data = {
+        id: status.id,
+        status: "CANCELLED",
+        description: status.description
+    }
+    console.log(data);
+    try {
+        const response = await axios.put(`${APPOINTMENT_LINK}status/${data.id}`,data);
+        if(response.data){
+            window.location.reload();
+        }
+    } catch (error) {
+        console.log(error);
+    }
+  }
   return (
     <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-40 flex flex-grow justify-center items-center ${show ? '': 'hidden'}`}>
     <div className=" z-50">
@@ -23,17 +39,13 @@ function CancelModal({show, setShow,status, setStatus, statusSubmit}) {
                         name='description'
                         value={status.description}
                         className=' px-4 py-2 w-full border border-gray-400 rounded-md focus:outline-none focus:shadow-md '
-                        onChange={(e) => handleOnChange(e)}
+                        onChange={(e) => setStatus({...status, description:e.target.value})}
                         />
                     </div>
                 </form>
                 <div className=" w-full flex justify-end relative left-0 px-7 py-4 bottom-0 pt-2 gap-2 z-40">
                         <button className="bg-cyan-500 px-6 py-3 hover:bg-cyan-700 text-white font-bold  rounded"
-                        onClick={()=>{
-                          console.log(status);
-                          statusSubmit()
-                        }}
-                        >
+                        onClick={submitButton}>
                             Submit
                         </button>
                         <button className="bg-red-500 hover:bg-red-700 text-white font-bold px-6 py-3 rounded" onClick={()=>setShow(false)}>

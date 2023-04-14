@@ -13,18 +13,20 @@ import Header from '../components/Header';
 import axios from 'axios';
 import PageNotFound from './PageNotFound';
 import History from './History';
+import {ADMIN_LINK, APPOINTMENT_LINK, PATIENT_LINK} from '../ApiLinks';
 
 function Dashboard() {
   const [ admin, setAdmin ] = useState({});
   const [loading, setLoading] = useState(false);
   const [ toggleBar, setToggleBar ] = useState(false);
   const [patients, setPatients] = useState([]);
+  const [appointments, setAppointments] = useState([]);
 
   useEffect(()=>{
     const fetchData = async() =>{
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:8080/api/v1/admin/getAdmin/${token}`);
+        const response = await axios.get(`${ADMIN_LINK}getAdmin/${token}`);
         setAdmin(response.data);
         setLoading(false);
       } catch (error) {
@@ -35,13 +37,27 @@ function Dashboard() {
     fetchData();
     const fetchAllPatient = async() =>{
       try{
-        const response = await axios.get("http://localhost:8080/api/v1/patient/fetch")
+        const response = await axios.get(`${PATIENT_LINK}fetch`)
         setPatients(response.data);
       }catch(err){ console.log(err); }
     }
     fetchAllPatient();
+    const fetchAllAppointment= async() =>{
+      try{
+        const response = await axios.get(`${APPOINTMENT_LINK}`)
+        setAppointments(response.data);
+      }catch(err){ console.log(err); }
+    }
+    fetchAllAppointment();
   },[]);
 
+  
+  const pendingAppointment = appointments.filter(val=>{
+    return val.status === "PENDING";
+  })
+  const approvedAppointment = appointments.filter(val=>{
+    return val.status === "APPROVED";
+  })
   if(loading)return <h1>Loading...</h1>
   return (
       <div className='w-full h-screen bg-gray-100 flex z-10 '>
@@ -50,7 +66,7 @@ function Dashboard() {
           <Header name={admin.firstname} toggleBar={toggleBar} setToggleBar={setToggleBar} />
           <Routes>
                   <Route element={
-                  <Home patients={patients.length}  />} 
+                  <Home patients={patients.length} pendingAppointment={pendingAppointment.length} approvedAppointment={approvedAppointment.length} />} 
                   path='/' />
 
                   <Route element={
@@ -58,7 +74,7 @@ function Dashboard() {
                   } path='/admin' />
 
                   <Route element={
-                  <Appointments />
+                  <Appointments/>
                   } path='/appointments' />
 
                   <Route element={

@@ -24,6 +24,7 @@ import PDFButton from '../components/PDFButton';
       setSearch(e.target.value);
     }
 
+    console.log(patients);
     const filteredPatient = patients.filter((val)=>
        (val.firstname+val.middlename+val.lastname+val.birthday+val.phoneNumber+val.email).toLowerCase()
       .includes(search.toLowerCase())

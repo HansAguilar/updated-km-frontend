@@ -5,7 +5,7 @@ import { BsFillCalendarCheckFill,  } from 'react-icons/bs';
 import { MdPayments, MdOutlinePendingActions } from 'react-icons/md';
 import CardInformation from '../components/CardInformation';
 
-function Home({patients}) {
+function Home({patients, pendingAppointment,approvedAppointment}) {
   
   return (
     <div className=' h-screen '>
@@ -23,7 +23,7 @@ function Home({patients}) {
         <CardInformation
           background={'bg-green-600'}
           iconColor={'text-green-700'}
-          number={10}
+          number={approvedAppointment}
           title={'Confirmed Appointments'}
           Icon={BsFillCalendarCheckFill}
         />
@@ -31,7 +31,7 @@ function Home({patients}) {
         <CardInformation
           background={'bg-yellow-600'}
           iconColor={'text-yellow-700'}
-          number={5}
+          number={pendingAppointment}
           title={'pending payments'}
           Icon={MdPayments}
         />
@@ -39,8 +39,8 @@ function Home({patients}) {
         <CardInformation
           background={'bg-red-600'}
           iconColor={'text-red-700'}
-          number={12}
-          title={'pending appointments'}
+          number={0}
+          title={'pending payments'}
           Icon={MdOutlinePendingActions}
         />
 
