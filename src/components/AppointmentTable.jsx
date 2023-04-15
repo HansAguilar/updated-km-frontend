@@ -4,10 +4,15 @@ import { APPOINTMENT_LINK } from '../ApiLinks';
 import {AiFillEdit, AiOutlineFolderView,AiFillDelete} from 'react-icons/ai';
 import UpdateAppointmentModal from './UpdateAppointmentModal';
 import CancelModal from './CancelModal';
+import ViewAppointment from './ViewAppointment';
 
 function AppointmentTable({tableHeaders,results,search,currentPage}) {
     const [cancelModal, setCancelModal] = useState(false);
     const [update, setUpdate] = useState(false);
+    const [view, setView] = useState({
+        isShow: false,
+        appointmentId:""
+    });
     const [statusValue, setStatusValue] = useState({
         isClick: false,
         statusCode: ""
@@ -81,6 +86,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
     <div className=' h-[550px] px-4 py-3 overflow-auto '>
         <UpdateAppointmentModal show={update} setShow={setUpdate} setAppointmentData={setAppointmentData} appointmentData={appointmentData} />
         <CancelModal show={cancelModal} setShow={setCancelModal} status={status1} setStatus={setStatus1}/>
+        <ViewAppointment view={view} setView={setView} />
         <table className='w-full relative '>
             {/*Head*/}
             <thead className=' bg-gray-100 '>
@@ -197,7 +203,15 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
                                     result.appointmentId
                                     )}><AiFillEdit size={25} />&nbsp;Update</p>
                                 <p className=' bg-red-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex' onClick={()=>deleteAppointment(result.appointmentId, result.status)}><AiFillDelete size={25} />&nbsp;Delete</p>
-                                <p className=' bg-gray-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex'><AiOutlineFolderView size={25} />&nbsp;View</p>
+                                <p 
+                                className=' bg-gray-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex'
+                                onClick={()=>{
+                                    setView({
+                                        isShow: true,
+                                        appointmentId: result
+                                    });
+                                }}
+                                ><AiOutlineFolderView size={25} />&nbsp;View</p>
                             </td>
                         </tr>
                     ))
