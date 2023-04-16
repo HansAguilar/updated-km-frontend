@@ -1,50 +1,27 @@
-import axios from 'axios';
-import React,{ useState, useEffect } from 'react'
-import { APPOINTMENT_LINK } from '../ApiLinks';
-import QRCode from "react-qr-code";
+import React,{ useState, useEffect } from 'react';
+import QRCode from 'qrcode';
 
-function ViewAppointment({view, setView,}) {
-  // const [details, setDetails] = useState({});
-  const details = view.appointmentId
+function ViewAppointment({view,setView}) {
+  const details = view.appointment;
+  const [qrcode, setQrcode] = useState("");
 
-  // const fetchAppointmentData = async()=>{
-  //   try {
-  //       const response = await axios.get(`${APPOINTMENT_LINK}${view.appointmentId}`);
-  //       if(response.data){
-  //           setDetails(response.data);
-  //       }
-  //   } catch (error) {
-  //       console.log(error);
-  //   }
-  // }
-  // useEffect(()=>{
-  //   fetchAppointmentData();
-  // },[])
-  console.log(details);
+  const generateToQrCode = () =>{
+    QRCode.toDataURL(`${details.appointmentId}`, {
+      width: 400,
+      margin: 2,
+      color: {
+        dark: "#082f49",  // white foreground color
+        light: "#ffffff"  // background color
+      }
+    }, (err,url)=>{
+      if(err) return console.error(err);
+      setQrcode(url);
+    })
+  }
 
-
-  const download = (e) => {
-    e.preventDefault();
-    const svg = document.getElementById("QRCode");
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const img = new Image();
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-      const pngFile = canvas.toDataURL("image/png");
-      const downloadLink = document.createElement("a");
-      downloadLink.download = `${details.patient.lastname}-appointment-qr-code`;
-      downloadLink.href = `${pngFile}`;
-      downloadLink.click();
-    };
-    img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
-  };
-  
-  const { appointmentId } =details;
-  const val = `${appointmentId}`;
+  useEffect(()=>{
+    generateToQrCode();
+  },[generateToQrCode]);
   
   return (
     <div
@@ -82,31 +59,33 @@ function ViewAppointment({view, setView,}) {
                     <p className=' text-white flex justify-between '>Phone <span className=' text-gray-200 capitalize ' >{details.patient?.contactNumber}</span></p>
                 </div>
                 <div className=' w-full p-2 border border-l-0 border-r-0 border-t-white '>
-                    <p className=' text-white flex justify-between '>Email <span className=' text-gray-200 capitalize ' >{details.patient?.email}</span></p>
+                    <p className=' text-white flex justify-between '>Email <span className=' text-gray-200 ' >{details.patient?.email}</span></p>
                 </div>
 
-                <div style={{ height: "auto", margin: "0 auto", maxWidth: 64, width: "100%" }}>
-              <QRCode
-                id="QRCode"
-                size={256}
-                style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                title="Custom Title"
-                value={val}
-                viewBox={`0 0 256 256`}
-              />
+                <div className=' mt-3 flex flex-col justify-center gap-y-3 '>
+                  {
+                    qrcode && (
+                     <>
+                       <div className=' w-auto h-auto rounded-  '>
+                          <img src={qrcode} alt="qrcode" className=' rounded-xl ' />
+                       </div>
+                       <a href={qrcode} download={`${details.patient?.firstname} ${details.patient?.middlename ? details.patient?.middlename.charAt(0).concat("."): ""} ${details.patient?.lastname}-appointment-qrcode.png`} 
+                       className=' text-white text-center uppercase '
+                       >Download</a>
+                     </>
+                    )
+                  }
+                </div>
             </div>
-
-              <button onClick={(e)=>download(e)}>Download</button>
-            </div>
-
-
-
-
 
             <div className=' flex-grow font-semibold text-green-700 '>
             dw
             </div>
           </form>
+          <button onClick={()=>setView({
+            ...view,
+            isShow: false,
+          })}>Close</button>
         </div>
        </div>
     </div>

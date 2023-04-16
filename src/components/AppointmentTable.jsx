@@ -11,7 +11,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
     const [update, setUpdate] = useState(false);
     const [view, setView] = useState({
         isShow: false,
-        appointmentId:""
+        appointment:""
     });
     const [statusValue, setStatusValue] = useState({
         isClick: false,
@@ -86,7 +86,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
     <div className=' h-[550px] px-4 py-3 overflow-auto '>
         <UpdateAppointmentModal show={update} setShow={setUpdate} setAppointmentData={setAppointmentData} appointmentData={appointmentData} />
         <CancelModal show={cancelModal} setShow={setCancelModal} status={status1} setStatus={setStatus1}/>
-        <ViewAppointment view={view} setView={setView} />
+        <ViewAppointment view={view} setView={setView}/>
         <table className='w-full relative '>
             {/*Head*/}
             <thead className=' bg-gray-100 '>
@@ -107,6 +107,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
                                         statusCode: e.target.value
                                     })
                                 }}>
+                                    <option value="">NONE</option>
                                     <option value="PENDING">PENDING</option>
                                     <option value="APPROVED">APPROVED</option>
                                     <option value="DONE">DONE</option>
@@ -208,7 +209,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
                                 onClick={()=>{
                                     setView({
                                         isShow: true,
-                                        appointmentId: result
+                                        appointment: result
                                     });
                                 }}
                                 ><AiOutlineFolderView size={25} />&nbsp;View</p>
