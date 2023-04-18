@@ -14,6 +14,7 @@ import axios from 'axios';
 import PageNotFound from './PageNotFound';
 import History from './History';
 import {ADMIN_LINK, APPOINTMENT_LINK, PATIENT_LINK} from '../ApiLinks';
+import AppointmentInformation from './AppointmentInformation';
 
 function Dashboard() {
   const [ admin, setAdmin ] = useState({});
@@ -73,9 +74,11 @@ function Dashboard() {
                   <Admin  />
                   } path='/admin' />
 
-                  <Route element={
-                  <Appointments/>
-                  } path='/appointments' />
+                  <Route path='/appointment'>
+                    <Route element={<Appointments/>} path='/appointment/' />
+                    <Route path='/appointment/details/:id' element={<AppointmentInformation/>} />
+                    <Route path='*' element={<PageNotFound/>} />
+                  </Route>
 
                   <Route element={
                   <Messages admin={admin} />

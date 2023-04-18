@@ -5,10 +5,12 @@ import {AiFillEdit, AiOutlineFolderView,AiFillDelete} from 'react-icons/ai';
 import UpdateAppointmentModal from './UpdateAppointmentModal';
 import CancelModal from './CancelModal';
 import ViewAppointment from './ViewAppointment';
+import { useNavigate } from 'react-router-dom';
 
 function AppointmentTable({tableHeaders,results,search,currentPage}) {
     const [cancelModal, setCancelModal] = useState(false);
     const [update, setUpdate] = useState(false);
+    const navigate = useNavigate();
     const [view, setView] = useState({
         isShow: false,
         appointment:""
@@ -207,10 +209,11 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
                                 <p 
                                 className=' bg-gray-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex'
                                 onClick={()=>{
-                                    setView({
-                                        isShow: true,
-                                        appointment: result
-                                    });
+                                    // setView({
+                                    //     isShow: true,
+                                    //     appointment: result
+                                    // });
+                                    navigate(`/admin/dashboard/appointment/details/${result.appointmentId}`)
                                 }}
                                 ><AiOutlineFolderView size={25} />&nbsp;View</p>
                             </td>
