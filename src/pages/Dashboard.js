@@ -15,6 +15,8 @@ import PageNotFound from './PageNotFound';
 import History from './History';
 import {ADMIN_LINK, APPOINTMENT_LINK, PATIENT_LINK} from '../ApiLinks';
 import AppointmentInformation from './AppointmentInformation';
+import Announcement from './Announcement';
+import AppointmentCalendar from './AppointmentCalendar';
 
 function Dashboard() {
   const [ admin, setAdmin ] = useState({});
@@ -76,6 +78,7 @@ function Dashboard() {
 
                   <Route path='/appointment'>
                     <Route element={<Appointments/>} path='/appointment/' />
+                    <Route element={<AppointmentCalendar appointments={appointments} />} path='/appointment/calendar' />
                     <Route path='/appointment/details/:id' element={<AppointmentInformation/>} />
                     <Route path='*' element={<PageNotFound/>} />
                   </Route>
@@ -104,6 +107,10 @@ function Dashboard() {
                   <Route element={
                   <Services />
                   } path='/services' />
+
+                  <Route element={
+                  <Announcement />
+                  } path='/announcement' />
 
           <Route path='*' element={<PageNotFound />} />
           </Routes>

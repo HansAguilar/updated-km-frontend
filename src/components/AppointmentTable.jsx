@@ -6,6 +6,8 @@ import UpdateAppointmentModal from './UpdateAppointmentModal';
 import CancelModal from './CancelModal';
 import ViewAppointment from './ViewAppointment';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AppointmentTable({tableHeaders,results,search,currentPage}) {
     const [cancelModal, setCancelModal] = useState(false);
@@ -40,15 +42,45 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
       const deleteAppointment = async(id, result) =>{
         try {
             if(result === "APPROVED"){
-                return alert("You can't remove this appointment!")
+                return toast.error(`${"You can't delete this appointment"}`, {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    pauseOnHover: false,
+                    closeOnClick: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                  });
             }
             const response = await axios.delete(`${APPOINTMENT_LINK}${id}`);
             if(response.data){
-                alert(response.data.message);
-                window.location.reload();
+                    toast.success(`${response.data.message}`, {
+                        position: "top-right",
+                        autoClose: 1500,
+                        hideProgressBar: false,
+                        pauseOnHover: false,
+                        closeOnClick: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                  });
+                  
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 1500); 
             }
         } catch (error) {
-            alert(error.response.data.message);
+            toast.error(`${"You can't delete this appointment"}`, {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                pauseOnHover: false,
+                closeOnClick: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+              });
         }
       }
       const updateButton= (dentist, dentalServices, timeStart, appointmentDate, appointmentId) =>{
@@ -86,6 +118,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
   return (
     <>
     <div className=' h-[550px] px-4 py-3 overflow-auto '>
+        <ToastContainer />
         <UpdateAppointmentModal show={update} setShow={setUpdate} setAppointmentData={setAppointmentData} appointmentData={appointmentData} />
         <CancelModal show={cancelModal} setShow={setCancelModal} status={status1} setStatus={setStatus1}/>
         <ViewAppointment view={view} setView={setView}/>

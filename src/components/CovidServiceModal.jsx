@@ -1,8 +1,8 @@
 import React from 'react';
 import logo from '../assets/small-logo.jpg';
 import { IoMdArrowRoundBack } from 'react-icons/io';
-import { APPOINTMENT_LINK } from '../ApiLinks';
 import axios from 'axios';
+import { APPOINTMENT_LINK } from '../ApiLinks';
 
 function CovidServiceModal({show, setModal, setAddModal, data}) {
 

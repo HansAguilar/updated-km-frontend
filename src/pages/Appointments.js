@@ -11,7 +11,6 @@ import CovidTestModal from '../components/CovidServiceModal';
 import axios from 'axios';
 import Pagination from '../components/Pagination';
 import { useNavigate } from 'react-router-dom';
-import CancelModal from '../components/CancelModal';
 // import { useNavigate } from 'react-router-dom';
 // import ExcelButton from '../components/ExcelButton';
 // import PDFButton from '../components/PDFButton';
@@ -75,8 +74,6 @@ function Appointments() {
       };
     });
    
-    
-    console.log(appointmentList)
   return (
     <div className=' h-screen overflow-hidden relative '>
       <Modal show={show} setModal={setModal} setCovidModal={setCovidModal} appointment={appointment} setAppointment={setAppointment} filteredAppointments={filteredAppointments} />

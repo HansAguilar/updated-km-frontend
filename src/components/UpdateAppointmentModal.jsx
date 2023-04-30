@@ -5,6 +5,7 @@ import axios from 'axios';
 
 function UpdateAppointmentModal({show, setShow,setAppointmentData, appointmentData}) {
     const [services, setServices] = useState([]);
+    const [selectedServices, setSelectedServices] = useState([]);
     // const [suggestions, setSuggestions] = useState([]);
     // const [active, setActive] = useState("");
 
@@ -18,10 +19,14 @@ function UpdateAppointmentModal({show, setShow,setAppointmentData, appointmentDa
             console.log(error);
         }
     }
-
-    console.log(services)
     useEffect(()=>{
-        fetchDentalServices();
+        fetchDentalServices(); 
+        // appointmentData.serviceSelected.map((val)=>{
+        //     return setSelectedServices({
+        //         id: val.serviceId,
+        //         name: val.name
+        //     })
+        // })
     },[]);
 
     const handleOnChange = (e)=>{          
@@ -31,8 +36,14 @@ function UpdateAppointmentModal({show, setShow,setAppointmentData, appointmentDa
         })
     }
 
+   
+    
+    console.log(selectedServices);
   return (
-    <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-40 flex flex-grow justify-center items-center ${show ? '': 'hidden'}`}>
+    <>
+    {
+        appointmentData && (
+            <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-40 flex flex-grow justify-center items-center ${show ? '': 'hidden'}`}>
         <div className=" z-50">
             <div className="m-auto w-[550px] h-auto p-8 bg-white rounded-lg shadow-lg">
                 <div className="text-left py-4">
@@ -83,6 +94,9 @@ function UpdateAppointmentModal({show, setShow,setAppointmentData, appointmentDa
             </div>
         </div>
     </div>
+        )
+    }
+    </>
   )
 }
 

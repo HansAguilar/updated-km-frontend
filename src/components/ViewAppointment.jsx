@@ -21,7 +21,7 @@ function ViewAppointment({view,setView}) {
 
   useEffect(()=>{
     generateToQrCode();
-  },[generateToQrCode]);
+  });
   
   return (
     <div

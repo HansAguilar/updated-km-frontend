@@ -1,16 +1,15 @@
 import React,{useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { APPOINTMENT_LINK } from "../ApiLinks";
+import { useParams } from 'react-router-dom';
+import { APPOINTMENT_LINK, PAYMENT_LINK } from "../ApiLinks";
 import axios from 'axios';
 import QRCode from 'qrcode';
 import bg from "../assets/reception.jpg";
 import moment from 'moment/moment';
-import logo from "../assets/logo.jpg";
 
 function AppointmentInformation() {
     const { id } = useParams();
-    const navigate = useNavigate();
     const [details, setDetails] = useState(null);
+    const [payment, setPayment] = useState(null);
     const [qrcode, setQrcode] = useState("");
 
     const fetchAppointmentDetails = async() =>{
@@ -20,6 +19,15 @@ function AppointmentInformation() {
                 setDetails(response.data);
             }
         } catch (error) { console.log(error); }
+    }
+
+    const fetchPayment = async()=>{
+      try {
+        const response = await axios.get(`${PAYMENT_LINK}${id}`);
+        if(response.data){
+          setPayment(response.data);
+        }
+      } catch (error) { console.log(error);}
     }
 
     const generateToQrCode = () =>{
@@ -38,9 +46,11 @@ function AppointmentInformation() {
 
     useEffect(()=>{
         fetchAppointmentDetails();
+        fetchPayment();
         generateToQrCode();
-    },[])
+    })
     
+    console.log(payment);
 
 
    const getTime = (value) =>{
@@ -56,10 +66,12 @@ function AppointmentInformation() {
     }
     return newTime;
    }
+
+   console.log(details)
   return (
     <>
         {
-        details && (
+        details && payment && (
             <div className=' h-screen overflow-hidden relative '>
               <div className=' w-full flex flex-col justify-center p-4 '> 
                 <div className=' w-full h-[870px] flex gap-5 p-4 '>
@@ -124,17 +136,48 @@ function AppointmentInformation() {
                     </div>
 
                     <div className='p-4'>
-                            <div className='  w-96 h-52'>
+                            <div className='  w-96 '>
                                 <div className=' text-gray-600 text-left'>
                                     
-                                  <h1 className=' text-lg font-bold '>{moment(details.appointmentDate).format("dddd, MMM Do")}</h1>
-                                  <h2>{
+                                  <h1 className=' text-md font-semibold '>{moment(details.appointmentDate).format("dddd, MMM Do")}</h1>
+                                  <h2 className=' text-xs '>{
                                   getTime(details.timeStart)
                                   }</h2>
                                 </div>
                                 {/* <Calendar  selectedDate={details.appointmentDate}/> */}
                             </div>
-                            
+                            <h1 className=' mt-3 mb-1 text-lg font-bold text-gray-600 '>Services</h1>
+                            <div className=' w-full flex gap-2 '>
+                              <div className='w-1/2 h-[330px] flex flex-col p-3 gap-2 overflow-auto scrollbar-hide'>
+                                {details.dentalServices.map((service, index) => (
+                                  <div
+                                    key={service.serviceId}
+                                    className={`h-auto border-l-4 shadow-md px-3 py-2 ${
+                                      index % 2 === 0
+                                        ? "border-l-cyan-500"
+                                        : index % 3 === 0
+                                        ? "border-l-yellow-500"
+                                        : "border-l-purple-500"
+                                    }`}
+                                  >
+                                    <h1 className='font-bold text-md text-gray-700'>{service.name}</h1>
+                                    <h2 className='capitalize'>{service.type}</h2>
+                                  </div>
+                                ))}
+                              </div>
+                              <div className=' flex-grow h-[330px] p-4 '>
+                                  <h1 className=' text-lg font-bold text-gray-700 '>Payment Summary</h1>
+                                  <div className=' pt-3 text-gray-500 font-semibold flex justify-between '>Total <span className=' capitalize  text-gray-700 font-normal '>{payment.totalPayment}</span></div>
+                                  <div className=' pt-3 text-gray-500 font-semibold flex justify-between '>Payment Method <span className=' capitalize font-normal text-gray-700 '>{payment.method === "hmo" ? "Health Insurance" : payment.method}</span></div>
+                                  <div className=' pt-3 text-gray-500 font-semibold flex justify-between '>Payment Type <span className=' capitalize font-normal text-gray-700 '>{payment.type}</span></div>
+                                  <div className={` float-right w-32 mt-3 p-1 text-xs rounded-full text-center text-white font-semibold ${
+                                    payment.status === "PENDING" ? "bg-orange-500" 
+                                    : "bg-green-500"
+                                  } `}>{
+                                    payment.status
+                                  }</div>
+                              </div>
+                            </div>
                     </div>
                 </div>
 

@@ -1,7 +1,9 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { SERVICES_LINK, PATIENT_LINK, DENTIST_LINK } from '../ApiLinks';
-import {CiCircleRemove} from "react-icons/ci"
+import {CiCircleRemove} from "react-icons/ci";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppointment, filteredAppointments }) {
   const [patients, setPatients] = useState([]);
@@ -158,7 +160,6 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
         });
       };
 
-      console.log(patients)
   const nextButton = async () => {
 
     if(!appointment.patient || !appointment.dentist || appointment.serviceSelected.length < 1 || !appointment.date || !appointment.timeStart){
@@ -418,7 +419,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                       Payment Method
                     </label>
                     <select name="method" value={appointment.method} onChange={(e)=>handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
-                      <optgroup label='Online Payment' className=' font-semibold '>
+                      <optgroup label='Online Payment' value="e-payment/gcash" className=' font-semibold '>
                         <option value="e-payment/gcash">GCash</option>
                         <option value="e-payment/paymaya">Paymaya</option>
                       </optgroup>
