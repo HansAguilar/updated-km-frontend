@@ -54,12 +54,12 @@ function Sidebar({toggleBar, children}) {
             sublinks: [
                 {
                     path: '/admin/dashboard/appointment/calendar',
-                    name: 'Calendar',
+                    name: 'Appointment Calendar',
                     icon: <SidebarIcon Icon={BsCalendarEventFill} />
                 },
                 {
                     path: '/admin/dashboard/appointment',
-                    name: 'List',
+                    name: 'Appointment List',
                     icon: <SidebarIcon Icon={BsFillCalendarCheckFill} />
                 },
             ]
@@ -160,7 +160,7 @@ function Sidebar({toggleBar, children}) {
                                         map.sublinks.map((val, index)=>(
                                             <NavLink to={val.path} key={index} className={` w-full px-4 py-3 flex gap-x-2 hover:bg-cyan-500 ${toggleBar ? "flex-col justify-center items-center text-center " : ""} `} onClick={()=>removeHover(map.value)}>
                                                 <div>{val.icon}</div>
-                                                <div className={toggleBar ? ' text-xs ' : ''}>{toggleBar? val.name.split(" ")[0] : val.name}</div>
+                                                <div className={toggleBar ? ' text-xs ' : ''}>{toggleBar && map.value !== "ACCOUNTS"? val.name.split(" ")[1] : toggleBar && map.value === "ACCOUNTS"? val.name.split(" ")[0] : val.name}</div>
                                             </NavLink>
                                         ))
                                     }

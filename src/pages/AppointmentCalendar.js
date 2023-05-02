@@ -58,7 +58,11 @@ function AppointmentCalendar({appointments}) {
 
   
   useEffect(()=>{
-    const result = appointments.map((val)=>{
+    const result = appointments
+    .filter((val)=>{
+      return val.status === "APPROVED"
+    })
+    .map((val)=>{
       console.log(new Date(moment(`${val.appointmentDate},${getTime(val.timeStart)}`).format('LLLL')));
       return {
         title: `${val.patient.firstname} ${val.patient.lastname}`,

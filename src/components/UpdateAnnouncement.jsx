@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import {ToastContainer, toast}  from 'react-toastify';
+import axios from 'axios';
+import { ANNOUNCEMENT_LINK } from '../ApiLinks';
 
 function UpdateAnnouncement({show, setModal,details,setDetails}) {
     const [picture, setPicture] = useState(""); 
@@ -23,30 +25,30 @@ function UpdateAnnouncement({show, setModal,details,setDetails}) {
       }
       
       const insertDetails = async(data) =>{
-        // try {
-        //     const response = await axios.post(`${ANNOUNCEMENT_LINK}`, data,{
-        //         headers: { Accept: "application/json", }
-        //       });
-        //     if(response.data){
-        //         toast.success(`${response.data.message}`, {
-        //             position: "top-right",
-        //             autoClose: 1500,
-        //             hideProgressBar: false,
-        //             pauseOnHover: false,
-        //             closeOnClick: false,
-        //             draggable: false,
-        //             progress: undefined,
-        //             theme: "colored",
-        //             });
+        try {
+            const response = await axios.put(`${ANNOUNCEMENT_LINK}${data.id}`, data,{
+                headers: { Accept: "application/json", }
+              });
+            if(response.data){
+                toast.success(`${response.data.message}`, {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    pauseOnHover: false,
+                    closeOnClick: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                    });
                     
-        //         window.setTimeout(()=>{
-        //                 window.location.reload();
-        //             },1500)
-        //     }
-        // } catch (error) { console.log(error.response); }
+                window.setTimeout(()=>{
+                        window.location.reload();
+                    },1500)
+            }
+        } catch (error) { console.log(error.response); }
       }
       const submitButton = () =>{
-        if(!details.title || !details.type || !details.description|| !profile){
+        if(!details.title || !details.type || !details.description|| !picture){
             return toast.error(`Fill up empty field!`, {
                             position: "top-right",
                             autoClose: 1500,
@@ -57,13 +59,15 @@ function UpdateAnnouncement({show, setModal,details,setDetails}) {
                             progress: undefined,
                             theme: "colored",
                             });
+        }else{
+          const data = { ...details, picture }
+          insertDetails(data);
         }
-        const data = { ...details, picture }
-        // insertDetails(data);
+        
       }
-    console.log(details);
   return (
         <>
+        <ToastContainer/>
         {
             details && (
                 <div className={` left-0 w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 z-40 flex flex-grow justify-center items-center ${show ? '': 'hidden'}`}>
