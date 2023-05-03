@@ -9,37 +9,21 @@ import PageHeader from '../components/PageHeader';
 import moment from 'moment';
 
 
-const locales = {
-  "en-US": require("date-fns/locale/en-US"),
-};
-const localizer = dateFnsLocalizer({
-    format,
-    parse,
-    startOfWeek,
-    getDay,
-    locales,
-});
 
-const events = [
-  {
-      title: "Big Meeting",
-      allDay: true,
-      start: new Date(),
-      end: new Date(),
-  },
-  {
-      title: "Vacation",
-      start: new Date(),
-      end: new Date(),
-  },
-  {
-      title: "Conference",
-      start: new Date(),
-      end: new Date(),
-  },
-];
+
 function AppointmentCalendar({appointments}) {
-  const [allAppointment, setAppointment] = useState([])
+  const [allAppointment, setAppointment] = useState([]);
+
+  const locales = {
+    "en-US": require("date-fns/locale/en-US"),
+  };
+  const localizer = dateFnsLocalizer({
+      format,
+      parse,
+      startOfWeek,
+      getDay,
+      locales,
+  });
 
   const getTime = (value) =>{
     const time = moment(new Date(`1997-12-30T${value}`)).format('LT');
@@ -55,8 +39,6 @@ function AppointmentCalendar({appointments}) {
     return newTime;
    }
 
-
-  
   useEffect(()=>{
     const result = appointments
     .filter((val)=>{
@@ -65,19 +47,14 @@ function AppointmentCalendar({appointments}) {
     .map((val)=>{
       console.log(new Date(moment(`${val.appointmentDate},${getTime(val.timeStart)}`).format('LLLL')));
       return {
-        title: `${val.patient.firstname} ${val.patient.lastname}`,
+        title: `Appointment for ${val.patient.firstname} ${val.patient.lastname}`,
         start: new Date(moment(`${val.appointmentDate},${getTime(val.timeStart)}`).format('LLLL')),
         end: new Date(moment(`${val.appointmentDate},${getTime(val.timeEnd)}`).format('LLLL'))
       }
       
     })
-    
     setAppointment([...result])
   },[appointments])
-
-  console.log(appointments)
-  console.table(allAppointment)
-  console.table(events)
   return (
     <>
     {
@@ -93,7 +70,6 @@ function AppointmentCalendar({appointments}) {
                   
               </div>
                 <Calendar localizer={localizer} events={allAppointment} startAccessor="start" endAccessor="end" style={{ height: 550, margin: "50px" }} />
-
             </div>
           </div>
         </div>

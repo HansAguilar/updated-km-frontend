@@ -3,6 +3,7 @@ import logo from '../assets/small-logo.jpg';
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import axios from 'axios';
 import { APPOINTMENT_LINK } from '../ApiLinks';
+import { ToastContainer, toast } from 'react-toastify';
 
 function CovidServiceModal({show, setModal, setAddModal, data}) {
 
@@ -28,8 +29,20 @@ function CovidServiceModal({show, setModal, setAddModal, data}) {
     try {
         const response = await axios.post(APPOINTMENT_LINK, newData);
         if(response.data){
-          alert(response.data.message);
-          window.location.reload();
+          toast.success(`${response.data.message}`, {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: false,
+            pauseOnHover: false,
+            closeOnClick: false,
+            draggable: false,
+            progress: undefined,
+            theme: "colored",
+            });
+            
+        window.setTimeout(()=>{
+                window.location.reload();
+            },1500)
         }
       } catch (error) {
         alert(error.response.data.message);
@@ -83,6 +96,7 @@ function CovidServiceModal({show, setModal, setAddModal, data}) {
         show ? '' : 'hidden'
         }`}
     >
+      <ToastContainer />
         <div className=' z-50 h-auto relative'>
             <div className='m-auto w-[900px] h-[750px] overflow-auto p-8 bg-white rounded-lg relative shadow-lg '>
 

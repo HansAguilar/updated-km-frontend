@@ -7,7 +7,7 @@ import CancelModal from './CancelModal';
 import ViewAppointment from './ViewAppointment';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 
 function AppointmentTable({tableHeaders,results,search,currentPage}) {
     const [cancelModal, setCancelModal] = useState(false);
@@ -100,8 +100,20 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
         try {
             const response = await axios.put(`${APPOINTMENT_LINK}status/${id}`,value);
             if(response.data){
-                alert(response.data.message);
-                window.location.reload();
+                toast.success(`${response.data.message}`, {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    pauseOnHover: false,
+                    closeOnClick: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                    });
+                    
+                window.setTimeout(()=>{
+                        window.location.reload();
+                    },1500);
             }
         } catch (error) {
             console.log(error);

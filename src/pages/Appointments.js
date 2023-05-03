@@ -36,8 +36,8 @@ function Appointments() {
     timeStart: " ",
     timeEnd:" ",
     totalAmount:0.00,
-    method: "",
-    type: "",
+    method: " ",
+    type: " ",
     insuranceId: "",
   });
 

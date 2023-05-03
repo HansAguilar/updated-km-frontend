@@ -8,6 +8,7 @@ import ResetPassword from './pages/ResetPassword';
 import './index.css'
 import PrivateChangePasswordRoute from './utils/PrivateChangePasswordRoute';
 import PageNotFound from './pages/PageNotFound';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App(props) {
     return (

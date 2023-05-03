@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React from 'react';
 import { APPOINTMENT_LINK } from '../ApiLinks';
+import { ToastContainer, toast } from 'react-toastify';
 
 function CancelModal({show, setShow,status,setStatus}) {
   const submitButton = async(e)=>{
@@ -14,14 +15,29 @@ function CancelModal({show, setShow,status,setStatus}) {
     try {
         const response = await axios.put(`${APPOINTMENT_LINK}status/${data.id}`,data);
         if(response.data){
-            window.location.reload();
+            toast.warning(`${response.data.message}`, {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                pauseOnHover: false,
+                closeOnClick: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+                });
+                
+            window.setTimeout(()=>{
+                    window.location.reload();
+                },1500)
         }
     } catch (error) {
         console.log(error);
     }
   }
   return (
-    <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-40 flex flex-grow justify-center items-center ${show ? '': 'hidden'}`}>
+    <>
+    <ToastContainer/>
+        <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-40 flex flex-grow justify-center items-center ${show ? '': 'hidden'}`}>
     <div className=" z-50">
             <div className="m-auto w-[550px] h-auto p-8 bg-white rounded-lg shadow-lg">
                 <div className="text-left py-4">
@@ -55,6 +71,7 @@ function CancelModal({show, setShow,status,setStatus}) {
             </div>
         </div>
     </div>
+    </>
   )
 }
 

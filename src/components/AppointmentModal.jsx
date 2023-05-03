@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { SERVICES_LINK, PATIENT_LINK, DENTIST_LINK } from '../ApiLinks';
 import {CiCircleRemove} from "react-icons/ci";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppointment, filteredAppointments }) {
   const [patients, setPatients] = useState([]);
@@ -162,9 +161,30 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
 
   const nextButton = async () => {
 
-    if(!appointment.patient || !appointment.dentist || appointment.serviceSelected.length < 1 || !appointment.date || !appointment.timeStart){
-      return alert("Fill up empty field!");
-    }  
+    if(!appointment.patient || !appointment.dentist || appointment.serviceSelected.length < 1 || !appointment.date || !appointment.timeStart || !appointment.type || !appointment.method){
+      return  toast.error(`Fill up empty field`, {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        pauseOnHover: false,
+        closeOnClick: false,
+        draggable: false,
+        progress: undefined,
+        theme: "colored",
+        });
+      }
+    if(appointment.method==="hmo" && !appointment.insuranceId){
+      return  toast.error(`Please select your insurance`, {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        pauseOnHover: false,
+        closeOnClick: false,
+        draggable: false,
+        progress: undefined,
+        theme: "colored",
+        });
+    }
     const current = new Date();
     current.setHours(0,0,0,0);
     const selectedDate = new Date(appointment.date);
@@ -225,6 +245,21 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
   }
 
   const btnClose = () => {
+    setAppointment({
+      patient: '',
+      patientId:"",
+      dentist: '',
+      dentistId:"",
+      serviceValue: "",
+      serviceSelected:[],
+      date:"",
+      timeStart: " ",
+      timeEnd:" ",
+      totalAmount:0.00,
+      method: "",
+      type: " ",
+      insuranceId: "",
+    })
     setModal(false);
   };
 
@@ -235,6 +270,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
         show ? '' : 'hidden'
       }`}
     >
+      <ToastContainer />
       <div className=' z-50 h-auto relative'>
         <div className='m-auto w-[900px] h-[750px] overflow-auto p-8 bg-white rounded-lg relative shadow-lg'>
           <div className='text-left py-4 h-auto overflow-auto'>
@@ -419,7 +455,8 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                       Payment Method
                     </label>
                     <select name="method" value={appointment.method} onChange={(e)=>handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
-                      <optgroup label='Online Payment' value="e-payment/gcash" className=' font-semibold '>
+                      <option value="" disabled >Select payment method...</option>
+                      <optgroup label='Online Payment' className=' font-semibold '>
                         <option value="e-payment/gcash">GCash</option>
                         <option value="e-payment/paymaya">Paymaya</option>
                       </optgroup>
@@ -440,7 +477,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                             Insurance Card
                           </label>
                           <select name="insuranceId" value={appointment.insuranceId} onChange={(e)=>handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
-                          <option value="" disabled >Select your insurance card...</option>
+                          <option value=" " disabled >Select your insurance card...</option>
                           {
                             insuranceList.map((val)=>(
                               <option value={val.insuranceId} key={val.insuranceId} >{val.card}</option>
@@ -455,7 +492,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                         Payment Type
                       </label>
                       <select name="type" value={appointment.type} onChange={(e) => handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
-                        <option value="" disabled >Select time...</option>
+                        <option value=" " disabled >Select time...</option>
                         <option value="full-payment">Full Payment</option>
                         {
                           appointment.method !== "hmo" && appointment.totalAmount >= 40000 ? <option value="installment">Installment</option> : ""
