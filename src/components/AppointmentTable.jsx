@@ -6,7 +6,8 @@ import UpdateAppointmentModal from './UpdateAppointmentModal';
 import CancelModal from './CancelModal';
 import ViewAppointment from './ViewAppointment';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import { toastHandler } from "../ToastHandler";
 
 
 function AppointmentTable({tableHeaders,results,search,currentPage}) {
@@ -42,45 +43,15 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
       const deleteAppointment = async(id, result) =>{
         try {
             if(result === "APPROVED"){
-                return toast.error(`${"You can't delete this appointment"}`, {
-                    position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: false,
-                    pauseOnHover: false,
-                    closeOnClick: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                  });
+                return toastHandler("error", "You can't delete this appointment");
             }
             const response = await axios.delete(`${APPOINTMENT_LINK}${id}`);
             if(response.data){
-                    toast.success(`${response.data.message}`, {
-                        position: "top-right",
-                        autoClose: 1500,
-                        hideProgressBar: false,
-                        pauseOnHover: false,
-                        closeOnClick: false,
-                        draggable: false,
-                        progress: undefined,
-                        theme: "colored",
-                  });
-                  
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 1500); 
+                  toastHandler("success",`${response.data.message}`)    
+                  setTimeout(() => { window.location.reload(); }, 1500); 
             }
         } catch (error) {
-            toast.error(`${"You can't delete this appointment"}`, {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: false,
-                pauseOnHover: false,
-                closeOnClick: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-              });
+            toastHandler("error","You can't delete this appointment");
         }
       }
       const updateButton= (dentist, dentalServices, timeStart, appointmentDate, appointmentId) =>{
@@ -100,20 +71,8 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
         try {
             const response = await axios.put(`${APPOINTMENT_LINK}status/${id}`,value);
             if(response.data){
-                toast.success(`${response.data.message}`, {
-                    position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: false,
-                    pauseOnHover: false,
-                    closeOnClick: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                    });
-                    
-                window.setTimeout(()=>{
-                        window.location.reload();
-                    },1500);
+                toastHandler("success",`${response.data.message}`);
+                window.setTimeout(()=>{ window.location.reload(); },1500);
             }
         } catch (error) {
             console.log(error);

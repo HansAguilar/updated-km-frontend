@@ -2,7 +2,9 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { SERVICES_LINK, PATIENT_LINK, DENTIST_LINK } from '../ApiLinks';
 import {CiCircleRemove} from "react-icons/ci";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import moment from 'moment/moment';
+import { toastHandler } from '../ToastHandler';
 
 function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppointment, filteredAppointments }) {
   const [patients, setPatients] = useState([]);
@@ -124,7 +126,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
         { timeValue: "03:30 Pm", timeStart: "03:30:00" },
         { timeValue: "04:00 Pm", timeStart: "04:00:00" },
       ];
-      
+
       setTimeStartList([...newTimeList]);
       setTimeStartList(prevTimeStartList => {
         let updatedTimeStartList = [...newTimeList];
@@ -141,8 +143,11 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
           const end = prevTimeStartList.findIndex((value)=>{
             return value.timeStart === getAppointmentDate[x].timeEnd;
           })
-          indexesToRemove.push(start, end-1);
+          for(let begin = start; begin<end; begin++){
+            indexesToRemove.push(begin);
+          }
         }
+        console.log(indexesToRemove);
 
         updatedTimeStartList = updatedTimeStartList.filter((_, index)=>{
           return !indexesToRemove.includes(index);
@@ -162,29 +167,12 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
   const nextButton = async () => {
 
     if(!appointment.patient || !appointment.dentist || appointment.serviceSelected.length < 1 || !appointment.date || !appointment.timeStart || !appointment.type || !appointment.method){
-      return  toast.error(`Fill up empty field`, {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        pauseOnHover: false,
-        closeOnClick: false,
-        draggable: false,
-        progress: undefined,
-        theme: "colored",
-        });
+      return  toastHandler("error", "Fill up empty field!");
       }
     if(appointment.method==="hmo" && !appointment.insuranceId){
-      return  toast.error(`Please select your insurance`, {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        pauseOnHover: false,
-        closeOnClick: false,
-        draggable: false,
-        progress: undefined,
-        theme: "colored",
-        });
+      return toastHandler("error", "Please select your insurance"); 
     }
+
     const current = new Date();
     current.setHours(0,0,0,0);
     const selectedDate = new Date(appointment.date);
@@ -197,6 +185,19 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
       timeEnd: end.toLocaleTimeString().split(':').map(val => val.padStart(2,'0')).join(':')
       .substring(0, 8),
     }
+    
+  
+    const timeTotal = new Date(calculateTotalServiceTime()).toLocaleTimeString();
+    const find = moment(appointment.timeStart, 'HH:mm').add(30, 'minute').format('HH:mm:ss');
+    const idx = timeStartList.findIndex((val)=> { return val.timeStart===find})
+    console.log(idx);
+    if(idx < 1){
+      if(timeTotal!=="1:30:00 AM") return toastHandler("error","Your selected time range is not available")
+    }
+    if((appointment.timeStart==="11:30:00" && timeTotal!=="1:30:00 AM")  || (appointment.timeStart==="03:30:00" && timeTotal!=="1:30:00 AM")){
+      return toastHandler("error","Kindly select 30 min service or change other dates");
+    }
+    
     setAppointment({
       ...appointment,
       ...data
@@ -206,7 +207,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
   }
 
   
-  const calculateTotalTime = ()=>{
+  const calculateTotalServiceTime = () =>{
     const timeEnd = appointment.serviceSelected.map((val)=>{
       const result = services.filter((service)=>{
         return service.serviceId === val;
@@ -223,7 +224,11 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
       const durationInMillis = (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
       total += durationInMillis;
     }
-    
+
+    return total;
+  }
+  const calculateTotalTime = ()=>{
+    const total = calculateTotalServiceTime();
     const date = new Date(total);
     const start = new Date(`1970-01-01T${appointment.timeStart}`);
     const end = new Date(start.getTime() + date.getTime());
@@ -455,7 +460,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                       Payment Method
                     </label>
                     <select name="method" value={appointment.method} onChange={(e)=>handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
-                      <option value="" disabled >Select payment method...</option>
+                      <option value=" " disabled >Select payment method...</option>
                       <optgroup label='Online Payment' className=' font-semibold '>
                         <option value="e-payment/gcash">GCash</option>
                         <option value="e-payment/paymaya">Paymaya</option>
