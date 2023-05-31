@@ -15,20 +15,20 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
   const [insuranceList, setInsuranceList] = useState([]);
   let [timeStartList, setTimeStartList] = useState(
     [
-      { timeValue:"09:00 Am", timeStart: "09:00:00" },
-      { timeValue:"09:30 Am", timeStart: "09:30:00" },
-      { timeValue:"10:00 Am", timeStart: "10:00:00" },
-      { timeValue:"10:30 Am", timeStart: "10:30:00" },
-      { timeValue:"11:00 Am", timeStart: "11:00:00" },
-      { timeValue:"11:30 Am", timeStart: "11:30:00" },
-      { timeValue:"12:00 Am", timeStart: "12:00:00" },
-      { timeValue:"01:00 Pm", timeStart: "01:00:00" },
-      { timeValue:"01:30 Pm", timeStart: "01:30:00" },
-      { timeValue:"02:00 Pm", timeStart: "02:00:00" },
-      { timeValue:"02:30 Pm", timeStart: "02:30:00" },
-      { timeValue:"03:00 Pm", timeStart: "03:00:00" },
-      { timeValue:"03:30 Pm", timeStart: "03:30:00" },
-      { timeValue:"04:00 Pm", timeStart: "04:00:00" },
+      { timeValue: "09:00 Am", timeStart: "09:00:00" },
+        { timeValue: "09:30 Am", timeStart: "09:30:00" },
+        { timeValue: "10:00 Am", timeStart: "10:00:00" },
+        { timeValue: "10:30 Am", timeStart: "10:30:00" },
+        { timeValue: "11:00 Am", timeStart: "11:00:00" },
+        { timeValue: "11:30 Am", timeStart: "11:30:00" },
+        { timeValue: "12:00 Am", timeStart: "12:00:00" },
+        { timeValue: "01:00 Pm", timeStart: "13:00:00" },
+        { timeValue: "01:30 Pm", timeStart: "13:30:00" },
+        { timeValue: "02:00 Pm", timeStart: "14:00:00" },
+        { timeValue: "02:30 Pm", timeStart: "14:30:00" },
+        { timeValue: "03:00 Pm", timeStart: "15:00:00" },
+        { timeValue: "03:30 Pm", timeStart: "15:30:00" },
+        { timeValue: "04:00 Pm", timeStart: "16:00:00" },
     ]
   );
 
@@ -118,13 +118,13 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
         { timeValue: "11:00 Am", timeStart: "11:00:00" },
         { timeValue: "11:30 Am", timeStart: "11:30:00" },
         { timeValue: "12:00 Am", timeStart: "12:00:00" },
-        { timeValue: "01:00 Pm", timeStart: "01:00:00" },
-        { timeValue: "01:30 Pm", timeStart: "01:30:00" },
-        { timeValue: "02:00 Pm", timeStart: "02:00:00" },
-        { timeValue: "02:30 Pm", timeStart: "02:30:00" },
-        { timeValue: "03:00 Pm", timeStart: "03:00:00" },
-        { timeValue: "03:30 Pm", timeStart: "03:30:00" },
-        { timeValue: "04:00 Pm", timeStart: "04:00:00" },
+        { timeValue: "01:00 Pm", timeStart: "13:00:00" },
+        { timeValue: "01:30 Pm", timeStart: "13:30:00" },
+        { timeValue: "02:00 Pm", timeStart: "14:00:00" },
+        { timeValue: "02:30 Pm", timeStart: "14:30:00" },
+        { timeValue: "03:00 Pm", timeStart: "15:00:00" },
+        { timeValue: "03:30 Pm", timeStart: "15:30:00" },
+        { timeValue: "04:00 Pm", timeStart: "16:00:00" },
       ];
 
       setTimeStartList([...newTimeList]);
@@ -182,20 +182,37 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
     }
     const end = calculateTotalTime();
     const data ={
-      timeEnd: end.toLocaleTimeString().split(':').map(val => val.padStart(2,'0')).join(':')
-      .substring(0, 8),
+      timeEnd: end,
     }
-    
-  
-    const timeTotal = new Date(calculateTotalServiceTime()).toLocaleTimeString();
-    const find = moment(appointment.timeStart, 'HH:mm').add(30, 'minute').format('HH:mm:ss');
-    const idx = timeStartList.findIndex((val)=> { return val.timeStart===find})
-    console.log(idx);
-    if(idx < 1){
-      if(timeTotal!=="1:30:00 AM") return toastHandler("error","Your selected time range is not available")
-    }
-    if((appointment.timeStart==="11:30:00" && timeTotal!=="1:30:00 AM")  || (appointment.timeStart==="03:30:00" && timeTotal!=="1:30:00 AM")){
-      return toastHandler("error","Kindly select 30 min service or change other dates");
+
+    const timeTotal = calculateTotalServiceTime();
+    const totalTimeDuration = moment('00:00:00', 'HH:mm:ss');
+
+    // console.log(timeTotal);
+    let start = moment(appointment.timeStart, 'HH:mm:ss');
+    while (start.isBefore(moment(end, "HH:mm:ss").add(30, 'minutes'))) {
+      const startTime = start.format('HH:mm:ss');
+      const matchingTime = timeStartList.find(time => time.timeStart === startTime);
+      if(startTime === "12:30:00" || startTime === "16:30:00"){
+        toastHandler("error",`Kindly select ${
+          totalTimeDuration.format('HH:mm:ss') === "01:00:00"
+              ? '30 minutes'
+              : '1 hour'
+        } service or change other dates`);
+        return;
+      }
+      if (!matchingTime) {
+        if (timeTotal !== totalTimeDuration.format("HH:mm:ss")) {
+          toastHandler('error', `Your selected time range should be less than or equal ${
+            totalTimeDuration.format('HH:mm:ss') === "00:30:00"
+              ? totalTimeDuration.minute() + ' minutes'
+              : totalTimeDuration.hour() + ' hour'
+          }`)
+          return;
+        }
+      }
+      totalTimeDuration.add(30, 'minutes');
+      start.add(30, "minutes");
     }
     
     setAppointment({
@@ -225,14 +242,12 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
       total += durationInMillis;
     }
 
-    return total;
+    const convertTotalTime = moment.duration(total);
+    return moment.utc(convertTotalTime.asMilliseconds()).format('HH:mm:ss');
   }
   const calculateTotalTime = ()=>{
-    const total = calculateTotalServiceTime();
-    const date = new Date(total);
-    const start = new Date(`1970-01-01T${appointment.timeStart}`);
-    const end = new Date(start.getTime() + date.getTime());
-    return end;
+    const timeStart = moment(appointment.timeStart, "HH:mm:ss");
+    return timeStart.add(calculateTotalServiceTime()).format("HH:mm:ss");
   }
 
   const calculateTotalAmount =( list ) =>{
@@ -434,11 +449,11 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                   Appointment Time
                 </label>
                 <select name="timeStart" value={appointment.timeStart} onChange={(e) => handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
-                  <option value=" " disabled >Choose time...</option>
+                  <option value="" disabled >Choose time...</option>
                   {
                     timeStartList
                     .filter((val)=>{
-                      return val.timeStart !== "12:00:00" && val.timeStart !== "04:00:00";
+                      return val.timeStart !== "12:00:00" && val.timeStart !== "16:00:00";
                     })
                     .map((val, index)=>(
                       <option value={val.timeStart} key={index}
@@ -460,7 +475,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                       Payment Method
                     </label>
                     <select name="method" value={appointment.method} onChange={(e)=>handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
-                      <option value=" " disabled >Select payment method...</option>
+                      <option value="" disabled >Select payment method...</option>
                       <optgroup label='Online Payment' className=' font-semibold '>
                         <option value="e-payment/gcash">GCash</option>
                         <option value="e-payment/paymaya">Paymaya</option>
@@ -482,7 +497,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                             Insurance Card
                           </label>
                           <select name="insuranceId" value={appointment.insuranceId} onChange={(e)=>handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
-                          <option value=" " disabled >Select your insurance card...</option>
+                          <option value="" disabled >Select your insurance card...</option>
                           {
                             insuranceList.map((val)=>(
                               <option value={val.insuranceId} key={val.insuranceId} >{val.card}</option>
@@ -497,7 +512,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                         Payment Type
                       </label>
                       <select name="type" value={appointment.type} onChange={(e) => handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
-                        <option value=" " disabled >Select time...</option>
+                        <option value="" disabled >Select time...</option>
                         <option value="full-payment">Full Payment</option>
                         {
                           appointment.method !== "hmo" && appointment.totalAmount >= 40000 ? <option value="installment">Installment</option> : ""

@@ -8,6 +8,7 @@ import ViewAppointment from './ViewAppointment';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { toastHandler } from "../ToastHandler";
+import moment from 'moment';
 
 
 function AppointmentTable({tableHeaders,results,search,currentPage}) {
@@ -141,16 +142,16 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
                                 {result.patient.firstname} {result.patient.middlename ? result.patient.middlename.charAt(0).concat("."):""} {result.patient.lastname}
                             </td>
                             <td>
-                                {result.dateSubmitted}
+                                {moment(result.dateSubmitted).format("LL")}
                             </td>
                             <td>
-                                {result.appointmentDate}
+                                {moment(result.appointmentDate).format("LL")}
                             </td>
                             <td>
-                                {result.timeStart}
+                                {moment(result.timeStart, 'HH:mm:ss').format('h:mm A')}
                             </td>
                             <td>
-                                {result.timeEnd}
+                                {moment(result.timeEnd, 'HH:mm:ss').format('h:mm A')}
                             </td>
                             <td className='capitalize px-10'>
                                 { status.selectedId === result.appointmentId && result.status !== "CANCELLED" && result.status !== "DONE" ? (

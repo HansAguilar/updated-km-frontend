@@ -33,11 +33,11 @@ function Appointments() {
     serviceValue: "",
     serviceSelected:[],
     date:"",
-    timeStart: " ",
-    timeEnd:" ",
+    timeStart: "",
+    timeEnd:"",
     totalAmount:0.00,
-    method: " ",
-    type: " ",
+    method: "",
+    type: "",
     insuranceId: "",
   });
 
@@ -60,6 +60,7 @@ function Appointments() {
   const searchHandle = (e) =>{ 
     setSearch(e.target.value);
   }
+  console.log(appointmentList);
 
   const filteredServices = appointmentList.filter(val=>
     (val.patient.firstname+val.patient.middlename+val.patient.lastname).toLowerCase().includes(search)
