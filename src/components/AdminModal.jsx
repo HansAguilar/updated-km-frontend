@@ -58,7 +58,7 @@ function AdminModal({show, setModal, type}) {
           headers: { Accept: "application/json", }
         });
         if(response.data){
-          alert(response.data.message);
+          alert("Account created!");
           window.location.reload();
         }
       }catch(err){
