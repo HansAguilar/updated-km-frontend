@@ -1,7 +1,9 @@
-import axios from 'axios';
 import React,{useState} from 'react';
+import { useDispatch } from 'react-redux';
+import { createDentist } from "../redux/action/DentistAction";
 
 function DenstistModal({show, setModal}) {
+  const dispatch = useDispatch();
   const [ dentistInfo, setDentistInfo ] = useState({
     fullname:"",
     birthday:"",
@@ -33,19 +35,19 @@ function DenstistModal({show, setModal}) {
     }
   }
 
-  const submitData = async(data) =>{
-    try{
-      const response = await axios.post("http://localhost:8080/api/v1/dentist/register",data,{
-        headers: { Accept: "application/json", }
-      });
-      if(response.data){
-        alert(response.data.message);
-        window.location.reload();
-      }
-    }catch(err){
-      console.log(err);
-    };
-  }
+  // const submitData = async(data) =>{
+  //   try{
+  //     const response = await axios.post("http://localhost:8080/api/v1/dentist/register",data,{
+  //       headers: { Accept: "application/json", }
+  //     });
+  //     if(response.data){
+  //       alert(response.data.message);
+  //       window.location.reload();
+  //     }
+  //   }catch(err){
+  //     console.log(err);
+  //   };
+  // }
   const isOver18 = (dob) =>{
     const birthday = new Date(dob);
     const ageDiff = Date.now() - birthday.getTime();
@@ -69,7 +71,8 @@ function DenstistModal({show, setModal}) {
     }
 
     const data = { ...dentistInfo, profile };
-    submitData(data);
+    dispatch(createDentist(data));
+    setModal(false);
   }
 
   return (
@@ -97,6 +100,7 @@ function DenstistModal({show, setModal}) {
               <div className='flex flex-col'>
                 <label htmlFor="gender">Gender</label>
                 <select name="gender" value={dentistInfo.gender} className='px-4 py-2 text-sm focus:outline-none focus:shadow-md border' onChange={(e)=>handleFormChange(e)}>
+                <option value="" disabled>Select Gender</option>
                   <option value="male" >Male</option>
                   <option value="female">Female</option>
                 </select>
@@ -127,7 +131,7 @@ function DenstistModal({show, setModal}) {
               </div>
               <div className='flex flex-col'>
                 <label htmlFor="file">Upload</label>
-                <input type="file" name="profile" className=' text-sm py-2 focus:outline-none focus:shadow-md  ' onChange={(e)=>handleProfile(e)}/>
+                <input type="file" accept='image/*' name="profile" className=' text-sm py-2 focus:outline-none focus:shadow-md  ' onChange={(e)=>handleProfile(e)}/>
               </div>
             </form>
             <hr/>

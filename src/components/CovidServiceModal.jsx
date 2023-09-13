@@ -1,12 +1,16 @@
 import React from 'react';
 import logo from '../assets/small-logo.jpg';
 import { IoMdArrowRoundBack } from 'react-icons/io';
-import axios from 'axios';
-import { APPOINTMENT_LINK } from '../ApiLinks';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer} from 'react-toastify';
+import moment from 'moment';
+import { useDispatch,useSelector } from 'react-redux';
+import { createAppointment, fetchPatientAppointment } from "../redux/action/AppointmentAction";
+import { fetchPatientPayments } from "../redux/action/PaymentAction";
+import { toastHandler } from '../ToastHandler';
 
-function CovidServiceModal({show, setModal, setAddModal, data}) {
-
+function CovidServiceModal({show, setModal, setAddModal, data,setAppointment}) {
+  const dispatch = useDispatch();
+  
   const backPrevious = () =>{
     setModal(false);
     setAddModal(true);
@@ -21,32 +25,33 @@ function CovidServiceModal({show, setModal, setAddModal, data}) {
       date: data.date,
       timeStart: data.timeStart,
       timeEnd: data.timeEnd,
+      numberOfMonths:data.numberOfMonths,
+      timeSubmitted:moment(new Date().getTime()).format("HH:mm:ss"),
       totalAmount: data.totalAmount,
       method: data.method,
       type: data.type,
       insuranceId: data.insuranceId
     }
-    try {
-        const response = await axios.post(APPOINTMENT_LINK, newData);
-        if(response.data){
-          toast.success(`${response.data.message}`, {
-            position: "top-right",
-            autoClose: 1500,
-            hideProgressBar: false,
-            pauseOnHover: false,
-            closeOnClick: false,
-            draggable: false,
-            progress: undefined,
-            theme: "colored",
-            });
-            
-        window.setTimeout(()=>{
-                window.location.reload();
-            },1500)
-        }
-      } catch (error) {
-        alert(error.response.data.message);
-      }
+    dispatch(createAppointment(newData, setModal));
+    
+    
+    // setAppointment({
+    //   patient: '',
+    //   patientId:"",
+    //   dentist: '',
+    //   dentistId:"",
+    //   serviceValue: "",
+    //   serviceSelected:[],
+    //   date:"",
+    //   numberOfMonths:0,
+    //   timeStart: "",
+    //   timeEnd:"",
+    //   totalAmount:fee.status === "AVAILABLE"?fee.price:0.00,
+    //   timeSubmitted:"",
+    //   method: "",
+    //   type: "",
+    //   insuranceId: ""
+    // })
   }
   const rules = [
     {

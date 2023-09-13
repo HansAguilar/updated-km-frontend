@@ -1,16 +1,16 @@
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import { SERVICES_LINK, PATIENT_LINK, DENTIST_LINK } from '../ApiLinks';
+import React, { useState, } from 'react';
 import {CiCircleRemove} from "react-icons/ci";
 import { ToastContainer } from 'react-toastify';
 import moment from 'moment/moment';
 import { toastHandler } from '../ToastHandler';
+import { useSelector } from 'react-redux';
 
-function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppointment, filteredAppointments }) {
-  const [patients, setPatients] = useState([]);
-  const [services, setServices] = useState([]);
+function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointment, filteredAppointments }) {
+  const patient = useSelector((state)=>{ return state.patient; });
+  const dentist = useSelector((state)=>{ return state.dentist; });
+  const service = useSelector((state)=>{ return state.service; });
+  const fee = useSelector((state)=>{ return state.fee.payload; });
   const [active, setActive] = useState("");
-  const [dentists, setDentists] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [insuranceList, setInsuranceList] = useState([]);
   let [timeStartList, setTimeStartList] = useState(
@@ -32,50 +32,10 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
     ]
   );
 
-  const fetchPatient = async () => {
-    try {
-      const response = await axios.get(PATIENT_LINK + 'fetch');
-      if (response.data) {
-        setPatients(response.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchDentist = async () => {
-    try {
-      const response = await axios.get(DENTIST_LINK);
-      if (response.data) {
-        setDentists(response.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchServices = async () => {
-    try {
-      const response = await axios.get(SERVICES_LINK);
-      if (response.data) {
-        setServices(response.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
- 
-  useEffect(() => {
-    fetchPatient();
-    fetchDentist();
-    fetchServices();
-    
-  },[]);
 
   const handleOnChange = (e) => {
     if(e.target.name === "patient"){
-      const filteredPatient = patients.filter(v=>{
+      const filteredPatient = patient.payload.filter(v=>{
         return v.verified;
       })
       .filter((v)=>
@@ -85,7 +45,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
       setActive("patient")
     }
     if(e.target.name === "dentist"){
-      const filteredPatient = dentists
+      const filteredPatient = dentist.payload
       .filter(v=>{
         return v.verified;
       })
@@ -96,7 +56,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
       setActive("dentist")
     }
     if(e.target.name === "serviceValue"){
-      const filteredService = services
+      const filteredService = service.payload
       .filter(v=>{
         return v.isAvailable;
       })
@@ -127,11 +87,29 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
         { timeValue: "04:00 Pm", timeStart: "16:00:00" },
       ];
 
-      setTimeStartList([...newTimeList]);
+      const currentTime  = moment();
+      const newTime = currentTime.add(1,"hour");
+      const newHour = moment(newTime);
+     
+      
+      
+      setTimeStartList([...newTimeList])
+      const filteredTime = newTimeList.filter((val) => 
+        moment(e.target.value, 'YYYY-MM-DD').isSame(moment(), 'day') &&
+        moment(val.timeStart, 'HH:mm:ss').isAfter(newHour)
+      );
+
+      if (filteredTime.length > 0) {
+        setTimeStartList([...filteredTime]);
+      } else {
+        setTimeStartList([...newTimeList]);
+      }
+      
+      
       setTimeStartList(prevTimeStartList => {
-        let updatedTimeStartList = [...newTimeList];
+        let updatedTimeStartList = [...prevTimeStartList];
         const getAppointmentDate = filteredAppointments.filter((value)=>{
-          return value.status === "APPROVED" && value.date === e.target.value;
+          return value.status === "APPROVED" || value.status === "PROCESSING" && value.date === e.target.value;
         });
 
        if(getAppointmentDate.length > 0){
@@ -147,7 +125,7 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
             indexesToRemove.push(begin);
           }
         }
-        console.log(indexesToRemove);
+        // console.log(indexesToRemove);
 
         updatedTimeStartList = updatedTimeStartList.filter((_, index)=>{
           return !indexesToRemove.includes(index);
@@ -165,8 +143,8 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
       };
 
   const nextButton = async () => {
-
-    if(!appointment.patient || !appointment.dentist || appointment.serviceSelected.length < 1 || !appointment.date || !appointment.timeStart || !appointment.type || !appointment.method){
+    // appointment.serviceSelected.length < 1 ||
+    if(!appointment.patient || !appointment.dentist ||  !appointment.date || !appointment.timeStart || !appointment.type || !appointment.method){
       return  toastHandler("error", "Fill up empty field!");
       }
     if(appointment.method==="hmo" && !appointment.insuranceId){
@@ -187,12 +165,14 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
 
     const timeTotal = calculateTotalServiceTime();
     const totalTimeDuration = moment('00:00:00', 'HH:mm:ss');
+    
 
-    // console.log(timeTotal);
+    console.log(timeTotal);
     let start = moment(appointment.timeStart, 'HH:mm:ss');
     while (start.isBefore(moment(end, "HH:mm:ss").add(30, 'minutes'))) {
       const startTime = start.format('HH:mm:ss');
       const matchingTime = timeStartList.find(time => time.timeStart === startTime);
+      console.log("start time", startTime);
       if(startTime === "12:30:00" || startTime === "16:30:00"){
         toastHandler("error",`Kindly select ${
           totalTimeDuration.format('HH:mm:ss') === "01:00:00"
@@ -222,37 +202,35 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
     setModal(false);
     setCovidModal(true);
   }
-
-  
   const calculateTotalServiceTime = () =>{
-    const timeEnd = appointment.serviceSelected.map((val)=>{
-      const result = services.filter((service)=>{
-        return service.serviceId === val;
-      }).map((val)=>{return val.duration; });
-      return  result;
-    })
-    let total = 0;
-    for (const duration of timeEnd) {
-      const timeParts = duration.toLocaleString().split(':');
-      const hours = parseInt(timeParts[0], 10);
-      const minutes = parseInt(timeParts[1], 10);
-      const seconds = parseInt(timeParts[2], 10);
+    // const timeEnd = appointment.serviceSelected.map((val)=>{
+    //   const result = service.payload.filter((serv)=>{
+    //     return serv.serviceId === val;
+    //   }).map((val)=>{return val.duration; });
+    //   return  result;
+    // })
+    // let total = 0;
+    // for (const duration of timeEnd) {
+    //   const timeParts = duration.toLocaleString().split(':');
+    //   const hours = parseInt(timeParts[0], 10);
+    //   const minutes = parseInt(timeParts[1], 10);
+    //   const seconds = parseInt(timeParts[2], 10);
     
-      const durationInMillis = (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
-      total += durationInMillis;
-    }
+    //   const durationInMillis = (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
+    //   total += durationInMillis;
+    // }
 
-    const convertTotalTime = moment.duration(total);
+    const convertTotalTime = moment.duration("00:30:00");
     return moment.utc(convertTotalTime.asMilliseconds()).format('HH:mm:ss');
   }
   const calculateTotalTime = ()=>{
     const timeStart = moment(appointment.timeStart, "HH:mm:ss");
+    // const timeStart = moment("00:30:00", "HH:mm:ss");
     return timeStart.add(calculateTotalServiceTime()).format("HH:mm:ss");
   }
-
   const calculateTotalAmount =( list ) =>{
     const totalAmount = list.map((val) => {
-      const result = services.find((service) => {
+      const result = service.payload.find((service) => {
           return service.serviceId === val;
           });
           return result.price;
@@ -263,23 +241,24 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
 
       return totalAmount;
   }
-
   const btnClose = () => {
     setAppointment({
-      patient: '',
-      patientId:"",
-      dentist: '',
-      dentistId:"",
-      serviceValue: "",
-      serviceSelected:[],
-      date:"",
-      timeStart: " ",
-      timeEnd:" ",
-      totalAmount:0.00,
-      method: "",
-      type: " ",
-      insuranceId: "",
-    })
+        patient: '',
+        patientId:"",
+        dentist: '',
+        dentistId:"",
+        serviceValue: "",
+        serviceSelected:[],
+        date:"",
+        numberOfMonths:0,
+        timeStart: "",
+        timeEnd:"",
+        totalAmount:fee.status === "AVAILABLE"?fee.price:0.00,
+        timeSubmitted:"",
+        method: "",
+        type: "",
+        insuranceId: ""
+      })
     setModal(false);
   };
 
@@ -292,9 +271,9 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
     >
       <ToastContainer />
       <div className=' z-50 h-auto relative'>
-        <div className='m-auto w-[900px] h-[750px] overflow-auto p-8 bg-white rounded-lg relative shadow-lg'>
+        <div className='m-auto w-[900px] h-auto overflow-auto p-8 bg-white rounded-lg relative shadow-lg'>
           <div className='text-left py-4 h-auto overflow-auto'>
-            <h2 className='text-2xl font-bold mb-2 text-gray-700 '>Add Appointment</h2>
+            <h2 className='text-2xl font-bold mb-2 text-gray-700 '>Add Treatment</h2>
             <hr />
             <br />
             <h5 className=' text-lg font-bold text-gray-500 mb-5 capitalize '>Appointment Information</h5>
@@ -387,12 +366,16 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                             return alert("You already select this service")
                           }
                           appointment.serviceSelected.push(v.serviceId);
-                          const totalAmount = calculateTotalAmount(appointment.serviceSelected);
+                          //const totalAmount = calculateTotalAmount(appointment.serviceSelected);
                           
+                          // setAppointment({
+                          //   ...appointment,
+                          //   serviceValue: "",
+                          //   totalAmount: totalAmount
+                          // });
                           setAppointment({
                             ...appointment,
                             serviceValue: "",
-                            totalAmount: totalAmount
                           });
                           setSuggestions([]);
                         }}
@@ -405,8 +388,8 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                 {
                   appointment.serviceSelected.length > 0 && (
                     <div className=' rounded-sm w-full py-2 flex flex-wrap gap-2 '>
-                      {appointment.serviceSelected.map((service, index) => {
-                        const selectedService = services.find((val) => val.serviceId === service);
+                      {appointment.serviceSelected.map((serv, index) => {
+                        const selectedService = service.payload.find((val) => val.serviceId === serv);
 
                         return (
                           <p key={index} className="flex gap-2 bg-cyan-500 rounded-md px-3 py-1 text-white">
@@ -416,9 +399,9 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                                 const updatedServices = appointment.serviceSelected.slice();
                                 updatedServices.splice(index, 1);
                                 
-                                const totalAmount = calculateTotalAmount(updatedServices)
+                                // const totalAmount = calculateTotalAmount(updatedServices)
 
-                                setAppointment({ ...appointment, serviceSelected: updatedServices, totalAmount: totalAmount });
+                                setAppointment({ ...appointment, serviceSelected: updatedServices });
                               }}
                               className='cursor-pointer'
                             >
@@ -519,7 +502,24 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                         }
                       </select>
                     </div>
-                    <div className=' mb-2 flex flex-col gap-1 relative '>
+                      {
+                        appointment.type === "installment" && (
+                          <div className=' mb-2 flex flex-col gap-1 relative '>
+                          <label htmlFor='serviceValue' className='font-bold text-gray-600 '>
+                            Installment Duration
+                          </label>
+                          <select name="numberOfMonths" value={appointment.numberOfMonths} onChange={(e) => handleOnChange(e)} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md '>
+                            <option value="" disabled >Select duration...</option>
+                            <option value={12}>12 Months</option>
+                            <option value={6}>6 Months</option>
+                            <option value={3}>3 Months</option>
+                          </select>
+                        </div>
+                        )
+                      }
+                    {
+                      appointment.totalAmount !== 0.00 &&  (
+                        <div className=' mb-2 flex flex-col gap-1 relative '>
                       <label htmlFor='serviceValue' className='font-bold text-gray-600 '>
                         Total Payment
                       </label>
@@ -532,6 +532,8 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
                         onChange={(e) => handleOnChange(e)}
                       />
                     </div>
+                      )
+                    }
                 </form>
               </div>
 
@@ -555,4 +557,4 @@ function AppointmentModal({ show, setModal,setCovidModal, appointment, setAppoin
   )
 }
 
-export default AppointmentModal
+export default TreatmentModal

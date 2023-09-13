@@ -10,16 +10,17 @@ import DentistTable from '../components/DentistTable';
 import DentistExcelButton from '../components/DentistExcelButton';
 import PDFButton from '../components/PDFButton';
 import { DENTIST_LINK } from '../ApiLinks';
+import { useSelector } from 'react-redux';
 
 function Dentist() {
   const [ show, setModal ] = useState(false);
   const [ search, setSearch ] = useState("");
-  const [dentistList, setDentistList] = useState([]);
+  const dentistList = useSelector((state)=>state.dentist.payload)
   const [ currentPage, setCurrentPage ] = useState(1);
   const tableHeaders = [ "profile", "fullname", "address","gender", "contact number", "email", "specialty", "status", "actions" ];
   const pageNumber = [];
 
-  for(let x = 1; x <= Math.ceil(dentistList.length/8);x++){
+  for(let x = 1; x <= Math.ceil(dentistList?.length/8);x++){
     pageNumber.push(x);
   }
 
@@ -27,19 +28,9 @@ function Dentist() {
     setSearch(e.target.value);
   }
 
-  const fetchDentist = async() =>{
-    try{
-      const response = await axios.get(DENTIST_LINK);
-      if(response.data){
-        setDentistList(response.data);
-      }
-    }catch(err){ console.log(err);}
-  }
-  useEffect(()=>{
-    fetchDentist();
-  },[])
+  
 
-  const filteredDentist = dentistList.filter(dentist=>
+  const filteredDentist = dentistList?.filter(dentist=>
     (dentist.fullname+dentist.address+dentist.specialty).toLowerCase().includes(search)
     );
 
@@ -51,13 +42,10 @@ function Dentist() {
       <PageHeader link={'Dentist'} />
       <div className=' w-full flex flex-col justify-center p-4 '> 
         <div className=' w-full bg-white h-auto rounded-xl shadow-lg'>
-          {/*Sub header*/}
-          <div className=' w-full p-4 border-t-2 border-t-cyan-500 rounded-t-xl flex justify-between items-center border-b-2 '>
-              <h1 className=' text-xl '>Dentist List</h1>
-              <button className=' bg-cyan-500 text-white flex justify-start items-center pl-1 pr-6 py-2 cursor-pointer rounded-md font-bold capitalize ' onClick={()=>setModal(true)}><IoAdd size={30} />&nbsp;Add dentist</button>
-          </div>
+          
            {/*Searchbar and files*/}
-           <div className=' w-full p-4 flex justify-between '>
+           <div className=' w-full p-4 flex justify-between items-center'>
+              <button className=' bg-cyan-500 text-white flex justify-start items-center pl-1 pr-6 py-2 cursor-pointer rounded-md font-bold capitalize ' onClick={()=>setModal(true)}><IoAdd size={30} />&nbsp;Add dentist</button>
               <div className=' inline-flex gap-2  '>
                   <DentistExcelButton users={dentistList} title={"Dentist"} />
                   <PDFButton data={dentistList} type="dentist"/>

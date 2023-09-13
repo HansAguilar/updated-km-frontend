@@ -1,8 +1,11 @@
-import axios from 'axios';
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { updatePatient } from "../redux/action/PatientAction";
+import { toastHandler } from '../ToastHandler';
 
 function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo, type}) {
 
+    const dispatch = useDispatch();
     const handleFormChange = (e) =>{
         setAdminInfo({
           ...adminInfo,
@@ -12,14 +15,23 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo, type}) {
       }
   
       const handleProfile = (e) =>{
+        const file = e.target.files[0];
         const reader = new FileReader();
-        if(e.target.files[0]){
-          reader.readAsDataURL(e.target.files[0]);
-          reader.onload = e =>{
-            setAdminInfo({...adminInfo, profile:e.target.result});
+        if(file){
+          const fileExtension = file.name.split('.').pop().toLowerCase();
+          const acceptedFormats = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+          if (acceptedFormats.includes(fileExtension)) {
+            reader.readAsDataURL(e.target.files[0]);
+            reader.onload = e =>{
+              setAdminInfo({...adminInfo, profile:e.target.result});
+            }
+          } else {
+            toastHandler("error",'Invalid file format. Please provide an image file.');
           }
         }
       }
+  
+      
     
       const isOver18 = (dob) =>{
         const birthday = new Date(dob);
@@ -40,17 +52,17 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo, type}) {
             !adminInfo.email
           ) {
             console.log(adminInfo);
-            return alert("Fill up empty field!");
+            return toastHandler("error","Fill up empty field!");
           }
           if (adminInfo.password !== adminInfo.confirmPassword) {
-            return alert("Mismatch password and confirmpassword");
+            return toastHandler("error","Mismatch password and confirmpassword");
           }
           const isLegalAge = isOver18(adminInfo.birthday);
-          if (isLegalAge) return alert("Invalid Age!");
+          if (isLegalAge) return toastHandler("error","Invalid Age!");
 
           const regex = /^09\d{9}$/;
           if(!regex.test(adminInfo.contactNumber)){
-            return alert("Contact number must be 11-digit and must start with 09");
+            return toastHandler("error","Contact number must be 11-digit and must start with 09");
           }
 
           const data = {
@@ -64,25 +76,20 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo, type}) {
             contactNumber: adminInfo.contactNumber,
             profile: adminInfo.profile,
           };
-          const response = await axios.put(
-            `http://localhost:8080/api/v1/${type}/update/${adminInfo.userId}`,
-            data,
-            {
-              headers: { Accept: "application/json" },
-            }
-          );
-          if (response.data) {
-            alert(response.data.message);
-            window.location.reload();
+          
+          if(type==="patient"){
+            dispatch(updatePatient(adminInfo.userId, data));
           }
+          setModal(false);
+          toastHandler("success","Update Successfully!");
         } catch (err) {
           console.log(err);
         }
       };
     
-      console.log(adminInfo);
       return (
         <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-40 flex flex-grow justify-center items-center ${show ? '': 'hidden'}`}>
+         
             <div className=" z-50">
               <div className="m-auto w-[550px] h-auto p-8 bg-white rounded-lg shadow-lg">
                 <div className="text-left py-4">
@@ -130,7 +137,7 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo, type}) {
                 </form>
                 <img src={adminInfo.profile} alt="Dentist" className=' mt-5 w-52 h-52 '/>
                 <div className='flex flex-col mt-3'>
-                    <input type="file" name='profile' className=' text-sm py-2 focus:outline-none focus:shadow-md  ' onChange={(e)=>handleProfile(e)}/>
+                    <input type="file" name='profile' accept="image/*" className=' text-sm py-2 focus:outline-none focus:shadow-md  ' onChange={(e)=>handleProfile(e)}/>
                   </div>
                 <hr/>
                 <div className='mt-3 flex justify-end gap-2'>

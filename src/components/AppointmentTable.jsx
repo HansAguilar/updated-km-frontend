@@ -8,10 +8,13 @@ import ViewAppointment from './ViewAppointment';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { toastHandler } from "../ToastHandler";
+import { approvedAppointment } from "../redux/action/AppointmentAction";
 import moment from 'moment';
+import { useDispatch } from 'react-redux';
 
 
 function AppointmentTable({tableHeaders,results,search,currentPage}) {
+    const dispatch = useDispatch();
     const [cancelModal, setCancelModal] = useState(false);
     const [update, setUpdate] = useState(false);
     const navigate = useNavigate();
@@ -69,15 +72,11 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
       }
 
       const statusSubmit = async(id, value) =>{
-        try {
-            const response = await axios.put(`${APPOINTMENT_LINK}status/${id}`,value);
-            if(response.data){
-                toastHandler("success",`${response.data.message}`);
-                window.setTimeout(()=>{ window.location.reload(); },1500);
-            }
-        } catch (error) {
-            console.log(error);
+        if(value.status==="APPROVED"){
+            dispatch(approvedAppointment(id));
+            toastHandler("success","Approved appointment successfully!");
         }
+        setStatus({...status, selectedId:null});
       }
       
       const cancelButton = (id)=>{
@@ -89,7 +88,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
       }
   return (
     <>
-    <div className=' h-[550px] px-4 py-3 overflow-auto '>
+    <div className='w-full px-4 py-3 overflow-auto '>
         <ToastContainer />
         <UpdateAppointmentModal show={update} setShow={setUpdate} setAppointmentData={setAppointmentData} appointmentData={appointmentData} />
         <CancelModal show={cancelModal} setShow={setCancelModal} status={status1} setStatus={setStatus1}/>
@@ -122,7 +121,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
                                 :""
                             }
                             </th>
-                            : <th className='py-3 px-2 capitalize' key={index}>{header}</th>
+                            : <th className='py-3 px-2 capitalize' key={8}>{header}</th>
                         }
                         </>
                     ))
@@ -168,11 +167,6 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
                                     >
                                     <option value="PENDING" disabled>Pending</option>
                                     <option value="APPROVED" >Approved</option>
-                                    {
-                                        result.status === "APPROVED" ?
-                                        <option value="DONE" >Done</option>
-                                        : ""
-                                    }
                                     <option value="CANCELLED" >Cancel</option>
                                     </select>
                                 ) : (

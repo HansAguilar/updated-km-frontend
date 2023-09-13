@@ -8,15 +8,17 @@ import Modal from '../components/AdminModal';
 import Pagination from '../components/Pagination';
 import ExcelButton from '../components/ExcelButton';
 import PDFButton from '../components/PDFButton';
+import { useSelector } from 'react-redux';
 
-  function Patients({patients}) {
+  function Patients() {
+    const { payload } = useSelector((state)=>{ return state.patient });
     const tableHeaders = [ "photo", "patient","birthday","gender","contact","email","status","action" ];
     const [ show, setModal ] = useState(false);
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ search, setSearch ] = useState("");
     const pageNumber = [];
     
-    for(let x = 1; x <= Math.ceil(patients.length/8);x++){
+    for(let x = 1; x <= Math.ceil(payload.length/8);x++){
       pageNumber.push(x);
     }
 
@@ -24,31 +26,35 @@ import PDFButton from '../components/PDFButton';
       setSearch(e.target.value);
     }
 
-    console.log(patients);
-    const filteredPatient = patients.filter((val)=>
+    const filteredPatient = payload.sort().filter((val)=>
        (val.firstname+val.middlename+val.lastname+val.birthday+val.phoneNumber+val.email).toLowerCase()
       .includes(search.toLowerCase())
     );
+
     return (
-      <div className=' h-screen overflow-hidden relative '>
+      <div className=' h-screen overflow-hidden relative bg-gray-200 '>
           <Modal show={show} setModal={setModal} type="patient" />
           <PageHeader link={'patient'} />
           
           <div className=' w-full flex flex-col justify-center p-4 '> 
             
-              <div className=' w-full bg-white h-auto rounded-xl shadow-lg'>
+              <div className=' w-full h-auto '>
   
                   {/*Sub header*/}
-                    <div className=' w-full p-4 border-t-2 border-t-cyan-500 rounded-t-xl flex justify-between items-center border-b-2 '>
+                    {/* <div className=' w-full p-4 flex justify-between items-center '>
                       <h1 className=' text-xl '>Patient List</h1>
-                      <button className=' bg-cyan-500 text-white flex justify-start items-center pl-1 pr-6 py-2 cursor-pointer rounded-md font-bold capitalize ' onClick={()=>setModal(true)}><IoAdd size={30} />&nbsp;Add patient</button>
-                    </div>
-                   {/*Searchbar and files*/}
-                    <div className=' w-full p-4 flex justify-between '>
+                      
+                    </div> */}
+                   
+                    {/*Tables*/}
+                    <div className=' w-full h-auto p-5 rounded-lg bg-white ' >
+                      {/*Searchbar and files*/}
+                    <div className=' w-full p-4 flex justify-between items-center '>
+                    <button className=' bg-cyan-500 text-white flex justify-start items-center pl-1 pr-6 py-2 cursor-pointer rounded-md font-bold capitalize ' onClick={()=>setModal(true)}><IoAdd size={30} />&nbsp;Add patient</button>
                       <div className=' inline-flex gap-2  '>
-                        <ExcelButton users={patients} title={"patients"} />
+                        <ExcelButton users={payload} title={"patients"} />
                         {/*  */}
-                        <PDFButton data={patients} />
+                        <PDFButton data={payload} />
                         <FileIcons Icon={AiFillPrinter} title={"Print"} />
                       </div>    
                       <input
@@ -59,10 +65,10 @@ import PDFButton from '../components/PDFButton';
                         onChange={(e)=>searchHandle(e)}
                       />
                     </div>
-                    {/*Tables*/}
-                    <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredPatient : patients  } search={search} currentPage={currentPage} />
-                    {/*Pagination */}
-                    <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
+                      <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredPatient : payload.sort()  } search={search} currentPage={currentPage} />
+                      {/*Pagination */}
+                      <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
+                    </div>
                   <div>
                 </div>
             </div>

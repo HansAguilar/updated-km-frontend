@@ -7,11 +7,13 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import PageHeader from '../components/PageHeader';
 import moment from 'moment';
+import { useSelector } from "react-redux";
 
 
 
 
-function AppointmentCalendar({appointments}) {
+function AppointmentCalendar({}) {
+  const appointments = useSelector((state)=>state.appointment.payload.filter((val)=>val.status==="APPROVED"))
   const [allAppointment, setAppointment] = useState([]);
 
   const locales = {

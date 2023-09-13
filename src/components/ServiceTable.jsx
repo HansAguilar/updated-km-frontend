@@ -3,8 +3,11 @@ import {AiFillEdit, AiFillDelete} from 'react-icons/ai';
 import UpdateDentistModal from './UpdateServicesModal';
 import axios from 'axios';
 import { SERVICES_LINK } from '../ApiLinks';
+import { useDispatch } from 'react-redux';
+import { deleteService } from "../redux/action/ServicesAction";
 
 function ServiceTable({tableHeaders, results, search, currentPage }) {
+    const dispatch = useDispatch();
     const [update, setUpdateModal] = useState(false);
     const [data, setData] = useState({
         serviceId:"",
@@ -30,15 +33,7 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
     };
 
     const deleteButton = async(id) =>{
-        try {
-            const response = await axios.delete(SERVICES_LINK+`${id}`)
-            if(response.data){
-                alert(response.data.message);
-                window.location.reload();
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        dispatch(deleteService(id));
     }
 
     const updateBtn = (serviceId,name,type,description,duration,price ) =>{
@@ -56,21 +51,21 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
   return (
     <>
      <UpdateDentistModal show={update} setModal={setUpdateModal} setData={setData} data={data} />
-     <div className=' h-[550px] px-4 py-3 overflow-auto '>
+     <div className=' h-auto overflow-auto '>
         <table className='w-full  '>
             {/*Head*/}
-            <thead className=' bg-gray-100 '>
+            <thead className=' shadow-md '>
                 <tr className=" text-gray-600">
                 {
                     tableHeaders.map((header, index)=>(
-                        <th className='py-3 px-2 capitalize' key={index}>{header}</th>
+                        <th className='py-5 px-2 capitalize text-white' key={index}>{header}</th>
                     ))
                 }
                 </tr>
             </thead>
 
             {/*Body*/}
-            <tbody className='h-auto p-6 '>
+            <tbody className='h-auto p-6 mt-5 '>
                 {
                     search.length > 0 ? 
                     results
@@ -122,16 +117,16 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
                     .slice((currentPage*8)-8,currentPage*8 )
                     .map((result)=>(
                         <tr className='mt-2 ' key={result.serviceId}>
-                            <td className=' text-center capitalize '>
+                            <td className=' text-center capitalize text-white px-5'>
                                 {result.name}
                             </td>
-                            <td className='text-center capitalize'>
+                            <td className='text-center capitalize text-white'>
                                 {result.type}
                             </td>
-                            <td className='text-center'>
+                            <td className='text-center text-white'>
                                 {result.duration === "00:30:00" ? "30 Min": "1 Hour"}
                             </td>
-                            <td className='text-center'>
+                            <td className='text-center text-white'>
                                 {result.price}
                             </td>
                             <td className='text-center'>

@@ -1,18 +1,18 @@
 import React,{ useState, useEffect } from 'react';
 import QRCode from 'qrcode';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 function ViewAppointment({view,setView}) {
-  const details = view.appointment;
+  const { id } = useParams();
+  const info = useSelector((state)=>state.appointment.payload.filter(val=>val.appointmentId===id));
+  const details = [...info];
   const [qrcode, setQrcode] = useState("");
 
   const generateToQrCode = () =>{
     QRCode.toDataURL(`${details.appointmentId}`, {
       width: 400,
       margin: 2,
-      color: {
-        dark: "#082f49",  // white foreground color
-        light: "#ffffff"  // background color
-      }
     }, (err,url)=>{
       if(err) return console.error(err);
       setQrcode(url);
@@ -21,7 +21,7 @@ function ViewAppointment({view,setView}) {
 
   useEffect(()=>{
     generateToQrCode();
-  });
+  },[id]);
   
   return (
     <div
@@ -66,9 +66,7 @@ function ViewAppointment({view,setView}) {
                   {
                     qrcode && (
                      <>
-                       <div className=' w-auto h-auto rounded-  '>
                           <img src={qrcode} alt="qrcode" className=' rounded-xl ' />
-                       </div>
                        <a href={qrcode} download={`${details.patient?.firstname} ${details.patient?.middlename ? details.patient?.middlename.charAt(0).concat("."): ""} ${details.patient?.lastname}-appointment-qrcode.png`} 
                        className=' text-white text-center uppercase '
                        >Download</a>

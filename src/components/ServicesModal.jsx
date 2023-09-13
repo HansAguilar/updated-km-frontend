@@ -1,8 +1,10 @@
-import axios from 'axios';
 import React,{useState} from 'react';
-import {SERVICES_LINK} from '../ApiLinks';
+import { useDispatch } from 'react-redux';
+import { createService } from "../redux/action/ServicesAction"
+import { toastHandler } from '../ToastHandler';
 
 function ServicesModal({show, setModal}) {
+  const dispatch = useDispatch();
   const [ services, setServices ] = useState({
     name:"",
     type:"",
@@ -21,14 +23,9 @@ function ServicesModal({show, setModal}) {
   }
 
   const submitButton = async() =>{
-    try {
-        if(!services.name || !services.type || !services.description || services.price === 0) return alert("Fill up empty field.")
-        const response = await axios.post(SERVICES_LINK, services);
-        if(response.data){
-            alert(response.data.message);
-            window.location.reload();
-        }
-    } catch (error) {alert(error.response.data.message);}
+    if(!services.name || !services.type || !services.description || services.price === 0) return toastHandler("error","Fill up empty field.")
+    dispatch(createService(services));
+    setModal(false);
   }
 
   const btnClose = () =>{
@@ -77,7 +74,7 @@ function ServicesModal({show, setModal}) {
                     </select>
                 </div>
                 <div className=' mb-2 flex flex-col gap-1 '>
-                    <label htmlFor="description" className='font-bold text-gray-600 '>Service Name</label>
+                    <label htmlFor="description" className='font-bold text-gray-600 '>Service Description</label>
                     <textarea type="text" name='description' value={services.description} className=' px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md resize-none ' 
                     onChange={(e)=>handleOnChange(e)} 
                     />
@@ -96,7 +93,7 @@ function ServicesModal({show, setModal}) {
                 </div>
                 <div className=' mb-2 flex flex-col gap-1 '>
                     <label htmlFor="price" className='font-bold text-gray-600 '>Service Price</label>
-                    <input type="price" name='price' value={services.price} className='  px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md ' 
+                    <input type="number" name='price' value={services.price} className='  px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:shadow-md ' 
                     onChange={(e)=>handleOnChange(e)} 
                     />
                 </div>

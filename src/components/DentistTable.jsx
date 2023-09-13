@@ -50,10 +50,10 @@ function DentistTable({tableHeaders, results, search, currentPage }) {
   return (
     <>
         <UpdateDentistModal show={update} setModal={setUpdateModal} setData={setData} data={data} />
-    <div className=' h-[550px] px-4 py-3 overflow-auto '>
+    <div className=' h-auto overflow-auto '>
         <table className='w-full  '>
             {/*Head*/}
-            <thead className=' bg-gray-100 '>
+            <thead className=' shadow-md  '>
                 <tr className=" text-gray-600">
                 {
                     tableHeaders.map((header, index)=>(

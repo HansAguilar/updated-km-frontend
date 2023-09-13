@@ -2,37 +2,20 @@ import axios from 'axios';
 import React from 'react';
 import { APPOINTMENT_LINK } from '../ApiLinks';
 import { ToastContainer, toast } from 'react-toastify';
+import { cancelledAppointment } from "../redux/action/AppointmentAction";
+import { useDispatch } from 'react-redux';
 
 function CancelModal({show, setShow,status,setStatus}) {
+    const dispatch = useDispatch();
   const submitButton = async(e)=>{
     e.preventDefault();
     const data = {
-        id: status.id,
         status: "CANCELLED",
         description: status.description
     }
-    console.log(data);
-    try {
-        const response = await axios.put(`${APPOINTMENT_LINK}status/${data.id}`,data);
-        if(response.data){
-            toast.warning(`${response.data.message}`, {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: false,
-                pauseOnHover: false,
-                closeOnClick: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-                });
-                
-            window.setTimeout(()=>{
-                    window.location.reload();
-                },1500)
-        }
-    } catch (error) {
-        console.log(error);
-    }
+    dispatch(cancelledAppointment(status.id,data));
+    setStatus({...status, description:""})
+    setShow(false);
   }
   return (
     <>

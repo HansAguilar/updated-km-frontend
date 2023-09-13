@@ -9,6 +9,7 @@ import { FaUserAlt, FaUserCog, FaUserMd} from 'react-icons/fa';
 import { MdMedicalServices, MdAnnouncement, MdManageAccounts } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 import { RiLogoutBoxFill } from 'react-icons/ri';
+import { GiHealthNormal } from "react-icons/gi";
 import logo from '../assets/small-logo.jpg';
 
 function Sidebar({toggleBar, children}) {
@@ -70,6 +71,11 @@ function Sidebar({toggleBar, children}) {
             icon: <SidebarIcon Icon={MdMedicalServices} />
         },
         {
+            path: '/admin/dashboard/treatment',
+            name: 'Treatment',
+            icon: <SidebarIcon Icon={GiHealthNormal} />
+        },
+        {
             path: '/admin/dashboard/messages',
             name: 'Messages',
             icon: <SidebarIcon Icon={AiFillMessage} />
@@ -127,7 +133,7 @@ function Sidebar({toggleBar, children}) {
     return (
         <>
             <div className={` relative h-screen bg-cyan-600 flex flex-col  text-white text-center ${toggleBar ? 'w-20' : 'w-72'} `}>
-                <div className={` ${toggleBar ? 'w-20' : 'w-72'} flex justify-center bg-cyan-700 p-3 border-gray-300`} >
+                <div className={` ${toggleBar ? 'w-20' : 'w-72'} flex justify-center bg-cyan-600 p-3 border-gray-300`} >
                     <div className={` ${toggleBar ? 'w-20' : 'w-72'} mt-4 flex flex-col justify-center items-center `}>
                         <img src={logo} alt="Dental logo" className={` ${toggleBar ? "w-16 h-14": "w-16 h-16"} rounded-full `} />
                         <h1 className={`text-md pt-4 mb-1 uppercase font-bold ${toggleBar ? 'hidden' : ''}`}>K.M. Geronimo Dental Clinic</h1>
@@ -173,7 +179,7 @@ function Sidebar({toggleBar, children}) {
                 }
                 </div>
                 <div className=' absolute bottom-0 w-full '>
-                    <NavLink to='/' className='w-auto px-5 py-4 flex items-center text-white gap-x-2 text-left bg-cyan-700 hover:shadow-md '>
+                    <NavLink to='/' className='w-auto px-5 py-4 flex items-center gap-x-2 text-left text-white hover:shadow-md '>
                             <div><SidebarIcon Icon={RiLogoutBoxFill} /></div>
                             <div className={`capitalize tracking-wide ${toggleBar ? 'hidden' : ''}`}>Logout</div>
                     </NavLink> 

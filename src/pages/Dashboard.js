@@ -10,66 +10,83 @@ import Profile from './Profile';
 import Services from './Services';
 import Messages from './Messages';
 import Header from '../components/Header';
-import axios from 'axios';
 import PageNotFound from './PageNotFound';
 import History from './History';
-import {ADMIN_LINK, APPOINTMENT_LINK, PATIENT_LINK} from '../ApiLinks';
 import AppointmentInformation from './AppointmentInformation';
 import Announcement from './Announcement';
 import AppointmentCalendar from './AppointmentCalendar';
+import ViewPatient from '../components/ViewPatient';
+import Treatment from "./Treatment";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPatient } from '../redux/action/PatientAction';
+import { fetchDentist } from '../redux/action/DentistAction';
+import { fetchAppointment } from '../redux/action/AppointmentAction';
+import { fetchAdmin,fetchLoginAdmin } from '../redux/action/AdminAction';
+import { fetchServices } from '../redux/action/ServicesAction';
+import { fetchPayments } from '../redux/action/PaymentAction';
+import { fetchInstallment } from '../redux/action/InstallmentAction';
+import { fetchAnnouncement } from '../redux/action/AnnouncementAction';
+import { fetchHistory } from '../redux/action/HistoryAction';
+import { fetchAllNotification } from '../redux/action/NotificationAction';
+import { fetchMessages } from '../redux/action/MessageAction';
+import { fetchAppointmentFee } from '../redux/action/AppointmentFeeAction';
+import LoadingSpinner from "../components/LoadingSpinner";
+import { AiOutlineScan } from 'react-icons/ai';
+import QRScanPage from './QRScanPage';
+import { useNavigate } from 'react-router-dom';
+import QRCodeModal from '../components/QRCodeModal';
 
 function Dashboard() {
-  const [ admin, setAdmin ] = useState({});
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [isToggleQR, setToggleQR] = useState(false);
   const [ toggleBar, setToggleBar ] = useState(false);
-  const [patients, setPatients] = useState([]);
-  const [appointments, setAppointments] = useState([]);
+  const patient = useSelector(state=>{return state.patient});
+  const history = useSelector(state=>{return state.history});
+  const installment = useSelector(state=>{return state.installment});
+  const announcement = useSelector(state=>{return state.announcement});
+  const messages = useSelector(state=>{return state.messages});
+  const payment = useSelector(state=>{return state.payment});
+  const service = useSelector(state=>{return state.service});
+  const dentist = useSelector(state=>{return state.denstis});
+  const admin = useSelector(state=>{return state.admin});
+  const appointment = useSelector(state=>{return state.appointment });
 
-  useEffect(()=>{
-    const fetchData = async() =>{
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`${ADMIN_LINK}getAdmin/${token}`);
-        setAdmin(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-        setLoading(false);
-      }
-    }
-    fetchData();
-    const fetchAllPatient = async() =>{
-      try{
-        const response = await axios.get(`${PATIENT_LINK}fetch`)
-        setPatients(response.data);
-      }catch(err){ console.log(err); }
-    }
-    fetchAllPatient();
-    const fetchAllAppointment= async() =>{
-      try{
-        const response = await axios.get(`${APPOINTMENT_LINK}`)
-        setAppointments(response.data);
-      }catch(err){ console.log(err); }
-    }
-    fetchAllAppointment();
-  },[]);
+  const [loading, isLoading] = useState(true);
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    dispatch(fetchLoginAdmin(token));
+    dispatch(fetchAdmin());
+  }, []);
+
+  useEffect(() => {
+    if (admin?.loginAdmin?.adminId) {
+      dispatch(fetchHistory());
+      dispatch(fetchAnnouncement());
+      dispatch(fetchInstallment());
+      dispatch(fetchPayments());
+      dispatch(fetchServices());
+      dispatch(fetchDentist());
+      dispatch(fetchAppointment());
+      dispatch(fetchAllNotification());
+      dispatch(fetchMessages(admin.loginAdmin.adminId));
+      dispatch(fetchAppointmentFee())
+      dispatch(fetchPatient());
+      isLoading(false); // Make sure you have a function named `isLoading` defined
+    }
+  }, [admin]);
   
-  const pendingAppointment = appointments.filter(val=>{
-    return val.status === "PENDING";
-  })
-  const approvedAppointment = appointments.filter(val=>{
-    return val.status === "APPROVED";
-  })
-  if(loading)return <h1>Loading...</h1>
-  return (
-      <div className='w-full h-screen bg-gray-100 flex z-10 '>
+  if(loading)return <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={loading} /></section>
+  return (!patient?.loading && !history?.loading &&!announcement?.loading && !installment?.loading &&!payment?.loading && !service?.loading &&!dentist?.loading && !admin?.loading && !messages.loading&& !appointment?.loading) &&(
+      <div className='w-full h-screen flex z-10 relative '>
         <Sidebar toggleBar={toggleBar} />
-        <div className=' flex flex-grow flex-col bg-gray-200 '>
-          <Header name={admin.firstname} toggleBar={toggleBar} setToggleBar={setToggleBar} />
+        <div className=' relative flex flex-grow flex-col bg-gray-200 '>
+          { isToggleQR && (<QRCodeModal setToggleQR={setToggleQR} />) }
+          <Header toggleBar={toggleBar} setToggleBar={setToggleBar} />
           <Routes>
                   <Route element={
-                  <Home patients={patients.length} pendingAppointment={pendingAppointment.length} approvedAppointment={approvedAppointment.length} />} 
+                  <Home />} 
                   path='/' />
 
                   <Route element={
@@ -78,13 +95,13 @@ function Dashboard() {
 
                   <Route path='/appointment'>
                     <Route element={<Appointments/>} path='/appointment/' />
-                    <Route element={<AppointmentCalendar appointments={appointments} />} path='/appointment/calendar' />
+                    <Route element={<AppointmentCalendar />} path='/appointment/calendar' />
                     <Route path='/appointment/details/:id' element={<AppointmentInformation/>} />
                     <Route path='*' element={<PageNotFound/>} />
                   </Route>
 
                   <Route element={
-                  <Messages admin={admin} />
+                  <Messages />
                   } path='/messages' />
 
                   <Route element={
@@ -92,9 +109,10 @@ function Dashboard() {
                   } path='/dentist' />
 
                   <Route 
-                  path='/patient' 
-                  element={<Patients patients={patients}/>} 
-                  />
+                  path='/patient' >
+                    <Route  element={<Patients />} path='/patient/' />
+                    <Route  element={<ViewPatient />} path='/patient/:id' />
+                  </Route>
 
                   <Route element={
                   <Profile />
@@ -105,6 +123,10 @@ function Dashboard() {
                   } path='/history' />
 
                   <Route element={
+                  <Treatment />
+                  } path='/treatment' />
+
+                  <Route element={
                   <Services />
                   } path='/services' />
 
@@ -112,8 +134,19 @@ function Dashboard() {
                   <Announcement />
                   } path='/announcement' />
 
+                  <Route element={ <QRScanPage /> } 
+                  path='/scan/:id' />
+                  
+
           <Route path='*' element={<PageNotFound />} />
           </Routes>
+
+          {/* LOGO */}
+          <div className=' flex justify-center items-center flex-col bg-cyan-600 absolute w-auto h-auto p-3 right-10 bottom-10 rounded-md cursor-pointer hover:shadow-lg hover:bg-cyan-700 ' onClick={()=>setToggleQR(true)} >
+            <AiOutlineScan size={50} className=' text-white ' />
+            <h3 className=' font-bold text-white '>QR Code</h3>
+          </div>
+
         </div>
     </div>
     )

@@ -1,9 +1,9 @@
-import axios from 'axios';
 import React from 'react';
-import { SERVICES_LINK } from '../ApiLinks';
+import { useDispatch } from 'react-redux';
+import { updateService } from "../redux/action/ServicesAction";
 
 function UpdateServicesModal({show, setModal, setData, data}) {
-
+  const dispatch = useDispatch();
   const serviceType = [ 'oral prophylaxis', 'tooth restoration', 'cosmetics', 'teeth whitening', 'oral surgery', 'odontectomy', 'pedia dentistry', 'Orthodontcs','none'];
 
 
@@ -15,17 +15,8 @@ function UpdateServicesModal({show, setModal, setData, data}) {
   }
 
   const submitData = async() =>{
-    try{
-      const response = await axios.put(`${SERVICES_LINK}${data.serviceId}`,data,{
-        headers: { Accept: "application/json", }
-      });
-      if(response.data){
-        alert(response.data.message);
-        window.location.reload();
-      }
-    }catch(err){
-      console.log(err);
-    };
+    dispatch(updateService(data.serviceId, data));
+    setModal(false);
   }
 
   const btnSubmit = async() =>{

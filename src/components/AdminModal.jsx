@@ -1,8 +1,11 @@
-import axios from 'axios';
 import React,{useState} from 'react';
 import { IoAddSharp, IoRemoveOutline} from 'react-icons/io5';
+import { createPatient } from '../redux/action/PatientAction';
+import { useDispatch } from 'react-redux';
+import { toastHandler } from '../ToastHandler';
 
 function AdminModal({show, setModal, type}) {
+    const dispatch = useDispatch();
     const [ adminInfo, setAdminInfo ] = useState({
       firstname:"",
       middlename:"",
@@ -41,29 +44,29 @@ function AdminModal({show, setModal, type}) {
       
     }
 
-    console.log(insuranceInfo)
     const handleProfile = (e) =>{
+      const file = e.target.files[0];
       const reader = new FileReader();
-      if(e.target.files[0]){
-        reader.readAsDataURL(e.target.files[0]);
-        reader.onload = e =>{
-          setProfile(e.target.result);
+      if(file){
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        const acceptedFormats = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+        if (acceptedFormats.includes(fileExtension)) {
+          reader.readAsDataURL(e.target.files[0]);
+          reader.onload = e =>{
+            setProfile(e.target.result);
+          }
+        } else {
+          toastHandler("error",'Invalid file format. Please provide an image file.');
         }
       }
     }
   
     const submitData = async(data) =>{
-      try{
-        const response = await axios.post(`http://localhost:8080/api/v1/${type}/registration`,data,{
-          headers: { Accept: "application/json", }
-        });
-        if(response.data){
-          alert("Account created!");
-          window.location.reload();
-        }
-      }catch(err){
-        console.log(err);
-      };
+      if(type==="patient"){
+        dispatch(createPatient(data,setModal,setAdminInfo,setProfile));
+      }else{
+        console.log("");
+      }
     }
     const isOver18 = (dob) =>{
       const birthday = new Date(dob);
@@ -74,25 +77,34 @@ function AdminModal({show, setModal, type}) {
     }
     const btnSubmit = () =>{
       if(!adminInfo.firstname ||!adminInfo.lastname || !adminInfo.birthday || !adminInfo.address || !adminInfo.gender || !adminInfo.contactNumber || !adminInfo.email || !adminInfo.username || !adminInfo.password || !adminInfo.confirmPassword || !profile){
-        return alert("Fill up empty field!");
+        return toastHandler("error","Fill up empty field!");
+      }
+      
+      if (/.*[\d\W\s].*/.test(adminInfo.firstname)) {
+        return toastHandler("error", "Invalid characters for firstname");
+      }
+      if(adminInfo.middlename && /.*[\d\W\s].*/.test(adminInfo.middlename)){
+        return toastHandler("error","Invalid number and special characters for middlename")
+      }
+      if(/.*[\d\W\s].*/.test(adminInfo.lastname)){
+        return toastHandler("error","Invalid number and special characters for lastname")
       }
       // if((type === "patient" && adminInfo.haveInsurance === "yes" )&& (!insurance.card || !insurance.cardNumber || !insurance.company)){
       //   return alert("Fill up empty field!");
       // }
       if(adminInfo.password !== adminInfo.confirmPassword ){
-        return alert("Mismatch password and confirmpassword");
+        return toastHandler("error","Mismatch password and confirmpassword");
       }
       const isLegalAge = isOver18(adminInfo.birthday);
-      if(isLegalAge) return alert("Invalid Age!");
+      if(isLegalAge) return toastHandler("error","Invalid Age!");
 
       const regex = /^09\d{9}$/;
       if(!regex.test(adminInfo.contactNumber)){
-        return alert("Contact number must be 11-digit and must start with 09");
+        return toastHandler("error","Contact number must be 11-digit and must start with 09");
       }
       let data = { };
       if(type === "patient"){
         data = { ...adminInfo, insuranceInfo,  profile};
-        console.log("data: ",data);
         submitData(data);
       }else{ 
       data = { ...adminInfo, profile };
@@ -101,7 +113,6 @@ function AdminModal({show, setModal, type}) {
       
     }
   
-    console.log(adminInfo)
     return (
       <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 z-40 flex flex-grow justify-center items-center ${show ? '': 'hidden'}`}>
           <div className=" z-50">
@@ -231,7 +242,8 @@ function AdminModal({show, setModal, type}) {
               </form>
               <div className='flex flex-col mt-3'>
                   <label htmlFor="file">Upload</label>
-                  <input type="file" name="profile" className=' text-sm py-2 focus:outline-none focus:shadow-md  ' onChange={(e)=>handleProfile(e)}/>
+                  <input type="file" name="profile"  accept="image/*
+                  " className=' text-sm py-2 focus:outline-none focus:shadow-md  ' onChange={(e)=>handleProfile(e)}/>
                 </div>
               <hr/>
               <div className='mt-3 flex justify-end gap-2'>
