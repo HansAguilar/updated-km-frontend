@@ -80,15 +80,17 @@ function AdminModal({show, setModal, type}) {
         return toastHandler("error","Fill up empty field!");
       }
       
-      if (/.*[\d\W\s].*/.test(adminInfo.firstname)) {
+      if (/[^\w\s]/.test(adminInfo.firstname)) {
         return toastHandler("error", "Invalid characters for firstname");
       }
-      if(adminInfo.middlename && /.*[\d\W\s].*/.test(adminInfo.middlename)){
-        return toastHandler("error","Invalid number and special characters for middlename")
+      if (adminInfo.middlename && /[^\w\s]/.test(adminInfo.middlename)) {
+          return toastHandler("error", "Invalid number and special characters for middlename");
       }
-      if(/.*[\d\W\s].*/.test(adminInfo.lastname)){
-        return toastHandler("error","Invalid number and special characters for lastname")
+      
+      if (/[^\w\s]/.test(adminInfo.lastname)) {
+          return toastHandler("error", "Invalid number and special characters for lastname");
       }
+      
       // if((type === "patient" && adminInfo.haveInsurance === "yes" )&& (!insurance.card || !insurance.cardNumber || !insurance.company)){
       //   return alert("Fill up empty field!");
       // }

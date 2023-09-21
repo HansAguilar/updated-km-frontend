@@ -11,7 +11,7 @@ function Services() {
   const [ show, setModal ] = useState(false);
   const [ search, setSearch ] = useState("");
   const [ currentPage, setCurrentPage ] = useState(1);
-  const tableHeaders = [ "Service Name", "Service Type", "Service Duration", "Service Price", "Status", "Action"];
+  const tableHeaders = [ "Service Name", "Service Type", "Service Duration", "Service Price", "Action"];
   const pageNumber = [];
 
   const {payload} = useSelector((state)=>{ return state.service });
@@ -30,12 +30,13 @@ function Services() {
     );
 
   return (
-    <div className=' h-screen overflow-hidden relative bg-cyan-800 '>
+    <div className=' h-screen overflow-hidden relative bg-gray-200 '>
       <ToastContainer />
       <Modal show={show} setModal={setModal} />
       <PageHeader link={'Service'} />
       <div className=' w-full flex flex-col justify-center p-4 '> 
-        <div className=' w-full bg-cyan-900 h-auto '>
+
+        <div className=' w-full h-auto p-5 rounded-lg bg-white '>
            {/*Searchbar and files*/}
            <div className=' w-full p-4 flex justify-between items-center '>
               <button className=' bg-cyan-500 text-white flex justify-start items-center pl-1 pr-6 py-2 cursor-pointer rounded-md font-bold capitalize ' onClick={()=>setModal(true)}><IoAdd size={30} />&nbsp;Add service</button>
@@ -51,10 +52,8 @@ function Services() {
                   placeholder='Search'
                   onChange={(e)=>searchHandle(e)}
                 />
-
-              
-    
             </div>
+
             <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredServices : payload  } search={search} currentPage={currentPage} /> 
               <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
         </div>

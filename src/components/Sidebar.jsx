@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import SidebarIcon from './SidebarIcon';
 import { NavLink } from 'react-router-dom';
 import { BiArrowFromBottom, BiArrowToBottom } from 'react-icons/bi'
-import { AiFillHome, AiFillMessage, AiFillSetting } from 'react-icons/ai';
+import { AiFillHome, AiFillMessage, AiFillSetting,AiFillSchedule } from 'react-icons/ai';
 import { BsCalendarEventFill, BsFillCalendarCheckFill, BsFillCalendar3Fill } from 'react-icons/bs'
 import { FaUserAlt, FaUserCog, FaUserMd} from 'react-icons/fa';
 import { MdMedicalServices, MdAnnouncement, MdManageAccounts } from 'react-icons/md';
@@ -79,6 +79,11 @@ function Sidebar({toggleBar, children}) {
             path: '/admin/dashboard/messages',
             name: 'Messages',
             icon: <SidebarIcon Icon={AiFillMessage} />
+        },
+        {
+            path: '/admin/dashboard/schedule',
+            name: 'Schedule',
+            icon: <SidebarIcon Icon={AiFillSchedule} />
         },
         {
             path:  `${params.pathname}`,

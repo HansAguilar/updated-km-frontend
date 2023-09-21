@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React,{useState} from 'react';
-import {AiFillEdit, AiOutlineFolderView} from 'react-icons/ai';
+import {AiFillEdit, AiFillDelete} from 'react-icons/ai';
 import UpdateAdminModal from './UpdateAdminModal';
 
 function AdminTable({tableHeaders, results, search, currentPage }) {
@@ -52,22 +52,22 @@ setUpdateModal(true);
   return (
    <>
     <UpdateAdminModal show={updateModel} setModal={setUpdateModal} setAdminInfo={setAdminInfo} adminInfo={adminInfo} type="admin"/>
-    <div className=' h-[550px] px-4 py-3 overflow-auto '>
+    <div className=' h-auto overflow-auto '>
         
         <table className='w-full  '>
             {/*Head*/}
-            <thead className=' bg-gray-100 '>
+            <thead className=' shadow-md '>
                 <tr className=" text-gray-600">
                 {
                     tableHeaders.map((header, index)=>(
-                        <th className='py-3 px-2 capitalize' key={index}>{header}</th>
+                        <th className='py-5 px-2 capitalize text-cyan-900' key={index}>{header}</th>
                     ))
                 }
                 </tr>
             </thead>
 
             {/*Body*/}
-            <tbody className='h-auto p-6'>
+            <tbody className='h-auto p-6 mt-5'>
                 
                 {
                     search.length > 0 ? 
@@ -76,10 +76,10 @@ setUpdateModal(true);
                     .map((result)=>(
                         <tr className='' key={result.adminId}>
                         <td className='p-2 text-center flex justify-center '>
-                            <img src={result.profile} className=' w-11 h-11 rounded-full border border-gray-400 border-2 ' alt="User" />
+                            <img src={result.profile} className=' w-11 h-11 rounded-full border border-gray-400 ' alt="User" />
                         </td>
                         <td className=' text-center capitalize '>
-                            {`${result.firstname} ${result.middlename !== "" ? result.middlename.charAt(0).concat(".") : '' } ${result.lastname}`}
+                            {`${result.firstname} ${!result.middlename ? "" : result.middlename.charAt(0).concat(".")  } ${result.lastname}`}
                         </td>
                         <td className='text-center'>
                             {result.address}
@@ -117,8 +117,8 @@ setUpdateModal(true);
                             )}>
                                 <AiFillEdit size={25} />&nbsp;Update
                             </button>
-                            <button className='bg-gray-500 text-white flex items-center px-4 py-2 rounded-md'>
-                                <AiOutlineFolderView size={25} />&nbsp;View
+                            <button className='bg-red-500 text-white flex items-center px-4 py-2 rounded-md'>
+                                <AiFillDelete size={25} />&nbsp;Delete
                             </button>
                         </td>
                     </tr>  
@@ -130,7 +130,7 @@ setUpdateModal(true);
                     .map((result)=>(
                         <tr className='' key={result.adminId}>
                             <td className='p-2 text-center flex justify-center '>
-                                <img src={result.profile} className=' w-11 h-11 rounded-full border border-gray-400 border-2 ' alt="User" />
+                                <img src={result.profile} className=' w-11 h-11 rounded-full border border-gray-400 ' alt="User" />
                             </td>
                             <td className=' text-center capitalize '>
                                 {`${result.firstname} ${!result.middlename ? "" : result.middlename.charAt(0).concat(".")  } ${result.lastname}`}
@@ -171,8 +171,8 @@ setUpdateModal(true);
                                 )}>
                                     <AiFillEdit size={25} />&nbsp;Update
                                 </button>
-                                <button className='bg-gray-500 text-white flex items-center px-4 py-2 rounded-md'>
-                                    <AiOutlineFolderView size={25} />&nbsp;View
+                                <button className='bg-red-500 text-white flex items-center px-4 py-2 rounded-md'>
+                                    <AiFillDelete size={25} />&nbsp;Delete
                                 </button>
                             </td>
                         </tr> 

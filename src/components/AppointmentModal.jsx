@@ -10,6 +10,7 @@ function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointm
   const dentist = useSelector((state)=>{ return state.dentist; });
   const service = useSelector((state)=>{ return state.service; });
   const fee = useSelector((state)=>{ return state.fee.payload; });
+  const schedule = useSelector((state)=>{ return state.schedule.payload; });
   const [active, setActive] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [insuranceList, setInsuranceList] = useState([]);
@@ -90,26 +91,49 @@ function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointm
       const currentTime  = moment();
       const newTime = currentTime.add(1,"hour");
       const newHour = moment(newTime);
-     
+      
+      setTimeStartList([...newTimeList]);
+
       
       
-      setTimeStartList([...newTimeList])
+
+      setTimeStartList((prev)=>{
+        let updatedSchedList = [...prev];
+        const filteredSchedule = schedule.filter((val)=>moment(e.target.value, "YYYY-MM-DD").isSame(val.dateSchedule) && val.dentist.dentistId === appointment.dentistId);
+
+        if(filteredSchedule.length > 0) {
+          const indicesScheduleToRemain = [];
+          for(let x = 0; x<filteredSchedule.length; x++){
+            let start = timeStartList.findIndex((val)=>val.timeStart===filteredSchedule[x].timeStart);
+            let end = timeStartList.findIndex((val)=>val.timeStart===filteredSchedule[x].timeEnd);
+    
+            for(let i = start; i<=end; i++){
+              indicesScheduleToRemain.push(i);
+            }
+          }
+          
+          updatedSchedList = updatedSchedList.filter((_,idx)=>{return indicesScheduleToRemain.includes(idx)});
+          
+        }
+        return updatedSchedList;
+      });
+
+      console.log(timeStartList);
+      
+
       const filteredTime = newTimeList.filter((val) => 
         moment(e.target.value, 'YYYY-MM-DD').isSame(moment(), 'day') &&
         moment(val.timeStart, 'HH:mm:ss').isAfter(newHour)
       );
-
       if (filteredTime.length > 0) {
         setTimeStartList([...filteredTime]);
-      } else {
-        setTimeStartList([...newTimeList]);
-      }
+      } 
       
       
       setTimeStartList(prevTimeStartList => {
         let updatedTimeStartList = [...prevTimeStartList];
         const getAppointmentDate = filteredAppointments.filter((value)=>{
-          return value.status === "APPROVED" || value.status === "PROCESSING" && value.date === e.target.value;
+          return (value.status === "APPROVED" || value.status === "PROCESSING" || value.status === "TREATMENT") && value.date === e.target.value;
         });
 
        if(getAppointmentDate.length > 0){
@@ -166,8 +190,6 @@ function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointm
     const timeTotal = calculateTotalServiceTime();
     const totalTimeDuration = moment('00:00:00', 'HH:mm:ss');
     
-
-    console.log(timeTotal);
     let start = moment(appointment.timeStart, 'HH:mm:ss');
     while (start.isBefore(moment(end, "HH:mm:ss").add(30, 'minutes'))) {
       const startTime = start.format('HH:mm:ss');
@@ -271,7 +293,7 @@ function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointm
     >
       <ToastContainer />
       <div className=' z-50 h-auto relative'>
-        <div className='m-auto w-[900px] h-auto overflow-auto p-8 bg-white rounded-lg relative shadow-lg'>
+        <div className='w-[700px] h-[600px] p-5 overflow-auto bg-white rounded-lg relative shadow-lg'>
           <div className='text-left py-4 h-auto overflow-auto'>
             <h2 className='text-2xl font-bold mb-2 text-gray-700 '>Add Treatment</h2>
             <hr />

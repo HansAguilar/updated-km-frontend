@@ -11,6 +11,7 @@ import historyReducer from "../reducer/HistoryReducer";
 import notificationReducer from "../reducer/NotificationReducer";
 import messageReducer from "../reducer/MessageReducer";
 import feeReducer from "../reducer/AppointmentFeeReducer";
+import scheduleReducer from "../reducer/ScheduleReducer";
 import thunk from "redux-thunk";
 
 const store = configureStore({
@@ -26,7 +27,8 @@ const store = configureStore({
         history:historyReducer,
         notification: notificationReducer,
         messages:messageReducer,
-        fee:feeReducer
+        fee:feeReducer,
+        schedule: scheduleReducer
     },
     middleware:[thunk]
 });

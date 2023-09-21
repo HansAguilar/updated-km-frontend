@@ -17,6 +17,7 @@ import Announcement from './Announcement';
 import AppointmentCalendar from './AppointmentCalendar';
 import ViewPatient from '../components/ViewPatient';
 import Treatment from "./Treatment";
+import Schedule from "./Schedule";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPatient } from '../redux/action/PatientAction';
 import { fetchDentist } from '../redux/action/DentistAction';
@@ -30,6 +31,7 @@ import { fetchHistory } from '../redux/action/HistoryAction';
 import { fetchAllNotification } from '../redux/action/NotificationAction';
 import { fetchMessages } from '../redux/action/MessageAction';
 import { fetchAppointmentFee } from '../redux/action/AppointmentFeeAction';
+import { fetchSchedule } from '../redux/action/ScheduleAction';
 import LoadingSpinner from "../components/LoadingSpinner";
 import { AiOutlineScan } from 'react-icons/ai';
 import QRScanPage from './QRScanPage';
@@ -71,7 +73,8 @@ function Dashboard() {
       dispatch(fetchAppointment());
       dispatch(fetchAllNotification());
       dispatch(fetchMessages(admin.loginAdmin.adminId));
-      dispatch(fetchAppointmentFee())
+      dispatch(fetchAppointmentFee());
+      dispatch(fetchSchedule());
       dispatch(fetchPatient());
       isLoading(false); // Make sure you have a function named `isLoading` defined
     }
@@ -129,6 +132,10 @@ function Dashboard() {
                   <Route element={
                   <Services />
                   } path='/services' />
+
+                  <Route element={
+                  <Schedule />
+                  } path='/schedule' />
 
                   <Route element={
                   <Announcement />

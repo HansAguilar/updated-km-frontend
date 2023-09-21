@@ -13,7 +13,7 @@ import moment from 'moment';
 import { useDispatch } from 'react-redux';
 
 
-function AppointmentTable({tableHeaders,results,search,currentPage}) {
+function AppointmentTable({tableHeaders,results,search,currentPage, type}) {
     const dispatch = useDispatch();
     const [cancelModal, setCancelModal] = useState(false);
     const [update, setUpdate] = useState(false);
@@ -133,7 +133,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage}) {
             <tbody className='h-auto p-6 '>
                {
                     results
-                    .filter((val)=>{ return statusValue.statusCode !== "" ? val.status === statusValue.statusCode : (val.status === "APPROVED" || val.status === "PENDING") })
+                    // .filter((val)=>{ return statusValue.statusCode !== "" ? val.status === statusValue.statusCode && type !== "" : (val.status === "APPROVED" || val.status === "PENDING" || val.status === "TREATMENT") })
                     .slice((currentPage*8)-8, currentPage*8)
                     .map((result)=>(
                         <tr key={result.appointmentId} className=' text-center h-16 '>

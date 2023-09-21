@@ -10,5 +10,6 @@ export const INSTALLMENT_LINK = "http://localhost:8080/api/v1/installment";
 export const NOTIFICATION_LINK = "http://localhost:8080/api/v1/notification";
 export const MESSAGE_LINK = "http://localhost:8080/api/v1/message";
 export const FEE_LINK = "http://localhost:8080/api/v1/fee";
+export const SCHEDULE_LINK = "http://localhost:8080/api/v1/schedule";
 
 export const SOCKET_LINK = "http://localhost:8081";

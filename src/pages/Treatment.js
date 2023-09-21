@@ -11,6 +11,7 @@ import CovidTestModal from '../components/CovidServiceModal';
 import axios from 'axios';
 import Pagination from '../components/Pagination';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 // import { useNavigate } from 'react-router-dom';
 // import ExcelButton from '../components/ExcelButton';
 // import PDFButton from '../components/PDFButton';
@@ -20,7 +21,7 @@ function Appointments() {
   const [ covidShow, setCovidModal ] = useState(false);
   const [ search, setSearch ] = useState("");
   const navigate = useNavigate();
-  const [appointmentList, setAppointmentList] = useState([]);
+  const appointmentList = useSelector((state)=>{ return state.appointment.payload.filter((val)=>val.status==="TREATMENT"); })
   const [ currentPage, setCurrentPage ] = useState(1);
   const tableHeaders = [ "Patient Name", "Dentist Name", "Treatment Date", "Treatment Start", "Treatment End", "Treatment Duration", "Teeth Number ", "Status","Action"];
   const pageNumber = [];
@@ -44,23 +45,9 @@ function Appointments() {
   for(let x = 1; x <= Math.ceil(appointmentList.length/8);x++){
     pageNumber.push(x);
   }
-
-  useEffect(()=>{
-    const fetchServices = async()=>{
-      try {
-        const response = await axios.get(APPOINTMENT_LINK);
-        if(response.data){
-          setAppointmentList(response.data);
-        }
-      } catch (error) { console.log(error) }
-    }
-    fetchServices();
-  },[])
-
   const searchHandle = (e) =>{ 
     setSearch(e.target.value);
   }
-  console.log(appointmentList);
 
   const filteredServices = appointmentList.filter(val=>
     (val.patient.firstname+val.patient.middlename+val.patient.lastname).toLowerCase().includes(search)
@@ -106,7 +93,7 @@ function Appointments() {
               
     
             </div>
-            <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredServices : appointmentList  } search={search} currentPage={currentPage} /> 
+            <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredServices : appointmentList  } search={search} currentPage={currentPage} type="Treatment" /> 
               <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
         </div>
       </div>

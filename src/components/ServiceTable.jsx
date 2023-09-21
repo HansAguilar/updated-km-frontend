@@ -51,14 +51,14 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
   return (
     <>
      <UpdateDentistModal show={update} setModal={setUpdateModal} setData={setData} data={data} />
-     <div className=' h-auto overflow-auto '>
-        <table className='w-full  '>
+     <div className=' w-full flex flex-col justify-center p-4  '>
+        <table className='w-full '>
             {/*Head*/}
-            <thead className=' shadow-md '>
+            <thead className=' shadow-md bg-gray-100 '>
                 <tr className=" text-gray-600">
                 {
                     tableHeaders.map((header, index)=>(
-                        <th className='py-5 px-2 capitalize text-white' key={index}>{header}</th>
+                        <th className='py-5 px-2 capitalize ' key={index}>{header}</th>
                     ))
                 }
                 </tr>
@@ -117,19 +117,19 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
                     .slice((currentPage*8)-8,currentPage*8 )
                     .map((result)=>(
                         <tr className='mt-2 ' key={result.serviceId}>
-                            <td className=' text-center capitalize text-white px-5'>
+                            <td className=' text-center capitalize px-5'>
                                 {result.name}
                             </td>
-                            <td className='text-center capitalize text-white'>
+                            <td className='text-center capitalize '>
                                 {result.type}
                             </td>
-                            <td className='text-center text-white'>
+                            <td className='text-center '>
                                 {result.duration === "00:30:00" ? "30 Min": "1 Hour"}
                             </td>
-                            <td className='text-center text-white'>
+                            <td className='text-center '>
                                 {result.price}
                             </td>
-                            <td className='text-center'>
+                            {/* <td className='text-center'>
                                 {
                                 result.isAvailable ? 
                                 <p 
@@ -145,7 +145,7 @@ function ServiceTable({tableHeaders, results, search, currentPage }) {
                                     Available
                                 </p>
                                 }
-                            </td>
+                            </td> */}
                             <td className=' h-auto relative w-auto flex items-end justify-center gap-3'>
                                 <p className=' px-5 py-2 rounded-md bg-cyan-500 text-white cursor-pointer hover:shadow-md flex' onClick={()=>updateBtn(
                                     result.serviceId,
