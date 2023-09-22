@@ -5,12 +5,13 @@ import moment from 'moment/moment';
 import { toastHandler } from '../ToastHandler';
 import { useSelector } from 'react-redux';
 
-function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointment, filteredAppointments }) {
+function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointment }) {
   const patient = useSelector((state)=>{ return state.patient; });
   const dentist = useSelector((state)=>{ return state.dentist; });
   const service = useSelector((state)=>{ return state.service; });
   const fee = useSelector((state)=>{ return state.fee.payload; });
   const schedule = useSelector((state)=>{ return state.schedule.payload; });
+  const filteredAppointments = useSelector((state)=>{ return state.appointment.payload.filter((val)=>val.status==="PENDING"||val.status==="APPROVED"|| val.status === "TREATMENT")})
   const [active, setActive] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [insuranceList, setInsuranceList] = useState([]);
@@ -107,18 +108,15 @@ function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointm
             let start = timeStartList.findIndex((val)=>val.timeStart===filteredSchedule[x].timeStart);
             let end = timeStartList.findIndex((val)=>val.timeStart===filteredSchedule[x].timeEnd);
     
-            for(let i = start; i<=end; i++){
+            for(let i = start; i<end; i++){
               indicesScheduleToRemain.push(i);
             }
           }
           
           updatedSchedList = updatedSchedList.filter((_,idx)=>{return indicesScheduleToRemain.includes(idx)});
-          
         }
         return updatedSchedList;
       });
-
-      console.log(timeStartList);
       
 
       const filteredTime = newTimeList.filter((val) => 
@@ -133,8 +131,10 @@ function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointm
       setTimeStartList(prevTimeStartList => {
         let updatedTimeStartList = [...prevTimeStartList];
         const getAppointmentDate = filteredAppointments.filter((value)=>{
-          return (value.status === "APPROVED" || value.status === "PROCESSING" || value.status === "TREATMENT") && value.date === e.target.value;
+          return  value.appointmentDate === e.target.value;
         });
+        
+        console.log(filteredAppointments);
 
        if(getAppointmentDate.length > 0){
         const indexesToRemove =[];
@@ -145,7 +145,7 @@ function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointm
           const end = prevTimeStartList.findIndex((value)=>{
             return value.timeStart === getAppointmentDate[x].timeEnd;
           })
-          for(let begin = start; begin<end; begin++){
+          for(let begin = start; begin<=end; begin++){
             indexesToRemove.push(begin);
           }
         }

@@ -39,6 +39,7 @@ export const createAppointment = (data,setModal,setAppointment) =>{
                 payload: response.data
             });
             toastHandler("success","Created appointment successfully!");
+            socket.emit("appointment_admin_changes",{value: response.data});
             setModal(false);
         } catch (error) {
             toastHandler("error",error.response.data.message);

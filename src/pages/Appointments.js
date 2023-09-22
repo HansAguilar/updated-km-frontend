@@ -23,7 +23,7 @@ function Appointments() {
   const [ show, setModal ] = useState(false);
   const [ covidShow, setCovidModal ] = useState(false);
   const [ search, setSearch ] = useState("");
-  const appointmentList = useSelector((state)=>{ return state.appointment.payload.filter((val)=>val.status==="PENDING"||val.status==="APPROVED"); })
+  const appointmentList = useSelector((state)=>{ return state.appointment.payload.filter((val)=>val.status==="PENDING"||val.status==="APPROVED")})
   const fee = useSelector((state)=>{ return state.fee.payload; });
   const [ currentPage, setCurrentPage ] = useState(1);
   const tableHeaders = [ "Patient Name", "Date Submitted", "Appointment Date", "Appointment Start", "Appointment End", "Status","ATC", "Action"];

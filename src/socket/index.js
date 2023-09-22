@@ -24,6 +24,9 @@ io.on("connection", (socket) => {
   })
 
   //APPOINTMENT
+  socket.on("appointment_admin_changes",(data)=>{
+    socket.broadcast.emit("response_admin_changes",data);
+  })
   socket.on("appointment_changes",(data)=>{
     socket.broadcast.emit("response_changes",data);
   })
