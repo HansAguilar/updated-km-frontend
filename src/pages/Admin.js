@@ -16,7 +16,8 @@ function Admin() {
   const [ currentPage, setCurrentPage ] = useState(1);
   const tableHeaders = [ "profile", "fullname", "address","gender", "contact number", "email", "role", "status", "actions" ];
   const pageNumber = [];
-  const adminList = useSelector((state)=>state.admin.payload);
+  const { loginAdmin } =  useSelector((state)=>state.admin);
+  const adminList = useSelector((state)=>state.admin.payload.filter(val=>val.adminId!==loginAdmin.adminId));
 
   for(let x = 1; x <= Math.ceil(adminList.length/8);x++){
     pageNumber.push(x);
@@ -28,11 +29,11 @@ function Admin() {
   }
 
   const filteredAdminList = adminList.filter((admin)=>
-    (admin.firstname+admin.middlename+admin.lastname+admin.address+admin.birthday).toLowerCase().includes(search)
+    (admin.firstname+admin.middlename+admin.lastname).toLowerCase().includes(search.toLowerCase())
   )
   return (
     <div className=' h-screen overflow-hidden relative bg-gray-200 '>
-          <Modal show={show} setModal={setModal} type="patient" />
+          <Modal show={show} setModal={setModal} type="admin" />
           <PageHeader link={'admin'} />
           
           <div className=' w-full flex flex-col justify-center p-4 '> 
@@ -49,7 +50,7 @@ function Admin() {
                     <div className=' w-full h-auto p-5 rounded-lg bg-white ' >
                       {/*Searchbar and files*/}
                     <div className=' w-full p-4 flex justify-between items-center '>
-                    <button className=' bg-cyan-500 text-white flex justify-start items-center pl-1 pr-6 py-2 cursor-pointer rounded-md font-bold capitalize ' onClick={()=>setModal(true)}><IoAdd size={30} />&nbsp;Add patient</button>
+                    <button className=' bg-cyan-500 text-white flex justify-start items-center pl-1 pr-6 py-2 cursor-pointer rounded-md font-bold capitalize ' onClick={()=>setModal(true)}><IoAdd size={30} />&nbsp;Add Admin</button>
                       <div className=' inline-flex gap-2  '>
                         <ExcelButton users={adminList} title={"patients"} />
                         {/*  */}

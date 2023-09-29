@@ -34,7 +34,6 @@ function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointm
     ]
   );
 
-
   const handleOnChange = (e) => {
     if(e.target.name === "patient"){
       const filteredPatient = patient.payload.filter(v=>{
@@ -96,36 +95,36 @@ function TreatmentModal({ show, setModal,setCovidModal, appointment, setAppointm
       setTimeStartList([...newTimeList]);
 
       
-      
-
-      setTimeStartList((prev)=>{
-        let updatedSchedList = [...prev];
-        const filteredSchedule = schedule.filter((val)=>moment(e.target.value, "YYYY-MM-DD").isSame(val.dateSchedule) && val.dentist.dentistId === appointment.dentistId);
-
-        if(filteredSchedule.length > 0) {
-          const indicesScheduleToRemain = [];
-          for(let x = 0; x<filteredSchedule.length; x++){
-            let start = timeStartList.findIndex((val)=>val.timeStart===filteredSchedule[x].timeStart);
-            let end = timeStartList.findIndex((val)=>val.timeStart===filteredSchedule[x].timeEnd);
-    
-            for(let i = start; i<end; i++){
-              indicesScheduleToRemain.push(i);
-            }
-          }
-          
-          updatedSchedList = updatedSchedList.filter((_,idx)=>{return indicesScheduleToRemain.includes(idx)});
-        }
-        return updatedSchedList;
-      });
-      
-
       const filteredTime = newTimeList.filter((val) => 
         moment(e.target.value, 'YYYY-MM-DD').isSame(moment(), 'day') &&
         moment(val.timeStart, 'HH:mm:ss').isAfter(newHour)
       );
       if (filteredTime.length > 0) {
-        setTimeStartList([...filteredTime]);
-      } 
+        setTimeStartList(filteredTime);
+      }
+      
+      setTimeStartList((prev)=>{
+        let updatedSchedList = [...prev];
+        const filteredSchedule = schedule.filter((val)=>moment(e.target.value, "YYYY-MM-DD").isSame(moment(val.dateSchedule).format("YYYY-MM-DD")) && val.dentist.dentistId === appointment.dentistId);
+        if(filteredSchedule.length > 0) {
+          const indicesScheduleToRemain = [];
+          for(let x = 0; x<filteredSchedule.length; x++){
+            let start = updatedSchedList.findIndex((val)=>val.timeStart===filteredSchedule[x].timeStart);
+            let end = updatedSchedList.findIndex((val)=>val.timeStart===filteredSchedule[x].timeEnd);
+    
+            for(let i = start; i<end; i++){
+              indicesScheduleToRemain.push(i);
+            }
+          }
+          console.log(indicesScheduleToRemain);
+          updatedSchedList = updatedSchedList.filter((_,idx)=>{return indicesScheduleToRemain.includes(idx)});
+        }
+        
+        return updatedSchedList;
+      });
+      
+
+      
       
       
       setTimeStartList(prevTimeStartList => {

@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 import { BiArrowFromBottom, BiArrowToBottom } from 'react-icons/bi'
 import { AiFillHome, AiFillMessage, AiFillSetting,AiFillSchedule } from 'react-icons/ai';
 import { BsCalendarEventFill, BsFillCalendarCheckFill, BsFillCalendar3Fill } from 'react-icons/bs'
-import { FaUserAlt, FaUserCog, FaUserMd} from 'react-icons/fa';
+import { FaUserAlt, FaUserCog, FaUserMd, FaMoneyBill} from 'react-icons/fa';
 import { MdMedicalServices, MdAnnouncement, MdManageAccounts } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 import { RiLogoutBoxFill } from 'react-icons/ri';
@@ -84,6 +84,11 @@ function Sidebar({toggleBar, children}) {
             path: '/admin/dashboard/schedule',
             name: 'Schedule',
             icon: <SidebarIcon Icon={AiFillSchedule} />
+        },
+        {
+            path: '/admin/dashboard/payment',
+            name: 'Payment',
+            icon: <SidebarIcon Icon={FaMoneyBill} />
         },
         {
             path:  `${params.pathname}`,

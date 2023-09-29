@@ -1,4 +1,4 @@
-import { APPROVED_APPOINTMENT_SUCCESS, CANCELLED_APPOINTMENT_SUCCESS, CREATE_APPOINTMENT_SUCCESS, DONE_APPOINTMENT_SUCCESS, FETCH_APPOINTMENT_FAILED, FETCH_APPOINTMENT_REQUEST, FETCH_APPOINTMENT_SUCCESS } from "../ActionTypes";
+import { APPROVED_APPOINTMENT_SUCCESS, CANCELLED_APPOINTMENT_SUCCESS, CREATE_APPOINTMENT_SUCCESS, DELETE_APPOINTMENT_SUCCESS, DONE_APPOINTMENT_SUCCESS, FETCH_APPOINTMENT_FAILED, FETCH_APPOINTMENT_REQUEST, FETCH_APPOINTMENT_SUCCESS, UPDATE_APPOINTMENT_SUCCESS } from "../ActionTypes";
 
 const reducer = (state = {}, action)=>{
     switch(action.type){
@@ -8,6 +8,10 @@ const reducer = (state = {}, action)=>{
             return { ...state, payload:action.payload, loading:false }
         case CREATE_APPOINTMENT_SUCCESS:
             return { ...state, payload:[...state.payload, action.payload], loading:false }
+        case UPDATE_APPOINTMENT_SUCCESS:
+            return { ...state, payload:state.payload.map((val)=>{ return val.appointmentId === action.payload.appointmentId ? action.payload:val }), loading:false }
+        case DELETE_APPOINTMENT_SUCCESS:
+            return {...state, payload:state.payload.filter((val)=>val.appointmentId!==action.payload), loading:false}
         case APPROVED_APPOINTMENT_SUCCESS:
             return { ...state, payload:state.payload.map((val)=>{ return val.appointmentId === action.payload.appointmentId ? action.payload:val }), loading:false }
         case CANCELLED_APPOINTMENT_SUCCESS:

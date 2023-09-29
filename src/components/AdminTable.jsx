@@ -1,10 +1,12 @@
-import axios from 'axios';
 import React,{useState} from 'react';
 import {AiFillEdit, AiFillDelete} from 'react-icons/ai';
 import UpdateAdminModal from './UpdateAdminModal';
+import { useDispatch } from 'react-redux';
+import { deleteAdmin,changeAdminStatus } from "../redux/action/AdminAction";
+import { toastHandler } from '../ToastHandler';
 
 function AdminTable({tableHeaders, results, search, currentPage }) {
-
+  const dispatch = useDispatch();
   const [ updateModel, setUpdateModal] = useState(false);
   const [adminInfo, setAdminInfo] = useState({
         userId:"",
@@ -19,18 +21,10 @@ function AdminTable({tableHeaders, results, search, currentPage }) {
         profile:""
   });
   const disableAccountBtn = async (id, disable) => {
-    try {
-        
-        const newDisableInformation = { id: id, verified: disable };
-        await axios.post(`http://localhost:8080/api/v1/admin/disable`, newDisableInformation, {
-            headers: { Accept: 'application/json' },
-        });
-        alert(`Disable${disable ? '' : 'd'} Account Successfully!`);
-        window.location.reload();
-    } catch (err) {
-        console.log(err);
-    }
-};
+    const newDisableInformation = { id: id, verified: disable };
+    dispatch(changeAdminStatus(newDisableInformation));
+    toastHandler("success",`Disable${disable ? '' : 'd'} Account Successfully!`);
+   };
 
 const update = ( adminId,firstname,middlename,lastname,address,birthday,email,gender,contactNumber,profile) =>{
     setAdminInfo({
@@ -171,7 +165,7 @@ setUpdateModal(true);
                                 )}>
                                     <AiFillEdit size={25} />&nbsp;Update
                                 </button>
-                                <button className='bg-red-500 text-white flex items-center px-4 py-2 rounded-md'>
+                                <button className='bg-red-500 text-white flex items-center px-4 py-2 rounded-md' onClick={()=>dispatch(deleteAdmin(result.adminId))}>
                                     <AiFillDelete size={25} />&nbsp;Delete
                                 </button>
                             </td>

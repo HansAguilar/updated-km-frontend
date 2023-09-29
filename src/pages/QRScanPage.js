@@ -20,7 +20,7 @@ export default function QRScanPage() {
   const appointment = useSelector((state)=>{
     return state.appointment.payload.filter((val)=>{
        return val.appointmentId===id
-       && (val.status==="PENDING" || val.status === "APPROVED") })
+       && (val.status === "APPROVED" || val.status === "TREATMENT") })
   });
 
   const payment = useSelector((state)=>{

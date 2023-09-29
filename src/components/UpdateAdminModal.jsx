@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { updatePatient } from "../redux/action/PatientAction";
+import { updateAdmin } from "../redux/action/AdminAction";
 import { toastHandler } from '../ToastHandler';
 
 function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo, type}) {
@@ -79,9 +80,11 @@ function UpdateAdminModal({show, setModal, setAdminInfo, adminInfo, type}) {
           
           if(type==="patient"){
             dispatch(updatePatient(adminInfo.userId, data));
+          }else{
+            dispatch(updateAdmin(adminInfo.userId, data));
           }
-          setModal(false);
           toastHandler("success","Update Successfully!");
+          setModal(false);
         } catch (err) {
           console.log(err);
         }

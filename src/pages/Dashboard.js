@@ -17,6 +17,7 @@ import Announcement from './Announcement';
 import AppointmentCalendar from './AppointmentCalendar';
 import ViewPatient from '../components/ViewPatient';
 import Treatment from "./Treatment";
+import Payment from "./Payment";
 import Schedule from "./Schedule";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPatient } from '../redux/action/PatientAction';
@@ -78,7 +79,7 @@ function Dashboard() {
       dispatch(fetchPatient());
       isLoading(false); // Make sure you have a function named `isLoading` defined
     }
-  }, [admin]);
+  }, [admin.loginAdmin]);
   
   if(loading)return <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={loading} /></section>
   return (!patient?.loading && !history?.loading &&!announcement?.loading && !installment?.loading &&!payment?.loading && !service?.loading &&!dentist?.loading && !admin?.loading && !messages.loading&& !appointment?.loading) &&(
@@ -136,6 +137,10 @@ function Dashboard() {
                   <Route element={
                   <Schedule />
                   } path='/schedule' />
+
+                  <Route element={
+                  <Payment />
+                  } path='/payment' />
 
                   <Route element={
                   <Announcement />

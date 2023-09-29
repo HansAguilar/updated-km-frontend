@@ -11,6 +11,8 @@ function AppointmentInformation() {
     const payment = useSelector((state)=>{ return state.payment.payload.filter(val=>{ return val.appointment.appointmentId === id })});
     const [qrcode, setQrcode] = useState("");
 
+    console.log();
+
     const generateToQrCode = () =>{
         QRCode.toDataURL(`${id}`, {
           width: 400,
@@ -143,7 +145,11 @@ function AppointmentInformation() {
                                     </div>
                                   ))
                                 }
-                                <h1 className=' text-red-500 text-sm '>For Dentist Viewing*</h1>
+                                {
+                                  details[0].status !== "TREATMENT" && (
+                                    <h1 className=' text-red-500 text-sm '>For Dentist Viewing*</h1>
+                                  )
+                                }
                               </div>
                               <div className=' flex-grow h-[330px] p-4 '>
                                   <h1 className=' text-lg font-bold text-gray-700 '>Payment Summary</h1>

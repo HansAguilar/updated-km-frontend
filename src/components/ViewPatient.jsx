@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoArrowBackSharp } from "react-icons/io5";
+import ExcelButton from './MedicalRecordExcel';
+import PDFButton from './PDFMedicalButton';
 
 function ViewPatient(props) {
     const [headerNavigation, setHeaderNavigation] = useState("overview");
@@ -15,20 +17,17 @@ function ViewPatient(props) {
             return (val.patient.patientId === id );
           })
           .map((val) => {
-            return { date:val.appointmentDate,time:`${moment(val.timeStart,"HH:mm").format("LT")} - ${moment(val.timeEnd,"HH:mm").format("LT")}` , dentist:`Dr. ${val.dentist.fullname}`, status: val.status, };
+            return { date:val.appointmentDate,time:`${moment(val.timeStart,"HH:mm").format("LT")} - ${moment(val.timeEnd,"HH:mm").format("LT")}` , dentist:`Dr. ${val.dentist.fullname}`, status: val.status, patient:`${val.patient.firstname} ${val.patient.lastname}` };
           });
       });
 
-      const history = useSelector((state) => { 
-        return state.history.payload
-        .filter(val=>{ return val.appointment.patient.patientId === id;})
+      const history = appointment.filter(val=>val.status === "DONE" || val.status === "CANCELLED")
         .map(val=> {return{
-            date: moment(val.appointment.appointmentDate).format("L"),
-            dentist: `Dr. ${val.appointment.dentist.fullname}`,
-            description: val.description,
-            status:val.appointment.status
-         }})
-    });
+            date: moment(val.appointmentDate).format("L"),
+            dentist: val.dentist,
+            description: val.status==="DONE" ? `Appointment for ${val.patient} was successful` :  `${val.patient} cancelled the appointment`,
+            status:val.status
+         }});
       
 
     const OverviewPage = () =>{
@@ -74,8 +73,21 @@ function ViewPatient(props) {
     const HistoryPage = () =>{
         return (
             <>
+                   
                 {/* LEFT */}
                 <section className=' h-full flex flex-col flex-grow '>
+                        {
+                            history.length > 1 && (
+                            <div   div className=' w-full p-4 flex justify-between items-center '>
+                            <div className=' inline-flex gap-2  '>
+                                <ExcelButton users={history} title={`${patient.lastname} ${patient.firstname} medical history`} />
+                                {/*  */}
+                                <PDFButton data={history} />
+                                {/* <FileIcons Icon={AiFillPrinter} title={"Print"} /> */}
+                            </div>    
+                        </div>
+                        )
+                        }
                         <section className=' w-full px-6 py-3 text-center text-white bg-cyan-600 z-30 font-bold flex justify-between items-center '>
                             <p className=' w-[200px] max-w-[200px] text-left '>Date</p>
                             <p className=' w-[200px] max-w-[200px] text-left '>Dentist</p>
@@ -88,7 +100,7 @@ function ViewPatient(props) {
                                 <div className=' w-full px-6 py-3 shadow-sm hover:bg-gray-100 text-cyan-900 flex justify-between items-center'  key={idx}>
                                     <p className=' w-auto max-w-[100px] text-left '>{val.date}</p>
                                     <p className=' w-[200px] max-w-[200px] '>{val.dentist}</p>
-                                    <p className=' w-[200px] max-w-[200px] text-left '>{val.description}</p>
+                                    <p className=' w-[400px] max-w-[200px] text-left '>{val.description}</p>
                                     <p className={`
                                     ${val.status === "CANCELLED"?"bg-red-500":" bg-emerald-500 "}
                                      text-white px-5 py-1 capitalize rounded-full 
@@ -124,7 +136,7 @@ function ViewPatient(props) {
                             appointment
                             .filter((val) => {
                                 return (
-                                  (val.status !== "SUCCESS" && val.status !== "CANCELLED")
+                                  (val.status === "TREATMENT")
                                 );
                               })
                             .map((val,idx)=>(

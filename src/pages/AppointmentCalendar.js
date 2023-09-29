@@ -13,9 +13,10 @@ import { useSelector } from "react-redux";
 
 
 function AppointmentCalendar({}) {
-  const appointments = useSelector((state)=>state.appointment.payload.filter((val)=>val.status==="APPROVED"))
+  const appointments = useSelector((state)=>state.appointment.payload.filter((val)=>val.status==="APPROVED"||val.status==="TREATMENT"))
   const [allAppointment, setAppointment] = useState([]);
 
+    console.log(appointments);
   const locales = {
     "en-US": require("date-fns/locale/en-US"),
   };
@@ -42,11 +43,7 @@ function AppointmentCalendar({}) {
    }
 
   useEffect(()=>{
-    const result = appointments
-    .filter((val)=>{
-      return val.status === "APPROVED"
-    })
-    .map((val)=>{
+    const result = appointments.map((val)=>{
       console.log(new Date(moment(`${val.appointmentDate},${getTime(val.timeStart)}`).format('LLLL')));
       return {
         title: `Appointment for ${val.patient.firstname} ${val.patient.lastname}`,

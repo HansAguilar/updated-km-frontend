@@ -1,6 +1,4 @@
-import axios from 'axios';
 import React,{useState} from 'react';
-import { APPOINTMENT_LINK } from '../ApiLinks';
 import {AiFillEdit, AiOutlineFolderView,AiFillDelete} from 'react-icons/ai';
 import UpdateAppointmentModal from './UpdateAppointmentModal';
 import CancelModal from './CancelModal';
@@ -8,7 +6,7 @@ import ViewAppointment from './ViewAppointment';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { toastHandler } from "../ToastHandler";
-import { approvedAppointment } from "../redux/action/AppointmentAction";
+import { approvedAppointment, deleteAppointment } from "../redux/action/AppointmentAction";
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
 
@@ -26,13 +24,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage, type}) {
         isClick: false,
         statusCode: ""
     });
-    const [appointmentData, setAppointmentData] = useState({
-        dentist: "",
-        dentalServices: "",
-        timeStart: "",
-        appointmentDate: "",
-        appointmentId: ""
-    })
+    const [appointmentId, setAppointmentId] = useState(null)
     const [status1, setStatus1] = useState({
         selectedId: null,
         remarks: "PENDING",
@@ -44,30 +36,13 @@ function AppointmentTable({tableHeaders,results,search,currentPage, type}) {
         description: ""
     })
 
-      const deleteAppointment = async(id, result) =>{
-        try {
-            if(result === "APPROVED"){
-                return toastHandler("error", "You can't delete this appointment");
-            }
-            const response = await axios.delete(`${APPOINTMENT_LINK}${id}`);
-            if(response.data){
-                  toastHandler("success",`${response.data.message}`)    
-                  setTimeout(() => { window.location.reload(); }, 1500); 
-            }
-        } catch (error) {
-            toastHandler("error","You can't delete this appointment");
-        }
+      const deleteAppointmentButton = async(id) =>{
+        dispatch(deleteAppointment(id))
+        return toastHandler("success", "Deleted successfully!");
       }
-      const updateButton= (dentist, dentalServices, timeStart, appointmentDate, appointmentId) =>{
-        setAppointmentData({
-            dentist: dentist.fullname,
-            dentistId: dentist.dentistId,
-            serviceSelected: dentalServices,
-            serviceValue: "",
-            timeStart: timeStart,
-            appointmentDate: appointmentDate,
-            appointmentId: appointmentId
-        })
+
+      const updateButton= (id) =>{
+        setAppointmentId(id)
         setUpdate(true);
       }
 
@@ -90,7 +65,7 @@ function AppointmentTable({tableHeaders,results,search,currentPage, type}) {
     <>
     <div className='w-full px-4 py-3 overflow-auto '>
         <ToastContainer />
-        <UpdateAppointmentModal show={update} setShow={setUpdate} setAppointmentData={setAppointmentData} appointmentData={appointmentData} />
+        {update && (<UpdateAppointmentModal show={update} setModal={setUpdate} initialAppointment={appointmentId} />)}
         <CancelModal show={cancelModal} setShow={setCancelModal} status={status1} setStatus={setStatus1}/>
         <ViewAppointment view={view} setView={setView}/>
         <table className='w-full relative '>
@@ -197,14 +172,8 @@ function AppointmentTable({tableHeaders,results,search,currentPage, type}) {
                                 }
                             </td>
                             <td className=' h-16 text-white flex gap-1 items-center justify-center text-center '>
-                                <p className=' bg-cyan-500 px-4 py-2 rounded-md cursor-pointer hover:shadow-md inline-flex ' onClick={()=>updateButton(
-                                    result.dentist,
-                                    result.dentalServices,
-                                    result.timeStart,
-                                    result.appointmentDate,
-                                    result.appointmentId
-                                    )}><AiFillEdit size={25} />&nbsp;Update</p>
-                                <p className=' bg-red-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex' onClick={()=>deleteAppointment(result.appointmentId, result.status)}><AiFillDelete size={25} />&nbsp;Delete</p>
+                                <p className=' bg-cyan-500 px-4 py-2 rounded-md cursor-pointer hover:shadow-md inline-flex ' onClick={()=>updateButton(result)}><AiFillEdit size={25} />&nbsp;Update</p>
+                                <p className=' bg-red-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex' onClick={()=>deleteAppointmentButton(result.appointmentId)}><AiFillDelete size={25} />&nbsp;Delete</p>
                                 <p 
                                 className=' bg-gray-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex'
                                 onClick={()=>{

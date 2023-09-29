@@ -11,7 +11,7 @@ function AnnouncementTable({tableHeaders, results, search, currentPage }) {
 
     const deleteAnnouncement = async(id) =>{
         try {
-            const response = await axios.delete(`${ANNOUNCEMENT_LINK}${id}`)
+            const response = await axios.delete(`${ANNOUNCEMENT_LINK}/${id}`)
             if(response.data){
                 toast.success(`${response.data.message}`, {
                     position: "top-right",

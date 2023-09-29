@@ -1,8 +1,10 @@
 import React,{useState} from 'react';
 import { IoAddSharp, IoRemoveOutline} from 'react-icons/io5';
 import { createPatient } from '../redux/action/PatientAction';
+import { createAdmin } from '../redux/action/AdminAction';
 import { useDispatch } from 'react-redux';
 import { toastHandler } from '../ToastHandler';
+import { ToastContainer } from 'react-toastify';
 
 function AdminModal({show, setModal, type}) {
     const dispatch = useDispatch();
@@ -65,7 +67,7 @@ function AdminModal({show, setModal, type}) {
       if(type==="patient"){
         dispatch(createPatient(data,setModal,setAdminInfo,setProfile));
       }else{
-        console.log("");
+        dispatch(createAdmin(data,setModal,setAdminInfo,setProfile));
       }
     }
     const isOver18 = (dob) =>{
@@ -117,6 +119,7 @@ function AdminModal({show, setModal, type}) {
   
     return (
       <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 z-40 flex flex-grow justify-center items-center ${show ? '': 'hidden'}`}>
+        <ToastContainer />
           <div className=" z-50">
             <div className="m-auto w-[550px] h-[700px] overflow-auto p-8 bg-white rounded-lg shadow-lg">
               <div className="text-left py-4">

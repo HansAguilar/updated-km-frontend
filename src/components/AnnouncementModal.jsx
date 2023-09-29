@@ -31,7 +31,7 @@ function AnnouncementModal({show, setModal}) {
   
   const insertDetails = async(data) =>{
     try {
-        const response = await axios.post(`${ANNOUNCEMENT_LINK}`, data,{
+        const response = await axios.post(`${ANNOUNCEMENT_LINK}/`, data,{
             headers: { Accept: "application/json", }
           });
         if(response.data){

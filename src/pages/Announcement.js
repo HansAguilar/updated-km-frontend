@@ -29,7 +29,7 @@ function Announcement() {
     
     const fetchAllAnnouncement = async() =>{
         try {
-            const response = await axios.get(ANNOUNCEMENT_LINK);
+            const response = await axios.get(`${ANNOUNCEMENT_LINK}/`);
             if(response.data){
                 setAnnouncement(response.data);
             }
