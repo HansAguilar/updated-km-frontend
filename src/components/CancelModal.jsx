@@ -13,7 +13,8 @@ function CancelModal({show, setShow,status,setStatus}) {
         status: "CANCELLED",
         description: status.description
     }
-    dispatch(cancelledAppointment(status.id,data));
+    console.log(status);
+    dispatch(cancelledAppointment(status.selectedId,data));
     setStatus({...status, description:""})
     setShow(false);
   }

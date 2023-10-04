@@ -31,7 +31,7 @@ function Login() {
 
   const fetchAccount = async(formData) =>{
     try{
-      const response = await axios.post("http://localhost:8080/api/v1/admin/login",formData,{
+      const response = await axios.post(`https://kmgeronimo-backend-api.onrender.com/api/v1/admin/login`,formData,{
         headers: { Accept: "application/json" }
       })
       modifyResult(response.data.status, response.data.message)

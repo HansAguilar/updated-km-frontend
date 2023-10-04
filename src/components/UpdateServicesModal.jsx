@@ -16,6 +16,15 @@ function UpdateServicesModal({show, setModal, setData, data}) {
 
   const submitData = async() =>{
     dispatch(updateService(data.serviceId, data));
+    setData({...data, 
+      serviceId:"",
+      name:"",
+      type:"",
+      description:"",
+      duration:"00:30:00",
+      price:0
+  });
+
     setModal(false);
   }
 

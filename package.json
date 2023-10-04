@@ -38,8 +38,6 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "socket": "nodemon src/socket/index.js",
-    "dev":" concurrently \"npm run start\" \" npm run socket \" ",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

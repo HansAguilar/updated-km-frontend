@@ -25,6 +25,14 @@ function ServicesModal({show, setModal}) {
   const submitButton = async() =>{
     if(!services.name || !services.type || !services.description || services.price === 0) return toastHandler("error","Fill up empty field.")
     dispatch(createService(services));
+    setServices({
+      ...services,
+      name:"",
+      type:"",
+      description:"",
+      duration:"00:30:00",
+      price: 0
+    });
     setModal(false);
   }
 

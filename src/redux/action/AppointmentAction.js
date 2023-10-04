@@ -74,22 +74,22 @@ export const approvedAppointment = (id) =>{
     }
 }
 
-export const updateAppointment = (id,data) =>{
+export const updateAppointment = (id,value) =>{
     return async dispatch=>{
         try {
-            const response = await axios.put(`${APPOINTMENT_LINK}/update/${id}`,data);
+            const response = await axios.put(`${APPOINTMENT_LINK}/update/${id}`,value);
             dispatch({
                 type: UPDATE_APPOINTMENT_SUCCESS,
                 payload:response.data
             });
             socket.emit("appointment_changes",{value: response.data});
         } catch (error) {
-            toastHandler("error", error.response.message.data)
+            toastHandler("error",error.response.data.message);
         }
     }
 }
 
-export const deleteAppointment = (id) =>{
+export const  deleteAppointment = (id) =>{
     return async dispatch=>{
         try {
             await axios.delete(`${APPOINTMENT_LINK}/${id}`);
@@ -98,7 +98,7 @@ export const deleteAppointment = (id) =>{
                 payload:id
             });
         } catch (error) {
-            toastHandler("error", error.response.message.data)
+            toastHandler("error",error.response.data.message);
         }
     }
 }

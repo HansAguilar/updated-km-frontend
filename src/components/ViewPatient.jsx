@@ -25,7 +25,7 @@ function ViewPatient(props) {
         .map(val=> {return{
             date: moment(val.appointmentDate).format("L"),
             dentist: val.dentist,
-            description: val.status==="DONE" ? `Appointment for ${val.patient} was successful` :  `${val.patient} cancelled the appointment`,
+            description: val.status==="DONE" ? `Appointment for ${val.patient} was successful` :  `Appointment for ${val.patient} has been cancelled`,
             status:val.status
          }});
       

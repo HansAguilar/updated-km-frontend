@@ -1,12 +1,13 @@
 import React,{useState} from 'react';
 import {AiFillEdit, AiOutlineFolderView,AiFillDelete} from 'react-icons/ai';
+import { MdCancel } from "react-icons/md";
 import UpdateAppointmentModal from './UpdateAppointmentModal';
 import CancelModal from './CancelModal';
 import ViewAppointment from './ViewAppointment';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { toastHandler } from "../ToastHandler";
-import { approvedAppointment, deleteAppointment } from "../redux/action/AppointmentAction";
+import { approvedAppointment, deleteAppointment, cancelledAppointment } from "../redux/action/AppointmentAction";
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
 
@@ -108,7 +109,10 @@ function AppointmentTable({tableHeaders,results,search,currentPage, type}) {
             <tbody className='h-auto p-6 '>
                {
                     results
-                    // .filter((val)=>{ return statusValue.statusCode !== "" ? val.status === statusValue.statusCode && type !== "" : (val.status === "APPROVED" || val.status === "PENDING" || val.status === "TREATMENT") })
+                    // .filter((val)=>{ return statusValue.statusCode !== "" ? val.status === statusValue.statusCode && type !== "" :
+                    // statusValue.statusCode === "DONE" ? val.status === "DONE"  
+                    // : statusValue.statusCode === "APPROVED" ? val.status === "APPROVED" 
+                    // : val.status === "PENDING"})
                     .slice((currentPage*8)-8, currentPage*8)
                     .map((result)=>(
                         <tr key={result.appointmentId} className=' text-center h-16 '>
@@ -173,6 +177,14 @@ function AppointmentTable({tableHeaders,results,search,currentPage, type}) {
                             </td>
                             <td className=' h-16 text-white flex gap-1 items-center justify-center text-center '>
                                 <p className=' bg-cyan-500 px-4 py-2 rounded-md cursor-pointer hover:shadow-md inline-flex ' onClick={()=>updateButton(result)}><AiFillEdit size={25} />&nbsp;Update</p>
+                                {
+                                    result.status !== "TREATMENT" && (
+                                        <p className=' bg-orange-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex' onClick={()=>{
+                                            setStatus1({...status1, selectedId: result.appointmentId})
+                                            setCancelModal(true)
+                                        }}><MdCancel size={25} />&nbsp;Cancel</p>
+                                    )
+                                }
                                 <p className=' bg-red-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex' onClick={()=>deleteAppointmentButton(result.appointmentId)}><AiFillDelete size={25} />&nbsp;Delete</p>
                                 <p 
                                 className=' bg-gray-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex'

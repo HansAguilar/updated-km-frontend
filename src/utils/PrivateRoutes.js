@@ -12,7 +12,7 @@ function PrivateRoutes() {
         const token = localStorage.getItem("token");
         const formData = new FormData()
         formData.append("token",token);
-        const response = await axios.post("http://localhost:8080/api/v1/admin/verifyAccount",formData,{
+        const response = await axios.post("https://kmgeronimo-backend-api.onrender.com/api/v1/admin/verifyAccount",formData,{
           headers: { Accept: 'application/json' }
         })
         if(response.data === "valid"){
