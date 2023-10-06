@@ -48,6 +48,9 @@ function HistoryTable({tableHeaders, results, search, currentPage }) {
                             <td className='p-2 text-center '>
                                 {result.name}
                             </td>
+                            <td className='p-2 text-center '>
+                                {result.dentist}
+                            </td>
                             <td className='p-2 text-center  '>
                                 {result.description}
                             </td>

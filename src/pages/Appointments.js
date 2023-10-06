@@ -1,7 +1,7 @@
 import React,{ useEffect, useState} from 'react';
 import PageHeader from '../components/PageHeader';
 import { IoAdd } from 'react-icons/io5';
-// import { AiFillPrinter } from 'react-icons/ai';
+import { AiFillPrinter, AiOutlineHistory } from 'react-icons/ai';
 // import FileIcons from '../components/FileIcons';
 import Table from '../components/AppointmentTable';
 import Modal from '../components/AppointmentModal';
@@ -12,17 +12,21 @@ import { fetchPatientPayments } from "../redux/action/PaymentAction";
 import { useDispatch, useSelector } from 'react-redux';
 import * as io from "socket.io-client";
 import { SOCKET_LINK } from '../ApiLinks';
+import moment from 'moment';
 // import { useNavigate } from 'react-router-dom';
-// import ExcelButton from '../components/ExcelButton';
+import ExcelButton from '../components/MedicalRecordExcel';
+import { useNavigate } from 'react-router-dom';
 // import PDFButton from '../components/PDFButton';
 
 
 const socket = io.connect(SOCKET_LINK);
 function Appointments() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [ show, setModal ] = useState(false);
   const [ covidShow, setCovidModal ] = useState(false);
   const [ search, setSearch ] = useState("");
+  const appointmentHistory = useSelector((state)=>{ return state.appointment.payload})
   const appointmentList = useSelector((state)=>{ return state.appointment.payload.filter((val)=>val.status==="PENDING"||val.status==="APPROVED")})
   const fee = useSelector((state)=>{ return state.fee.payload; });
   const [ currentPage, setCurrentPage ] = useState(1);
@@ -45,7 +49,15 @@ function Appointments() {
     method: "",
     type: "",
     insuranceId: "",
-  });
+  }); 
+  
+  const history = appointmentHistory.filter(val=>val.status === "DONE" || val.status === "CANCELLED")
+  .map(val=> {return{
+      date: moment(val.appointmentDate).format("L"),
+      name: `${`${val.patient.firstname} ${val.patient.lastname}`}`,
+      description: val.status==="DONE" ? `Appointment for  was successful` :  `Appointment for ${val.patient} has been cancelled`,
+      status:val.status
+   }});
 
   for(let x = 1; x <= Math.ceil(appointmentList.length/8);x++){
     pageNumber.push(x);
@@ -95,7 +107,7 @@ function Appointments() {
           {/* <div className=' w-full h-auto p-4 border-t-2 border-t-cyan-500 rounded-t-xl flex justify-between items-center border-b-2 '>
               <h1 className=' text-xl '>Appointment List</h1>
               <div className='flex gap-3 '>
-                <button className=' bg-gray-500 text-white flex justify-start items-center pl-4 pr-8 py-2 cursor-pointer rounded-md font-bold capitalize ' onClick={()=>navigate("/admin/dashboard/history")}><AiOutlineHistory size={30} />&nbsp;History</button>
+                
                 <button className=' bg-cyan-500 text-white flex justify-start items-center pl-1 pr-6 py-2 cursor-pointer rounded-md font-bold capitalize ' onClick={()=>setModal(true)}><IoAdd size={30} />&nbsp;Add Appointment</button> 
               </div>
           </div> */}
@@ -103,8 +115,9 @@ function Appointments() {
            <div className=' w-full p-4 flex justify-between '>
               <button className=' bg-cyan-500 text-white flex justify-start items-center pl-1 pr-6 py-2 cursor-pointer rounded-md font-bold capitalize ' onClick={()=>setModal(true)}><IoAdd size={30} />&nbsp;Add Appointment</button> 
               <div className=' inline-flex gap-2  '>
-                  {/* <ExcelButton user={patients} title={"patients"} />
-                  <PDFButton data={patients} />
+              <button className=' bg-gray-500 text-white flex justify-start items-center pl-4 pr-8 py-2 cursor-pointer rounded-md font-bold capitalize ' onClick={()=>navigate("/admin/dashboard/history")}><AiOutlineHistory size={30} />&nbsp;History</button>
+                  {/* <ExcelButton user={history} title={"patients"} /> */}
+                  {/* <PDFButton data={patients} />
                   <FileIcons Icon={AiFillPrinter} title={"Print"} /> */}
               </div>    
               <input

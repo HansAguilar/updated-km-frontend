@@ -9,11 +9,18 @@ import Pagination from '../components/Pagination';
 import ExcelButton from '../components/ExcelButton';
 import PDFButton from '../components/PDFButton';
 import { useSelector } from 'react-redux';
+import UpdatePaymentModal from '../components/UpdatePayment';
 
   function Payments() {
     const payload = useSelector((state)=>{ return state.payment.payload.filter((val)=>val.status==="PENDING") });
-    const tableHeaders = [ "photo", "patient","method","type","payment total","action" ];
+    const tableHeaders = [ "photo", "patient","appointment date","method","type","payment total","status","action" ];
     const [ show, setModal ] = useState(false);
+    const [ updateModal, setUpdateModal ] = useState(false);
+    const [ updateData, setUpdateData ] = useState({
+      id:"",
+      method:"",
+      totalAmount:""
+    });
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ search, setSearch ] = useState("");
     const pageNumber = [];
@@ -34,12 +41,12 @@ import { useSelector } from 'react-redux';
     return (
       <div className=' h-screen overflow-hidden relative bg-gray-200 '>
           <Modal show={show} setModal={setModal} type="patient" />
+          { updateModal && (<UpdatePaymentModal show={updateModal} setModal={setUpdateModal} updateData={updateData} setUpdateData={setUpdateData} />)}
           <PageHeader link={'payment'} />
           
           <div className=' w-full flex flex-col justify-center p-4 '> 
             
               <div className=' w-full h-auto '>
-  
                   {/*Sub header*/}
                     {/* <div className=' w-full p-4 flex justify-between items-center '>
                       <h1 className=' text-xl '>Patient List</h1>
@@ -65,7 +72,7 @@ import { useSelector } from 'react-redux';
                         onChange={(e)=>searchHandle(e)}
                       />
                     </div>
-                      <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredPatient : payload.sort()  } search={search} currentPage={currentPage} />
+                      <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredPatient : payload.sort()  } search={search} setUpdateModal={setUpdateModal} currentPage={currentPage}  updateData={updateData} setUpdateData={setUpdateData}/>
                       {/*Pagination */}
                       <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
                     </div>

@@ -7,7 +7,7 @@ import { updateAppointment } from "../redux/action/AppointmentAction";
 import { toastHandler } from '../ToastHandler';
 
 function UpdateAppointmentModal({show,setModal,initialAppointment}) {
-  const minDate = new Date().toISOString().split('T')[0];
+  const [minDate, setMinDate] = useState(new Date().toISOString().split('T')[0]);
   const dispatch = useDispatch();
   const dentist = useSelector((state)=>{ return state.dentist; });
   const service = useSelector((state)=>{ return state.service; });

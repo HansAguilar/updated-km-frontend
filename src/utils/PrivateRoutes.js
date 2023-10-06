@@ -2,6 +2,7 @@ import React,{ useEffect,useState } from 'react';
 import { Outlet,Navigate } from 'react-router-dom';
 import axios from 'axios';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { ADMIN_LINK } from '../ApiLinks';
 
 function PrivateRoutes() {
   const [auth, setAuth] = useState({ token: false });
@@ -12,7 +13,7 @@ function PrivateRoutes() {
         const token = localStorage.getItem("token");
         const formData = new FormData()
         formData.append("token",token);
-        const response = await axios.post("https://kmgeronimo-backend-api.onrender.com/api/v1/admin/verifyAccount",formData,{
+        const response = await axios.post(`${ADMIN_LINK}/verifyAccount`,formData,{
           headers: { Accept: 'application/json' }
         })
         if(response.data === "valid"){

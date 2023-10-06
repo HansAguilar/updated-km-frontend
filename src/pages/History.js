@@ -4,11 +4,15 @@ import Table from '../components/HistoryTable';
 import axios from 'axios';
 import Pagination from '../components/Pagination';
 import { HISTORY_LINK } from '../ApiLinks';
+import { useSelector } from 'react-redux';
+import ExcelButton from '../components/HistoryExcel';
+import PDFButton from '../components/HistoryPdfButton';
+import moment from 'moment';
 
 function History() {
-  const tableHeaders = [ "Name", "Description", "Date", "Status" ];
+  const tableHeaders = [ "Name","Dentist", "Description", "Date", "Status" ];
   const [ search, setSearch ] = useState("");
-  const [historyList, setHistoryList] = useState([]);
+  const  historyList = useSelector((state)=>state.appointment.payload.filter((val)=>val.status === "DONE" || val.status === "CANCELLED"))
   const [ currentPage, setCurrentPage ] = useState(1);
   const pageNumber = [];
 
@@ -22,17 +26,27 @@ function History() {
   const filteredHistory = historyList.filter((val)=>
     (val.name+val.appointmentDate).toLowerCase().includes(search.toLowerCase())
   )
-  const fetchHistory = async() => {
-    try {
-        const response = await axios.get(HISTORY_LINK);
-        if(response.data){
-            setHistoryList(response.data);
-        }
-    } catch (error) {console.log(error); }
-  }
-  useEffect(()=>{
-    fetchHistory();
-  },[]);
+
+  const history = historyList.filter(val=>val.status === "DONE" || val.status === "CANCELLED")
+        .map(val=> {return{
+            appointmentDate: moment(val.appointmentDate).format("L"),
+            name: `${val.patient.firstname} ${val.patient.lastname}`,
+            dentist: `Dr. ${val.dentist.fullname}`,
+            description: val.status==="DONE" ? `Appointment for ${val.patient.firstname} ${val.patient.lastname} was successful` :  `Appointment for ${val.patient} has been cancelled`,
+            status:val.status
+         }});
+
+  // const fetchHistory = async() => {
+  //   try {
+  //       const response = await axios.get(HISTORY_LINK);
+  //       if(response.data){
+  //           setHistoryList(response.data);
+  //       }
+  //   } catch (error) {console.log(error); }
+  // }
+  // useEffect(()=>{
+  //   fetchHistory();
+  // },[]);
   
   return (
     <div className=' h-screen overflow-hidden relative '>
@@ -58,9 +72,9 @@ function History() {
            {/*Searchbar and files*/}
            <div className=' w-full p-4 flex justify-between '>
               <div className=' inline-flex gap-2  '>
-                  {/* <ExcelButton user={patients} title={"patients"} />
-                  <PDFButton data={patients} />
-                  <FileIcons Icon={AiFillPrinter} title={"Print"} /> */}
+                   <ExcelButton users={history} title={"medical-record-list"} />
+                  <PDFButton data={history} />
+                  {/*<FileIcons Icon={AiFillPrinter} title={"Print"} /> */}
               </div>    
               {/* <input
                   type='text'
@@ -73,7 +87,7 @@ function History() {
               
     
             </div>
-            <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredHistory : historyList  } search={search} currentPage={currentPage} /> 
+            <Table tableHeaders={tableHeaders} results={ search.length > 0 ? filteredHistory : history  } search={search} currentPage={currentPage} /> 
               <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
         </div>
       </div>

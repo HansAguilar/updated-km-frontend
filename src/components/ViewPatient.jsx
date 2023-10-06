@@ -1,10 +1,12 @@
 import moment from 'moment';
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoArrowBackSharp } from "react-icons/io5";
 import ExcelButton from './MedicalRecordExcel';
 import PDFButton from './PDFMedicalButton';
+import { TEETH_LINK } from '../ApiLinks';
+import axios from 'axios';
 
 function ViewPatient(props) {
     const [headerNavigation, setHeaderNavigation] = useState("overview");
@@ -30,42 +32,110 @@ function ViewPatient(props) {
          }});
       
 
+         const [teethList, setTeethList] = useState([]);
+         const toothChart = [...Array(32)].map((_,idx)=>{
+            const filterTeeth = teethList.filter((val)=>val.teethNumber===idx+1 && val.status==="UNDER_TREATMENT");
+            return { 
+                teethNumber: idx+1,
+                isUnderTreatment:filterTeeth.length>0?true:false,
+            }
+         });
+         const [teethHistory, setHistory] = useState([]);
+         const teethHeader = ["Appointment Start", "Appointment End", "Services","Status"]
+
+         const selectTeethButton = (idx) => {
+            const filteredSelectedTeeth = teethList.filter((val)=>val.teethNumber===idx);
+            setHistory(filteredSelectedTeeth);
+         }
+
+         useEffect(()=>{
+           const fetchTeeth = async()=>{
+               try {
+                   const response = await axios.get(`${TEETH_LINK}/${id}`);
+                   setTeethList(response.data);
+               } catch (error) {
+                   
+               }
+           }
+           fetchTeeth();
+         },[]);
+    
     const OverviewPage = () =>{
         return (
             <>
                 {/* LEFT */}
-                <section className=' h-full flex flex-col flex-grow '>
-                        <section className=' w-full px-6 py-3 text-white bg-cyan-600 z-30 font-bold flex justify-between items-center '>
-                            <p>Date</p>
-                            <p>Time</p>
-                            <p>Dentist</p>
-                            <p>Status</p>
-                        </section>
-                        <section className=' w-full min-h-[490px] max-h-[490px] overflow-auto bg-white '>
-                        {
-                            appointment
-                            .filter((val) => {
-                                return (
-                                  (val.status !== "SUCCESS" && val.status !== "CANCELLED")
-                                );
-                              })
-                            .map((val,idx)=>(
-                                <div className=' w-full px-6 py-3 shadow-sm hover:bg-gray-100 text-cyan-900 flex justify-between items-center'  key={idx}>
-                                    <p>{moment(val.date).format("MMMM DD YYYY")}</p>
-                                    <p>{val.time}</p>
-                                    <p>{val.dentist}</p>
-                                    <p>{val.status}</p>
+                <section className=' min-h-[560px] max-h-[560px]  flex flex-col flex-grow p-4 '>
+                   
+                   {/* TOOTH CHART */}
+                    <div className=' w-full h-auto flex flex-col gap-y-4 py-3 px-10 bg-rose-500 rounded-lg '>
+                        {/* UPPER TEETH */}
+                        <div className=' w-full flex flex-row justify-center items-start gap-3 '>
+                            {
+                                toothChart.map((val,idx)=>(
+                                    <div key={idx} className={` px-5 py-8 rounded-b-2xl shadow-sm 
+                                    ${val.isUnderTreatment?' bg-emerald-500 ':'bg-white'} 
+                                    ${val.isUnderTreatment?' text-white ':'text-zinc-600'} 
+                                    ${val.isUnderTreatment?' font-bold ':''} 
+                                    cursor-pointer `}
+                                    onClick={()=>selectTeethButton(val.teethNumber)}
+                                    >
+                                        <p>{val.teethNumber<10? `0${val.teethNumber}`:val.teethNumber}</p>
+                                    </div>
+                                )).slice(0,16)
+                            }
+                        </div>
+                        
+                        {/* LOWER TEETH */}
+                        <div className=' w-full flex flex-row justify-center items-start gap-3 '>
+                            {
+                                toothChart.map((val,idx)=>(
+                                    <div key={idx}  className={` px-5 py-8 rounded-t-2xl shadow-sm 
+                                    ${val.isUnderTreatment?' bg-emerald-500 ':'bg-white'} 
+                                    ${val.isUnderTreatment?' text-white ':'text-zinc-600'} 
+                                    cursor-pointer `}
+                                    onClick={()=>selectTeethButton(val.teethNumber)}
+                                    >
+                                        <p>{val.teethNumber}</p>
+                                    </div>
+                                )).slice(16,toothChart.length)
+                            }
+                        </div>
+                    </div>
+
+                    {
+                        teethHeader.length > 0 && (
+                            <div className=' bg-white rounded-md w-full p-5 mt-2 h-full '>
+                                {/* HEADER */}
+                                <div className=' w-full border-b-[1px] pb-2 text-zinc-500 grid grid-cols-4 '>
+                                    {
+                                        teethHeader.map((val,idx)=>(
+                                            <p key={idx} className='uppercase text-sm font-bold '>{val}</p>
+                                        ))
+                                    }
                                 </div>
-                            ))
-                        }
-                        {/* <div className=' w-full px-6 py-3 text-cyan-900 flex justify-between items-center'>
-                                    <p>val.date</p>
-                                    <p>val.time</p>
-                                    <p>val.dentist</p>
-                                    <p>val.status</p>
-                                </div> */}
-                        </section>
-                    </section>
+
+                                <div className=' w-full h-auto max-h-[200px] overflow-auto grid gap-3 mt-2' >
+                                    {
+                                        teethHistory.map((val,idx)=>(
+                                            <div key={idx} className=' grid grid-cols-4 w-full '>
+                                                <p  className=' text-sm text-zinc-700 '>{moment(val.treatmentDate).format('MMM DD, YYYY')}</p>
+                                                <p className='text-sm text-zinc-700 '>{moment(val.treatmentEnd).format('MMM DD, YYYY')}</p>
+                                                <div className=' w-full flex flex-wrap gap-2 '>{
+                                                    val.appointment.dentalServices.map((val,idx)=>(
+                                                        <p key={idx}  className=' px-3 py-1 rounded-md w-auto bg-cyan-500 text-white capitalize text-sm'>{val.name.toLowerCase()}</p>
+                                                    ))
+                                                }</div>
+                                                <p className=' capitalize text-sm text-zinc-700 '>{val.status === "UNDER_TREATMENT"? "TREATMENT".toLowerCase():val.status.toLowerCase()}</p>
+                                            </div>
+                                        ))
+                                    }
+                               </div>
+
+                                
+                            </div>
+                        )
+                    }
+                </section>
             </>
         )
     }
@@ -76,18 +146,12 @@ function ViewPatient(props) {
                    
                 {/* LEFT */}
                 <section className=' h-full flex flex-col flex-grow '>
-                        {
-                            history.length > 1 && (
-                            <div   div className=' w-full p-4 flex justify-between items-center '>
+                        {/* <div   div className=' w-full p-4 flex justify-between items-center '>
                             <div className=' inline-flex gap-2  '>
                                 <ExcelButton users={history} title={`${patient.lastname} ${patient.firstname} medical history`} />
-                                {/*  */}
                                 <PDFButton data={history} />
-                                {/* <FileIcons Icon={AiFillPrinter} title={"Print"} /> */}
                             </div>    
-                        </div>
-                        )
-                        }
+                        </div> */}
                         <section className=' w-full px-6 py-3 text-center text-white bg-cyan-600 z-30 font-bold flex justify-between items-center '>
                             <p className=' w-[200px] max-w-[200px] text-left '>Date</p>
                             <p className=' w-[200px] max-w-[200px] text-left '>Dentist</p>
@@ -160,7 +224,7 @@ function ViewPatient(props) {
         )
     }
 
-    return (
+    return teethList && (
         <section className=" w-full h-screen overflow-hidden relative bg-gray-200">
             
             <section className=' w-full h-full bg-gray-200 '>
