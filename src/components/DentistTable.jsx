@@ -157,7 +157,7 @@ function DentistTable({tableHeaders, results, search, currentPage }) {
                                     result.specialty,
                                     result.profile
                                 )}><AiFillEdit size={25} />&nbsp;Update</p>
-                                <p className=' px-5 py-2 rounded-md bg-gray-500 text-white cursor-pointer hover:shadow-md flex'><AiOutlineFolderView size={25} />&nbsp;View</p> 
+                                {/* {//<p className=' px-5 py-2 rounded-md bg-gray-500 text-white cursor-pointer hover:shadow-md flex'><AiOutlineFolderView size={25} />&nbsp;View</p> } */}
                             </td>
                         </tr>
                     ))

@@ -101,9 +101,9 @@ function PaymentTable({tableHeaders, results, search, currentPage,setUpdateModal
                                 }} >
                                     <AiFillEdit size={25} />&nbsp;Update
                                 </button>
-                                <button className='bg-red-500 text-white flex items-center px-4 py-2 rounded-md' >
+                                {/* <button className='bg-red-500 text-white flex items-center px-4 py-2 rounded-md' >
                                     <AiFillDelete size={25} />&nbsp;Delete
-                                </button>
+                                </button> */}
                             </td>
                         </tr> 
                     ))
