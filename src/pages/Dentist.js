@@ -1,15 +1,13 @@
-import React,{ useState, useEffect } from 'react';
+import React,{ useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { IoAdd } from 'react-icons/io5';
 import { AiFillPrinter } from 'react-icons/ai';
 import FileIcons from '../components/FileIcons';
 import DentistModal from '../components/DentistModal';
-import axios from 'axios';
 import Pagination from '../components/Pagination';
 import DentistTable from '../components/DentistTable';
 import DentistExcelButton from '../components/DentistExcelButton';
 import PDFButton from '../components/PDFButton';
-import { DENTIST_LINK } from '../ApiLinks';
 import { useSelector } from 'react-redux';
 
 function Dentist() {
@@ -23,19 +21,13 @@ function Dentist() {
   for(let x = 1; x <= Math.ceil(dentistList?.length/8);x++){
     pageNumber.push(x);
   }
-
   const searchHandle = (e) =>{ 
     setSearch(e.target.value);
   }
-
-  
-
   const filteredDentist = dentistList?.filter(dentist=>
     (dentist.fullname+dentist.address+dentist.specialty).toLowerCase().includes(search)
     );
 
-
-  console.log(dentistList)
   return (
     <div className=' h-screen overflow-hidden relative '>
       <DentistModal show={show} setModal={setModal} />

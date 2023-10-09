@@ -82,19 +82,6 @@ function Appointments() {
       };
     });
    
-
-    useEffect(()=>{
-      socket.on("response_changes",(data)=>{
-        dispatch(fetchPatientAppointment());
-        dispatch(fetchPatientPayments());
-      })
-
-      socket.on("response_cancel",(data)=>{
-        dispatch(responseToCancelledAppointment(data.value));
-      })
-
-      return ()=>{socket.off()}
-    },[socket]);
   return (
     <div className=' h-screen overflow-hidden relative '>
       <Modal show={show} setModal={setModal} setCovidModal={setCovidModal} appointment={appointment} setAppointment={setAppointment} filteredAppointments={filteredAppointments} />

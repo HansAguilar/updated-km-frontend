@@ -146,7 +146,6 @@ function AppointmentTable({tableHeaders,results,search,currentPage, type}) {
                                     >
                                     <option value="PENDING" disabled>Pending</option>
                                     <option value="APPROVED" >Approved</option>
-                                    <option value="CANCELLED" >Cancel</option>
                                     </select>
                                 ) : (
                                     <p

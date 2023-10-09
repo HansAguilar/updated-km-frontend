@@ -1,8 +1,10 @@
 import axios from 'axios';
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { updateDentist } from "../redux/action/DentistAction";
 
 function UpdateDentistModal({show, setModal, setData, data}) {
-
+  const dispatch = useDispatch();
   const handleFormChange = (e) =>{
     setData({
       ...data,
@@ -20,19 +22,6 @@ function UpdateDentistModal({show, setModal, setData, data}) {
     }
   }
 
-  const submitData = async(newData) =>{
-    try{
-      const response = await axios.put(`http://localhost:8080/api/v1/dentist/updatedentist/${data.dentistId}`,newData,{
-        headers: { Accept: "application/json", }
-      });
-      if(response.data){
-        alert(response.data.message);
-        window.location.reload();
-      }
-    }catch(err){
-      console.log(err);
-    };
-  }
   const isOver18 = (dob) =>{
     const birthday = new Date(dob);
     const ageDiff = Date.now() - birthday.getTime();
@@ -61,7 +50,8 @@ function UpdateDentistModal({show, setModal, setData, data}) {
       specialty: data.specialty,
       profile: data.profile
     }
-    submitData(newData);
+    dispatch(updateDentist(data.dentistId, newData));
+    setModal(false);
   }
 
   return (

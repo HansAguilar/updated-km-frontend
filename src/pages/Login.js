@@ -3,6 +3,7 @@ import logo from '../assets/logo.jpg';
 import blob from '../assets/blob.png';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ADMIN_LINK } from '../ApiLinks';
 
 function Login() {
   const [account, setAccount] = useState({
@@ -29,7 +30,7 @@ function Login() {
 
   const fetchAccount = async (formData) => {
     try {
-      const response = await axios.post(`https://kmgeronimo-backend-api.onrender.com/api/v1/admin/login`, formData, {
+      const response = await axios.post(`${ADMIN_LINK}/login`, formData, {
         headers: { Accept: "application/json" }
       })
       modifyResult(response.data.status, response.data.message)

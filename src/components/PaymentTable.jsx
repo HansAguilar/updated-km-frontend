@@ -1,11 +1,12 @@
 import React,{useState} from 'react';
 import {AiFillEdit, AiFillDelete} from 'react-icons/ai';
+import { BsFillPersonCheckFill } from 'react-icons/bs';
 import UpdateAdminModal from './UpdateAdminModal';
 import { useDispatch } from 'react-redux';
 import { toastHandler } from '../ToastHandler';
 import moment from 'moment/moment';
 
-function PaymentTable({tableHeaders, results, search, currentPage,setUpdateModal,updateData,setUpdateData}) {
+function PaymentTable({tableHeaders, results, search, currentPage,setUpdateModal,updateData,setUpdateData,acceptData,setAcceptData}) {
   const dispatch = useDispatch();
   
   console.log(results);
@@ -101,6 +102,13 @@ function PaymentTable({tableHeaders, results, search, currentPage,setUpdateModal
                                 }} >
                                     <AiFillEdit size={25} />&nbsp;Update
                                 </button>
+                                {
+                                    result.status === "CHECKING" && (
+                                        <button className=' bg-green-500 text-white flex items-center px-4 py-2 rounded-md' onClick={()=>setAcceptData({...acceptData, isActive:true, data:result})}>
+                                            <BsFillPersonCheckFill size={25} />&nbsp;Accept
+                                        </button>
+                                    )
+                                }
                                 {/* <button className='bg-red-500 text-white flex items-center px-4 py-2 rounded-md' >
                                     <AiFillDelete size={25} />&nbsp;Delete
                                 </button> */}

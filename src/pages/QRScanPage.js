@@ -63,7 +63,11 @@ export default function QRScanPage() {
     if(payment[0]?.status === "PENDING"){
       return toastHandler("error","Please pay the bill")
     }
-    dispatch(acceptAppointment(id));
+    if(payment[0]?.status === "TREATMENT"){
+
+    }else{
+      dispatch(acceptAppointment(id));
+    }
     window.location.reload(navigate("/admin/dashboard/"));
   }
   return appointmentDetails && (

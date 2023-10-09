@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { updatePayment } from "../redux/action/PaymentAction";
 import { toastHandler } from '../ToastHandler';
 
-function UpdatePaymentModal({show, setModal, setData, data,updateData,setUpdateData}) {
+function UpdatePaymentModal({show, setModal, setData, data,updateData,setUpdateData,}) {
   const dispatch = useDispatch();
 
 

@@ -93,6 +93,7 @@ export const  deleteAppointment = (id) =>{
     return async dispatch=>{
         try {
             await axios.delete(`${APPOINTMENT_LINK}/${id}`);
+            dispatch(fetchPatientPayments());
             dispatch({
                 type: DELETE_APPOINTMENT_SUCCESS,
                 payload:id
@@ -108,6 +109,7 @@ export const cancelledAppointment = (id,data) =>{
     return async dispatch=>{
         try {
             const response = await axios.put(`${APPOINTMENT_LINK}/status/cancelled/${id}`,data);
+            dispatch(fetchPatientPayments());
             dispatch({
                 type: CANCELLED_APPOINTMENT_SUCCESS,
                 payload:id

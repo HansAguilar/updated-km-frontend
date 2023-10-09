@@ -22,10 +22,9 @@ import Schedule from "./Schedule";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPatient } from '../redux/action/PatientAction';
 import { fetchDentist } from '../redux/action/DentistAction';
-import { fetchAppointment } from '../redux/action/AppointmentAction';
+import { fetchAppointment,fetchPatientAppointment, responseToCancelledAppointment } from '../redux/action/AppointmentAction';
 import { fetchAdmin,fetchLoginAdmin } from '../redux/action/AdminAction';
 import { fetchServices } from '../redux/action/ServicesAction';
-import { fetchPayments } from '../redux/action/PaymentAction';
 import { fetchInstallment } from '../redux/action/InstallmentAction';
 import { fetchAnnouncement } from '../redux/action/AnnouncementAction';
 import { fetchHistory } from '../redux/action/HistoryAction';
@@ -38,7 +37,12 @@ import { AiOutlineScan } from 'react-icons/ai';
 import QRScanPage from './QRScanPage';
 import { useNavigate } from 'react-router-dom';
 import QRCodeModal from '../components/QRCodeModal';
+import * as io from "socket.io-client";
+import { SOCKET_LINK } from '../ApiLinks';
+import { fetchPayments,clientChanges,fetchPatientPayments } from "../redux/action/PaymentAction";
+import { fetchIncomingMessage } from "../redux/action/MessageAction";
 
+const socket = io.connect(SOCKET_LINK);
 function Dashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -80,6 +84,23 @@ function Dashboard() {
       isLoading(false); // Make sure you have a function named `isLoading` defined
     }
   }, [admin.loginAdmin]);
+
+  useEffect(()=>{
+    socket.on("response_payment_changes",(data)=>{
+      dispatch(clientChanges(data.value));
+    });
+    socket.on("response_changes",(data)=>{
+      dispatch(fetchPatientAppointment());
+      dispatch(fetchPatientPayments());
+    });
+    socket.on("response_cancel",(data)=>{
+      dispatch(responseToCancelledAppointment(data.value));
+    });
+    socket.on("received_by_admin", (data)=>{
+      dispatch(fetchIncomingMessage(data.key, data.value));
+    })
+    return ()=>{socket.off()}
+  },[socket]);
   
   if(loading)return <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={loading} /></section>
   return (!patient?.loading && !history?.loading &&!announcement?.loading && !installment?.loading &&!payment?.loading && !service?.loading &&!dentist?.loading && !admin?.loading && !messages.loading&& !appointment?.loading) &&(

@@ -13,12 +13,6 @@ function Messages({admin}) {
   const messages = useSelector((state)=>{ return state.messages.payload; });
   const [roomKey, setRoomKey] = useState("");
 
-  useEffect(()=>{
-    socket.on("received_by_admin", (data)=>{
-      dispatch(fetchIncomingMessage(data.key, data.value));
-    })
-  },[socket])
-
   const MessageModal = ()=>{
     const admin= useSelector((state)=>{ return state.admin.loginAdmin; })
     const [ messageDetails, setMessageDetails ] = useState({

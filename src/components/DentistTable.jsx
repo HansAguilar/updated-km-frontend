@@ -2,9 +2,12 @@ import axios from 'axios';
 import React,{useState} from 'react';
 import {AiFillEdit, AiOutlineFolderView} from 'react-icons/ai';
 import UpdateDentistModal from './UpdateDentistModal';
+import { ToastContainer } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { disableDentist, deleteDentist } from '../redux/action/DentistAction';
 
 function DentistTable({tableHeaders, results, search, currentPage }) {
-
+    const dispatch = useDispatch();
     const [update, setUpdateModal] = useState(false);
     const [data, setData] = useState({
          dentistId: "",
@@ -19,17 +22,8 @@ function DentistTable({tableHeaders, results, search, currentPage }) {
     });
 
     const disableAccountBtn = async (id, disable) => {
-        try {
-            
-            const newDisableInformation = { id: id, verified: disable };
-            await axios.post(`http://localhost:8080/api/v1/dentist/disable`, newDisableInformation, {
-                headers: { Accept: 'application/json' },
-            });
-            alert(`Disable${disable ? '' : 'd'} Account Successfully!`);
-            window.location.reload();
-        } catch (err) {
-            console.log(err);
-        }
+        const newDisableInformation = { id: id, verified: disable };
+        dispatch(disableDentist(newDisableInformation));
     };
 
     const updateBtn = (dentistId, fullname, birthday, address, gender, contactNumber, email, specialty, profile ) =>{
@@ -50,6 +44,7 @@ function DentistTable({tableHeaders, results, search, currentPage }) {
   return (
     <>
         <UpdateDentistModal show={update} setModal={setUpdateModal} setData={setData} data={data} />
+    <ToastContainer />
     <div className=' h-auto overflow-auto '>
         <table className='w-full  '>
             {/*Head*/}
@@ -157,7 +152,10 @@ function DentistTable({tableHeaders, results, search, currentPage }) {
                                     result.specialty,
                                     result.profile
                                 )}><AiFillEdit size={25} />&nbsp;Update</p>
-                                {/* {//<p className=' px-5 py-2 rounded-md bg-gray-500 text-white cursor-pointer hover:shadow-md flex'><AiOutlineFolderView size={25} />&nbsp;View</p> } */}
+                                <p 
+                                className=' px-5 py-2 rounded-md bg-red-500 text-white cursor-pointer hover:shadow-md flex'
+                                onClick={()=>dispatch(deleteDentist(result.dentistId))}
+                                ><AiOutlineFolderView size={25} />&nbsp;Delete</p> 
                             </td>
                         </tr>
                     ))
