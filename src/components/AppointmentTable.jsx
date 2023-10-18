@@ -1,5 +1,5 @@
-import React,{useState} from 'react';
-import {AiFillEdit, AiOutlineFolderView,AiFillDelete} from 'react-icons/ai';
+import React, { useState } from 'react';
+import { AiFillEdit, AiOutlineFolderView, AiFillDelete } from 'react-icons/ai';
 import { MdCancel } from "react-icons/md";
 import UpdateAppointmentModal from './UpdateAppointmentModal';
 import CancelModal from './CancelModal';
@@ -10,200 +10,219 @@ import { toastHandler } from "../ToastHandler";
 import { approvedAppointment, deleteAppointment, cancelledAppointment } from "../redux/action/AppointmentAction";
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
+import { AiFillCheckSquare } from "react-icons/ai"
 
 
-function AppointmentTable({tableHeaders,results,search,currentPage, type}) {
-    const dispatch = useDispatch();
-    const [cancelModal, setCancelModal] = useState(false);
-    const [update, setUpdate] = useState(false);
-    const navigate = useNavigate();
-    const [view, setView] = useState({
-        isShow: false,
-        appointment:""
-    });
-    const [statusValue, setStatusValue] = useState({
-        isClick: false,
-        statusCode: ""
-    });
-    const [appointmentId, setAppointmentId] = useState(null)
-    const [status1, setStatus1] = useState({
-        selectedId: null,
-        remarks: "PENDING",
-        isSelected: false
-      });
-      const [status, setStatus] = useState({
-        id:"",
-        status: "",
-        description: ""
-    })
+function AppointmentTable({ tableHeaders, results, search, currentPage, type }) {
+	const dispatch = useDispatch();
+	const [cancelModal, setCancelModal] = useState(false);
+	const [update, setUpdate] = useState(false);
+	const navigate = useNavigate();
+	const [view, setView] = useState({
+		isShow: false,
+		appointment: ""
+	});
+	const [statusValue, setStatusValue] = useState({
+		isClick: false,
+		statusCode: ""
+	});
+	const [appointmentId, setAppointmentId] = useState(null)
+	const [status1, setStatus1] = useState({
+		selectedId: null,
+		remarks: "PENDING",
+		isSelected: false
+	});
+	const [status, setStatus] = useState({
+		id: "",
+		status: "",
+		description: ""
+	})
 
-      const deleteAppointmentButton = async(id) =>{
-        dispatch(deleteAppointment(id))
-        return toastHandler("success", "Deleted successfully!");
-      }
+	const deleteAppointmentButton = async (id) => {
+		dispatch(deleteAppointment(id))
+		return toastHandler("success", "Deleted successfully!");
+	}
 
-      const updateButton= (id) =>{
-        setAppointmentId(id)
-        setUpdate(true);
-      }
+	const updateButton = (id) => {
+		setAppointmentId(id)
+		setUpdate(true);
+	}
 
-      const statusSubmit = async(id, value) =>{
-        if(value.status==="APPROVED"){
-            dispatch(approvedAppointment(id));
-            toastHandler("success","Approved appointment successfully!");
-        }
-        setStatus({...status, selectedId:null});
-      }
-      
-      const cancelButton = (id)=>{
-        setStatus1({
-            ...status1,
-            id: id
-        })
-        setCancelModal(true);
-      }
-  return (
-    <>
-    <div className='w-full px-4 py-3 overflow-auto '>
-        <ToastContainer />
-        {update && (<UpdateAppointmentModal show={update} setModal={setUpdate} initialAppointment={appointmentId} />)}
-        <CancelModal show={cancelModal} setShow={setCancelModal} status={status1} setStatus={setStatus1}/>
-        <ViewAppointment view={view} setView={setView}/>
-        <table className='w-full relative '>
-            {/*Head*/}
-            <thead className=' bg-gray-100 '>
-            <tr className=" text-gray-600">
-                {
-                    tableHeaders.map((header, index)=>(
-                        <>
-                        {
-                            header === "Status" ? 
-                            <th className={`py-3 px-2 capitalize cursor-pointer`} key={index} onClick={()=>setStatusValue({...statusValue, isClick: true})}>
-                                <p className={`${statusValue.isClick ? "hidden":""}`}>{header}</p>
-                            
-                                {
-                                statusValue.isClick ? <select className=' bg-transparent py-2 px-3 focus:outline-none ' value={statusValue.statusCode} onChange={(e)=>{
-                                    setStatusValue({
-                                        ...statusValue,
-                                        isClick:false,
-                                        statusCode: e.target.value
-                                    })
-                                }}>
-                                    <option value="">NONE</option>
-                                    <option value="PENDING">PENDING</option>
-                                    <option value="APPROVED">APPROVED</option>
-                                    <option value="DONE">DONE</option>
-                                </select>
-                                :""
-                            }
-                            </th>
-                            : <th className='py-3 px-2 capitalize' key={8}>{header}</th>
-                        }
-                        </>
-                    ))
-                }
-                </tr>
-            </thead>
-           
-            {/*Body*/}
-            <tbody className='h-auto p-6 '>
-               {
-                    results
-                    // .filter((val)=>{ return statusValue.statusCode !== "" ? val.status === statusValue.statusCode && type !== "" :
-                    // statusValue.statusCode === "DONE" ? val.status === "DONE"  
-                    // : statusValue.statusCode === "APPROVED" ? val.status === "APPROVED" 
-                    // : val.status === "PENDING"})
-                    .slice((currentPage*8)-8, currentPage*8)
-                    .map((result)=>(
-                        <tr key={result.appointmentId} className=' text-center h-16 '>
-                            <td>
-                                {result.patient.firstname} {result.patient.middlename ? result.patient.middlename.charAt(0).concat("."):""} {result.patient.lastname}
-                            </td>
-                            <td>
-                                {moment(result.dateSubmitted).format("LL")}
-                            </td>
-                            <td>
-                                {moment(result.appointmentDate).format("LL")}
-                            </td>
-                            <td>
-                                {moment(result.timeStart, 'HH:mm:ss').format('h:mm A')}
-                            </td>
-                            <td>
-                                {moment(result.timeEnd, 'HH:mm:ss').format('h:mm A')}
-                            </td>
-                            <td className='capitalize px-10'>
-                                { status.selectedId === result.appointmentId && result.status !== "CANCELLED" && result.status !== "DONE" ? (
-                                    <select
-                                    name="status"
-                                    value={result.status}
-                                    className='px-6 py-2 border focus:outline'
-                                    onChange={(e) => {
-                                        if(e.target.value === "CANCELLED") return cancelButton(result.appointmentId);
-                                       const data = { status: e.target.value, description:"", }
-                                        statusSubmit(result.appointmentId, data);
-                                    }}
-                                    onBlur={()=>setStatus({...status, selectedId:null})}
-                                    >
-                                    <option value="PENDING" disabled>Pending</option>
-                                    <option value="APPROVED" >Approved</option>
-                                    </select>
-                                ) : (
-                                    <p
-                                    className={`${
-                                        result.status === "PENDING" ? "bg-orange-500"
-                                        : result.status === "APPROVED" ? "bg-green-500"
-                                        : result.status === "DONE" ? "bg-cyan-500"
-                                        : "bg-red-500"
-                                    } rounded-full text-white py-1 cursor-pointer`}
-                                    onClick={() =>{
-                                        setStatus({
-                                        selectedId: result.appointmentId,
-                                        remarks: result.status,
-                                        isSelected:true,
-                                    })}
-                                    }
-                                    >
-                                    {result.status.toLowerCase()}
-                                    </p>
-                                )}
-                                </td>
-                            <td className=' text-center '>
-                                {
-                                    result.doneReadingTC ?
-                                    <input type="checkbox" checked/>:
-                                    <input type="checkbox" />
-                                }
-                            </td>
-                            <td className=' h-16 text-white flex gap-1 items-center justify-center text-center '>
-                                <p className=' bg-cyan-500 px-4 py-2 rounded-md cursor-pointer hover:shadow-md inline-flex ' onClick={()=>updateButton(result)}><AiFillEdit size={25} />&nbsp;Update</p>
-                                {
-                                    result.status !== "TREATMENT" && (
-                                        <p className=' bg-orange-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex' onClick={()=>{
-                                            setStatus1({...status1, selectedId: result.appointmentId})
-                                            setCancelModal(true)
-                                        }}><MdCancel size={25} />&nbsp;Cancel</p>
-                                    )
-                                }
-                                <p className=' bg-red-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex' onClick={()=>deleteAppointmentButton(result.appointmentId)}><AiFillDelete size={25} />&nbsp;Delete</p>
-                                <p 
-                                className=' bg-gray-500 px-4 py-2 rounded-md cursor-pointer  hover:shadow-md inline-flex'
-                                onClick={()=>{
-                                    // setView({
-                                    //     isShow: true,
-                                    //     appointment: result
-                                    // });
-                                    navigate(`/admin/dashboard/appointment/details/${result.appointmentId}`)
-                                }}
-                                ><AiOutlineFolderView size={25} />&nbsp;View</p>
-                            </td>
-                        </tr>
-                    ))
-               }
-            </tbody>
-        </table>
-    </div>
-    </>
-  )
+	const statusSubmit = async (id, value) => {
+		if (value.status === "APPROVED") {
+			dispatch(approvedAppointment(id));
+			toastHandler("success", "Approved appointment successfully!");
+		}
+		setStatus({ ...status, selectedId: null });
+	}
+
+	const cancelButton = (id) => {
+		setStatus1({
+			...status1,
+			id: id
+		})
+		setCancelModal(true);
+	}
+	return (
+		<>
+			{update && (<UpdateAppointmentModal show={update} setModal={setUpdate} initialAppointment={appointmentId} />)}
+			<CancelModal show={cancelModal} setShow={setCancelModal} status={status1} setStatus={setStatus1} />
+			<ViewAppointment view={view} setView={setView} />
+			<div className='p-4'>
+				<ToastContainer limit={1} autoClose={1500} />
+
+				<table className='min-w-full table-fixed'>
+
+					{/*//~ HEAD */}
+					<thead className='bg-slate-700'>
+						<tr>
+							{
+								tableHeaders.map((header, index) => (
+									<>
+										{
+											header === "Status" ?
+												<th className="p-2 uppercase text-slate-100 cursor-pointer" key={index} onClick={() => setStatusValue({ ...statusValue, isClick: true })}>
+													<p className={`${statusValue.isClick ? "hidden" : ""}`}>{header}</p>
+
+													{
+														statusValue.isClick ? <select className='bg-transparent focus:outline-none' value={statusValue.statusCode} onChange={(e) => {
+															setStatusValue({
+																...statusValue,
+																isClick: false,
+																statusCode: e.target.value
+															})
+														}}>
+															<option className='bg-gray-600 text-slate-200' value="">NONE</option>
+															<option className='bg-gray-600 text-slate-200' value="PENDING">PENDING</option>
+															<option className='bg-gray-600 text-slate-200' value="APPROVED">APPROVED</option>
+															<option className='bg-gray-600 text-slate-200' value="DONE">DONE</option>
+														</select>
+															: ""
+													}
+												</th>
+												: <th className='p-2 uppercase text-slate-100' key={8}>{header}</th>
+										}
+									</>
+								))
+							}
+						</tr>
+					</thead>
+					{/*//~ HEAD */}
+
+
+					{/*//~ BODY */}
+					<tbody>
+						{
+							results
+								// .filter((val)=>{ return statusValue.statusCode !== "" ? val.status === statusValue.statusCode && type !== "" :
+								// statusValue.statusCode === "DONE" ? val.status === "DONE"  
+								// : statusValue.statusCode === "APPROVED" ? val.status === "APPROVED" 
+								// : val.status === "PENDING"})
+								.slice((currentPage * 8) - 8, currentPage * 8)
+								.map((result) => (
+									<tr key={result.appointmentId} className='font-medium border text-cyan-900 even:bg-slate-100'>
+										<td className='text-center capitalize'>
+											{result.patient.firstname} {result.patient.middlename ? result.patient.middlename.charAt(0).concat(".") : ""} {result.patient.lastname}
+										</td>
+										<td className='text-center'>
+											{moment(result.dateSubmitted).format("LL")}
+										</td>
+										<td className='text-center'>
+											{moment(result.appointmentDate).format("LL")}
+										</td>
+										<td className='text-center'>
+											{moment(result.timeStart, 'HH:mm:ss').format('h:mm A')}
+										</td>
+										<td className='text-center'>
+											{moment(result.timeEnd, 'HH:mm:ss').format('h:mm A')}
+										</td>
+										<td className='text-center capitalize'>
+											{
+												status.selectedId === result.appointmentId && result.status !== "CANCELLED" && result.status !== "DONE" ?
+													(
+														<select name="status" value={result.status} className='p-2 border focus:border-blue-400 rounded focus:outline-none'
+															onChange={(e) => {
+																if (e.target.value === "CANCELLED") return cancelButton(result.appointmentId);
+																const data = { status: e.target.value, description: "", }
+																statusSubmit(result.appointmentId, data);
+															}}
+															onBlur={() => setStatus({ ...status, selectedId: null })}
+														>
+															<option value="PENDING" disabled>Pending</option>
+															<option value="APPROVED" >Approved</option>
+														</select>
+													)
+													:
+													(
+														<span
+															className={`
+															${result.status === "PENDING" ? "bg-yellow-100 text-yellow-600 hover:bg-yellow-400"
+																	:
+																	result.status === "APPROVED" ? "bg-green-100 text-green-600 hover:bg-green-400"
+																		:
+																		result.status === "DONE" ? "bg-red-100 text-slate-600 hover:bg-slate-400"
+																			:
+																			"bg-red-500"} 
+																			transition-all ease-linear duration-150 py-1 px-3 rounded-full max-w-max mx-auto cursor-pointer hover:text-white`}
+															onClick={() => {
+																setStatus({
+																	selectedId: result.appointmentId,
+																	remarks: result.status,
+																	isSelected: true,
+																})
+															}}>
+															• {result.status.toLowerCase()}
+														</span>
+													)}
+										</td>
+										<td className='text-center'>
+											{
+												result.doneReadingTC ?
+													<AiFillCheckSquare size={40} className='text-slate-500 m-auto' />
+													:
+													<input type="checkbox" />
+											}
+										</td>
+										<td className='text-center p-4'>
+											<div className='flex items-center justify-center gap-2 text-white'>
+												<span className='transition-all ease-linear duration-150 rounded p-2 bg-blue-500 hover:bg-blue-700 text-white cursor-pointer flex items-center' onClick={() => updateButton(result)}>
+													<AiFillEdit size={25} />
+													<p className='pr-2'>Update</p>
+												</span>
+
+												{
+													result.status !== "TREATMENT" && (
+														<span className='transition-all ease-linear duration-150 rounded p-2 bg-orange-500 hover:bg-orange-700 cursor-pointer flex items-center' onClick={() => {
+															setStatus1({ ...status1, selectedId: result.appointmentId })
+															setCancelModal(true)
+														}}>
+															<MdCancel size={25} />
+															<p className='pr-2'>Cancel</p>
+														</span>
+													)
+												}
+
+												<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 cursor-pointer flex items-center' onClick={() => deleteAppointmentButton(result.appointmentId)}>
+													<AiFillDelete size={25} />
+													<p className='pr-2'>Delete</p>
+												</span>
+
+												<span className='transition-all ease-linear duration-150 rounded p-2 bg-gray-500 hover:bg-gray-700 cursor-pointer flex items-center' onClick={() => { navigate(`/admin/dashboard/appointment/details/${result.appointmentId}`) }}>
+													<AiOutlineFolderView size={25} />
+													<p className='pr-2'>View</p>
+												</span>
+											</div>
+										</td>
+									</tr>
+								))
+						}
+					</tbody>
+					{/*//~ BODY */}
+
+				</table>
+			</div>
+		</>
+	)
 }
 
 export default AppointmentTable

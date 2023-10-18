@@ -1,4 +1,4 @@
-import React,{ useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import { Routes, Route } from 'react-router-dom';
 import Home from './Home';
@@ -22,8 +22,8 @@ import Schedule from "./Schedule";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPatient } from '../redux/action/PatientAction';
 import { fetchDentist } from '../redux/action/DentistAction';
-import { fetchAppointment,fetchPatientAppointment, responseToCancelledAppointment } from '../redux/action/AppointmentAction';
-import { fetchAdmin,fetchLoginAdmin } from '../redux/action/AdminAction';
+import { fetchAppointment, fetchPatientAppointment, responseToCancelledAppointment } from '../redux/action/AppointmentAction';
+import { fetchAdmin, fetchLoginAdmin } from '../redux/action/AdminAction';
 import { fetchServices } from '../redux/action/ServicesAction';
 import { fetchInstallment } from '../redux/action/InstallmentAction';
 import { fetchAnnouncement } from '../redux/action/AnnouncementAction';
@@ -39,7 +39,7 @@ import { useNavigate } from 'react-router-dom';
 import QRCodeModal from '../components/QRCodeModal';
 import * as io from "socket.io-client";
 import { SOCKET_LINK } from '../ApiLinks';
-import { fetchPayments,clientChanges,fetchPatientPayments } from "../redux/action/PaymentAction";
+import { fetchPayments, clientChanges, fetchPatientPayments } from "../redux/action/PaymentAction";
 import { fetchIncomingMessage } from "../redux/action/MessageAction";
 
 const socket = io.connect(SOCKET_LINK);
@@ -47,17 +47,17 @@ function Dashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isToggleQR, setToggleQR] = useState(false);
-  const [ toggleBar, setToggleBar ] = useState(false);
-  const patient = useSelector(state=>{return state.patient});
-  const history = useSelector(state=>{return state.history});
-  const installment = useSelector(state=>{return state.installment});
-  const announcement = useSelector(state=>{return state.announcement});
-  const messages = useSelector(state=>{return state.messages});
-  const payment = useSelector(state=>{return state.payment});
-  const service = useSelector(state=>{return state.service});
-  const dentist = useSelector(state=>{return state.denstis});
-  const admin = useSelector(state=>{return state.admin});
-  const appointment = useSelector(state=>{return state.appointment });
+  const [toggleBar, setToggleBar] = useState(false);
+  const patient = useSelector(state => { return state.patient });
+  const history = useSelector(state => { return state.history });
+  const installment = useSelector(state => { return state.installment });
+  const announcement = useSelector(state => { return state.announcement });
+  const messages = useSelector(state => { return state.messages });
+  const payment = useSelector(state => { return state.payment });
+  const service = useSelector(state => { return state.service });
+  const dentist = useSelector(state => { return state.denstis });
+  const admin = useSelector(state => { return state.admin });
+  const appointment = useSelector(state => { return state.appointment });
 
   const [loading, isLoading] = useState(true);
 
@@ -85,104 +85,106 @@ function Dashboard() {
     }
   }, [admin.loginAdmin]);
 
-  useEffect(()=>{
-    socket.on("response_payment_changes",(data)=>{
+  useEffect(() => {
+    socket.on("response_payment_changes", (data) => {
       dispatch(clientChanges(data.value));
     });
-    socket.on("response_changes",(data)=>{
+    socket.on("response_changes", (data) => {
       dispatch(fetchPatientAppointment());
       dispatch(fetchPatientPayments());
     });
-    socket.on("response_cancel",(data)=>{
+    socket.on("response_cancel", (data) => {
       dispatch(responseToCancelledAppointment(data.value));
     });
-    socket.on("received_by_admin", (data)=>{
+    socket.on("received_by_admin", (data) => {
       dispatch(fetchIncomingMessage(data.key, data.value));
     })
-    return ()=>{socket.off()}
-  },[socket]);
-  
-  if(loading)return <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={loading} /></section>
-  return (!patient?.loading && !history?.loading &&!announcement?.loading && !installment?.loading &&!payment?.loading && !service?.loading &&!dentist?.loading && !admin?.loading && !messages.loading&& !appointment?.loading) &&(
-      <div className='w-full h-screen flex z-10 relative '>
-        <Sidebar toggleBar={toggleBar} />
-        <div className=' relative flex flex-grow flex-col bg-gray-200 '>
-          { isToggleQR && (<QRCodeModal setToggleQR={setToggleQR} />) }
-          <Header toggleBar={toggleBar} setToggleBar={setToggleBar} />
-          <Routes>
-                  <Route element={
-                  <Home />} 
-                  path='/' />
+    return () => { socket.off() }
+  }, [socket]);
 
-                  <Route element={
-                  <Admin  />
-                  } path='/admin' />
+  if (loading) return <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={loading} /></section>
+  return (!patient?.loading && !history?.loading && !announcement?.loading && !installment?.loading && !payment?.loading && !service?.loading && !dentist?.loading && !admin?.loading && !messages.loading && !appointment?.loading) && (
+    <div className='w-full h-screen flex z-10 relative '>
+      <Sidebar toggleBar={toggleBar} />
+      <div className=' relative flex flex-grow flex-col bg-slate-200'>
+        {isToggleQR && (<QRCodeModal setToggleQR={setToggleQR} />)}
+        <Header toggleBar={toggleBar} setToggleBar={setToggleBar} />
+        <Routes>
+          <Route element={
+            <Home />}
+            path='/' />
 
-                  <Route path='/appointment'>
-                    <Route element={<Appointments/>} path='/appointment/' />
-                    <Route element={<AppointmentCalendar />} path='/appointment/calendar' />
-                    <Route path='/appointment/details/:id' element={<AppointmentInformation/>} />
-                    <Route path='*' element={<PageNotFound/>} />
-                  </Route>
+          <Route element={
+            <Admin />
+          } path='/admin' />
 
-                  <Route element={
-                  <Messages />
-                  } path='/messages' />
+          <Route path='/appointment'>
+            <Route element={<Appointments />} path='/appointment/' />
+            <Route element={<AppointmentCalendar />} path='/appointment/calendar' />
+            <Route path='/appointment/details/:id' element={<AppointmentInformation />} />
+            <Route path='*' element={<PageNotFound />} />
+          </Route>
 
-                  <Route element={
-                  <Dentist />
-                  } path='/dentist' />
+          <Route element={
+            <Messages />
+          } path='/messages' />
 
-                  <Route 
-                  path='/patient' >
-                    <Route  element={<Patients />} path='/patient/' />
-                    <Route  element={<ViewPatient />} path='/patient/:id' />
-                  </Route>
+          <Route element={
+            <Dentist />
+          } path='/dentist' />
 
-                  <Route element={
-                  <Profile />
-                  } path='/profile' />
+          <Route
+            path='/patient' >
+            <Route element={<Patients />} path='/patient/' />
+            <Route element={<ViewPatient />} path='/patient/:id' />
+          </Route>
 
-                  <Route element={
-                  <History />
-                  } path='/history' />
+          <Route element={
+            <Profile />
+          } path='/profile' />
 
-                  <Route element={
-                  <Treatment />
-                  } path='/treatment' />
+          <Route element={
+            <History />
+          } path='/history' />
 
-                  <Route element={
-                  <Services />
-                  } path='/services' />
+          <Route element={
+            <Treatment />
+          } path='/treatment' />
 
-                  <Route element={
-                  <Schedule />
-                  } path='/schedule' />
+          <Route element={
+            <Services />
+          } path='/services' />
 
-                  <Route element={
-                  <Payment />
-                  } path='/payment' />
+          <Route element={
+            <Schedule />
+          } path='/schedule' />
 
-                  <Route element={
-                  <Announcement />
-                  } path='/announcement' />
+          <Route element={
+            <Payment />
+          } path='/payment' />
 
-                  <Route element={ <QRScanPage /> } 
-                  path='/scan/:id' />
-                  
+          <Route element={
+            <Announcement />
+          } path='/announcement' />
+
+          <Route element={<QRScanPage />}
+            path='/scan/:id' />
+
 
           <Route path='*' element={<PageNotFound />} />
-          </Routes>
+        </Routes>
 
-          {/* LOGO */}
-          <div className=' flex justify-center items-center flex-col bg-cyan-600 absolute w-auto h-auto p-3 right-10 bottom-10 rounded-md cursor-pointer hover:shadow-lg hover:bg-cyan-700 ' onClick={()=>setToggleQR(true)} >
-            <AiOutlineScan size={50} className=' text-white ' />
-            <h3 className=' font-bold text-white '>QR Code</h3>
-          </div>
 
+        {/*//~ FLOATING QR */}
+        <div className=' flex justify-center items-center flex-col bg-blue-500 absolute p-3 right-10 bottom-8 rounded cursor-pointer shadow-md hover:bg-blue-700 ' onClick={() => setToggleQR(true)} >
+          <AiOutlineScan size={40} className=' text-white ' />
+          <h3 className=' font-bold text-white '>QR Code</h3>
         </div>
+        {/*//~ FLOATING QR */}
+
+      </div>
     </div>
-    )
+  )
 }
 
 export default Dashboard

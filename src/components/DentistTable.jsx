@@ -1,170 +1,209 @@
-import axios from 'axios';
-import React,{useState} from 'react';
-import {AiFillEdit, AiOutlineFolderView} from 'react-icons/ai';
+import React, { useState } from 'react';
+import { AiFillEdit, AiOutlineFolderView, AiFillDelete } from 'react-icons/ai';
 import UpdateDentistModal from './UpdateDentistModal';
 import { ToastContainer } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { disableDentist, deleteDentist } from '../redux/action/DentistAction';
 
-function DentistTable({tableHeaders, results, search, currentPage }) {
-    const dispatch = useDispatch();
-    const [update, setUpdateModal] = useState(false);
-    const [data, setData] = useState({
-         dentistId: "",
-         fullname:"",
-         birthday:"",
-         address:"",
-         gender:"",
-         contactNumber:"",
-         email:"",
-         specialty:"",
-         profile:""
-    });
+function DentistTable({ tableHeaders, results, search, currentPage }) {
+	const dispatch = useDispatch();
+	const [update, setUpdateModal] = useState(false);
+	const [data, setData] = useState({
+		dentistId: "",
+		fullname: "",
+		birthday: "",
+		address: "",
+		gender: "",
+		contactNumber: "",
+		email: "",
+		specialty: "",
+		profile: ""
+	});
 
-    const disableAccountBtn = async (id, disable) => {
-        const newDisableInformation = { id: id, verified: disable };
-        dispatch(disableDentist(newDisableInformation));
-    };
+	const disableAccountBtn = async (id, disable) => {
+		const newDisableInformation = { id: id, verified: disable };
+		dispatch(disableDentist(newDisableInformation));
+	};
 
-    const updateBtn = (dentistId, fullname, birthday, address, gender, contactNumber, email, specialty, profile ) =>{
-        setData({
-            ...data,
-            dentistId: dentistId,
-            fullname:fullname,
-            birthday:birthday,
-            address:address,
-            gender:gender,
-            contactNumber:contactNumber,
-            email:email,
-            specialty:specialty,
-            profile:profile
-        })
-        setUpdateModal(true);
-    }
-  return (
-    <>
-        <UpdateDentistModal show={update} setModal={setUpdateModal} setData={setData} data={data} />
-    <ToastContainer />
-    <div className=' h-auto overflow-auto '>
-        <table className='w-full  '>
-            {/*Head*/}
-            <thead className=' shadow-md  '>
-                <tr className=" text-gray-600">
-                {
-                    tableHeaders.map((header, index)=>(
-                        <th className='py-3 px-2 capitalize' key={index}>{header}</th>
-                    ))
-                }
-                </tr>
-            </thead>
+	const updateBtn = (dentistId, fullname, birthday, address, gender, contactNumber, email, specialty, profile) => {
+		setData({
+			...data,
+			dentistId: dentistId,
+			fullname: fullname,
+			birthday: birthday,
+			address: address,
+			gender: gender,
+			contactNumber: contactNumber,
+			email: email,
+			specialty: specialty,
+			profile: profile
+		})
+		setUpdateModal(true);
+	}
+	return (
+		<>
+			<UpdateDentistModal show={update} setModal={setUpdateModal} setData={setData} data={data} />
+			<ToastContainer limit={1} autoClose={1500} />
+			<div className='p-4'>
 
-            {/*Body*/}
-            <tbody className='h-auto p-6'>
-                
-                {
-                    search.length > 0 ? 
-                    results
-                    .map((result)=>(
-                        <tr className='' key={result.dentistId}>
-                            <td className='p-2 flex justify-center  '>
-                                <img src={result.profile} className=' w-11 h-11 rounded-full border border-gray-400 border-2 ' alt="User" />
-                            </td>
-                            <td className=' text-center capitalize '>
-                                {`Dr. ${result.fullname}`}
-                            </td>
-                            <td className='text-center'>
-                                {result.address}
-                            </td>
-                            <td className='text-center'>
-                                {result.gender}
-                            </td>
-                            <td className='text-center'>
-                                {result.contactNumber}
-                            </td>
-                            <td className='text-center'>
-                                {result.email}
-                            </td>
-                            <td className='text-center'>
-                                {result.specialty}
-                            </td>
-                            <td className=' text-center '>
-                                {result.verified ? 
-                                    <p className=' px-2 py-2 rounded-md bg-cyan-500 text-white cursor-pointer hover:shadow-md ' onClick={()=>disableAccountBtn(result.dentistId, false)}>Active</p> : 
-                                    <p className=' px-2 py-2 rounded-md bg-red-500 text-white cursor-pointer hover:shadow-md '  onClick={()=>disableAccountBtn(result.dentistId, true)}>Inactive</p> 
-                                }   
-                            </td>
-                            <td className=' h-auto relative bottom-2 w-auto flex items-start justify-center gap-3'>
-                                <p className=' px-5 py-2 rounded-md bg-blue-500 text-white cursor-pointer hover:shadow-md flex' onClick={()=>updateBtn(
-                                    result.dentistId,
-                                    result.fullname,
-                                    result.birthday,
-                                    result.address,
-                                    result.gender,
-                                    result.contactNumber,
-                                    result.email,
-                                    result.specialty,
-                                    result.profile
-                                )}><AiFillEdit size={25} />&nbsp;Update</p>
-                                <p className=' px-5 py-2 rounded-md bg-gray-500 text-white cursor-pointer hover:shadow-md flex'><AiOutlineFolderView size={25} />&nbsp;View</p> 
-                            </td>
-                        </tr>))
-                    : results
-                    //       firstItem         LastItem
-                    .slice((currentPage*8)-8,currentPage*8 )
-                    .map((result)=>(
-                        <tr className='' key={result.dentistId}>
-                            <td className='p-2 flex justify-center  '>
-                                <img src={result.profile} className=' w-11 h-11 rounded-full border border-gray-400 border-2 ' alt="User" />
-                            </td>
-                            <td className=' text-center capitalize '>
-                                {`Dr. ${result.fullname}`}
-                            </td>
-                            <td className='text-center'>
-                                {result.address}
-                            </td>
-                            <td className='text-center'>
-                                {result.gender}
-                            </td>
-                            <td className='text-center'>
-                                {result.contactNumber}
-                            </td>
-                            <td className='text-center'>
-                                {result.email}
-                            </td>
-                            <td className='text-center'>
-                                {result.specialty}
-                            </td>
-                            <td className=' text-center '>
-                                {result.verified ? 
-                                    <p className=' px-2 py-2 rounded-md bg-cyan-500 text-white cursor-pointer hover:shadow-md ' onClick={()=>disableAccountBtn(result.dentistId, false)}>Active</p> : 
-                                    <p className=' px-2 py-2 rounded-md bg-red-500 text-white cursor-pointer hover:shadow-md '  onClick={()=>disableAccountBtn(result.dentistId, true)}>Inactive</p> 
-                                }   
-                            </td>
-                            <td className=' h-auto relative bottom-2 w-auto flex items-start justify-center gap-3'>
-                                <p className=' px-5 py-2 rounded-md bg-blue-500 text-white cursor-pointer hover:shadow-md flex' onClick={()=>updateBtn(
-                                    result.dentistId,
-                                    result.fullname,
-                                    result.birthday,
-                                    result.address,
-                                    result.gender,
-                                    result.contactNumber,
-                                    result.email,
-                                    result.specialty,
-                                    result.profile
-                                )}><AiFillEdit size={25} />&nbsp;Update</p>
-                                <p 
-                                className=' px-5 py-2 rounded-md bg-red-500 text-white cursor-pointer hover:shadow-md flex'
-                                onClick={()=>dispatch(deleteDentist(result.dentistId))}
-                                ><AiOutlineFolderView size={25} />&nbsp;Delete</p> 
-                            </td>
-                        </tr>
-                    ))
-                }
-            </tbody>
-        </table>
-    </div>
-    </>
-  )
+				<table className='min-w-full'>
+
+					{/*//~ HEAD */}
+					<thead className='bg-slate-700'>
+						<tr>
+							{
+								tableHeaders.map((header, index) => (
+									<th className='p-2 uppercase text-slate-100' key={index}>{header}</th>
+								))
+							}
+						</tr>
+					</thead>
+					{/*//~ HEAD */}
+
+					<tbody>
+						{
+							search.length > 0 ?
+								results
+									.map((result) => (
+										<tr className='font-medium border text-cyan-900 even:bg-slate-100' key={result.dentistId}>
+											<td className='py-2 text-center'>
+												<img src={result.profile} className='m-auto w-14 h-14 rounded-full object-fill aspect-auto border border-gray-400 ' alt="User" />
+											</td>
+											<td className=' text-center capitalize '>
+												{`Dr. ${result.fullname}`}
+											</td>
+											<td className='text-center'>
+												{
+													result.address.length >= 18 ?
+														<span>{result.address.substring(0, 18) + "..."}</span>
+														:
+														<span>{result.address}</span>
+												}
+											</td>
+											<td className='text-center capitalize'>
+												{result.gender}
+											</td>
+											<td className='text-center'>
+												{result.contactNumber}
+											</td>
+											<td className='text-center'>
+												{
+													result.email.length >= 18 ?
+														<span>{result.email.substring(0, 18) + "..."}</span>
+														:
+														<span>{result.email}</span>
+												}
+											</td>
+											<td className='text-center'>
+												{result.specialty}
+											</td>
+											<td className=' text-center '>
+												<span className={`transition-all ease-linear duration-150 py-1 px-3 rounded-full max-w-max mx-auto cursor-pointer hover:text-white ${result.verified ? 'bg-green-100 text-green-600 hover:bg-green-400' : 'bg-red-100 text-red-600 hover:bg-red-400'}`}
+													onClick={
+														result.verified ? () => disableAccountBtn(result.dentistId, false) : () => disableAccountBtn(result.dentistId, true)
+													}
+												>
+													• {result.verified ? "Active" : "Inactive"}
+												</span>
+											</td>
+											<td className='text-center'>
+												<div className='flex items-center justify-center gap-2'>
+													<span className='transition-all ease-linear duration-150 rounded p-2 bg-blue-500 hover:bg-blue-700 text-white cursor-pointer flex items-center' onClick={() => updateBtn(
+														result.dentistId,
+														result.fullname,
+														result.birthday,
+														result.address,
+														result.gender,
+														result.contactNumber,
+														result.email,
+														result.specialty,
+														result.profile
+													)}>
+														<AiFillEdit size={25} />
+														<p className='pr-2'>Update</p>
+													</span>
+													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'>
+														<AiFillDelete size={25} />
+														<p className='pr-2'>Delete</p>
+													</span>
+												</div>
+											</td>
+										</tr>))
+								: results
+									//       firstItem         LastItem
+									.slice((currentPage * 8) - 8, currentPage * 8)
+									.map((result) => (
+										<tr className='font-medium border text-cyan-900 even:bg-slate-100' key={result.dentistId}>
+											<td className='py-2 text-center'>
+												<img src={result.profile} className='m-auto w-14 h-14 rounded-full object-fill aspect-auto border border-gray-400 ' alt="User" />
+											</td>
+											<td className=' text-center capitalize '>
+												{`Dr. ${result.fullname}`}
+											</td>
+											<td className='text-center'>
+												{
+													result.address.length >= 18 ?
+														<span>{result.address.substring(0, 18) + "..."}</span>
+														:
+														<span>{result.address}</span>
+												}
+											</td>
+											<td className='text-center capitalize'>
+												{result.gender}
+											</td>
+											<td className='text-center'>
+												{result.contactNumber}
+											</td>
+											<td className='text-center'>
+												{
+													result.email.length >= 18 ?
+														<span>{result.email.substring(0, 18) + "..."}</span>
+														:
+														<span>{result.email}</span>
+												}
+											</td>
+											<td className='text-center'>
+												{result.specialty}
+											</td>
+											<td className=' text-center '>
+												<span className={`transition-all ease-linear duration-150 py-1 px-3 rounded-full max-w-max mx-auto cursor-pointer hover:text-white ${result.verified ? 'bg-green-100 text-green-600 hover:bg-green-400' : 'bg-red-100 text-red-600 hover:bg-red-400'}`}
+													onClick={
+														result.verified ? () => disableAccountBtn(result.dentistId, false) : () => disableAccountBtn(result.dentistId, true)
+													}
+												>
+													• {result.verified ? "Active" : "Inactive"}
+												</span>
+											</td>
+											<td className='text-center'>
+												<div className='flex items-center justify-center gap-2'>
+													<span className='transition-all ease-linear duration-150 rounded p-2 bg-blue-500 hover:bg-blue-700 text-white cursor-pointer flex items-center' onClick={() => updateBtn(
+														result.dentistId,
+														result.fullname,
+														result.birthday,
+														result.address,
+														result.gender,
+														result.contactNumber,
+														result.email,
+														result.specialty,
+														result.profile
+													)}>
+														<AiFillEdit size={25} />
+														<p className='pr-2'>Update</p>
+													</span>
+													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'>
+														<AiFillDelete size={25} />
+														<p className='pr-2'>Delete</p>
+													</span>
+												</div>
+											</td>
+										</tr>
+									))
+						}
+					</tbody>
+				</table>
+			</div >
+		</>
+	)
 }
 
 export default DentistTable

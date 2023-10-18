@@ -4,57 +4,51 @@ import { APPOINTMENT_LINK } from '../ApiLinks';
 import { ToastContainer, toast } from 'react-toastify';
 import { cancelledAppointment } from "../redux/action/AppointmentAction";
 import { useDispatch } from 'react-redux';
+import { toastHandler } from '../ToastHandler';
 
-function CancelModal({show, setShow,status,setStatus}) {
-    const dispatch = useDispatch();
-  const submitButton = async(e)=>{
+function CancelModal({ show, setShow, status, setStatus }) {
+  const dispatch = useDispatch();
+  const submitButton = async (e) => {
     e.preventDefault();
+
+    if(!status.description) return toastHandler("error", "Please fill up empty field");
+
     const data = {
-        status: "CANCELLED",
-        description: status.description
+      status: "CANCELLED",
+      description: status.description
     }
-    dispatch(cancelledAppointment(status.selectedId,data));
-    setStatus({...status, description:""})
+    dispatch(cancelledAppointment(status.selectedId, data));
+    setStatus({ ...status, description: "" })
     setShow(false);
   }
   return (
-    <>
-    <ToastContainer/>
-        <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-40 flex flex-grow justify-center items-center ${show ? '': 'hidden'}`}>
-    <div className=" z-50">
-            <div className="m-auto w-[550px] h-auto p-8 bg-white rounded-lg shadow-lg">
-                <div className="text-left py-4">
-                <h2 className="text-xl font-bold capitalize mb-2 text-gray-600 ">Cancel Appointment</h2>
-                <hr />
-                </div>
+    <div className={`w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-10 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
+        <ToastContainer limit={1} autoClose={1500} />
+      <div className="m-auto w-[600px] bg-zinc-100 rounded overflow-auto">
 
-                <form action="post" className='w-full ' >
-                    <div className=' mb-2  flex flex flex-grow flex-col relative '>
-                        <label htmlFor='patient' className='font-bold text-gray-600 '>
-                        Reason for your cancellation
-                        </label>
-                        <input
-                        type='text'
-                        name='description'
-                        value={status.description}
-                        className=' px-4 py-2 w-full border border-gray-400 rounded-md focus:outline-none focus:shadow-md '
-                        onChange={(e) => setStatus({...status, description:e.target.value})}
-                        />
-                    </div>
-                </form>
-                <div className=" w-full flex justify-end relative left-0 px-7 py-4 bottom-0 pt-2 gap-2 z-40">
-                        <button className="bg-cyan-500 px-6 py-3 hover:bg-cyan-700 text-white font-bold  rounded"
-                        onClick={submitButton}>
-                            Submit
-                        </button>
-                        <button className="bg-red-500 hover:bg-red-700 text-white font-bold px-6 py-3 rounded" onClick={()=>setShow(false)}>
-                            Close
-                        </button>
-                    </div>
-            </div>
+        {/*//~ HEADER */}
+        <div className='p-4 bg-blue-400'>
+          <h2 className="text-2xl text-slate-100 tracking-wider uppercase font-bold">Cancel Appointment</h2>
         </div>
+        {/*//~ HEADER */}
+
+        <form action="post" className='p-4 border-t-2' >
+          <div className=' mb-2 flex flex-grow flex-col relative '>
+            <label htmlFor='description' className='font-medium text-slate-600'>Reason for your cancellation</label>
+            <textarea name="description" id="description" rows={3} value={status.description} className='p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none'
+              onChange={(e) => setStatus({ ...status, description: e.target.value })}
+            >
+            </textarea>
+          </div>
+        </form>
+
+        <div className='flex gap-2 p-4 justify-end'>
+          <button className='py-2 px-4 font-medium bg-red-500 text-white rounded hover:bg-red-700' onClick={() => setShow(false)}>Cancel</button>
+          <button className='py-2 px-4 font-medium bg-blue-500 text-white rounded hover:bg-blue-700' onClick={submitButton}>Confirm</button>
+        </div>
+
+      </div>
     </div>
-    </>
   )
 }
 

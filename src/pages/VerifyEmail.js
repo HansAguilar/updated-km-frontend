@@ -6,6 +6,7 @@ import blob from '../assets/blob.png';
 function VerifyEmail() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
   const btnSentEmail = async () => {
     const formData = new FormData();
@@ -13,9 +14,9 @@ function VerifyEmail() {
     try {
       const response = await axios.post("http://localhost:8080/api/v1/admin/verifyemail", formData);
       if (response.data) {
-        alert(response.data.message);
+        setMessage(response.data.message);
       }
-    } catch (err) { alert(err.response.data.message); }
+    } catch (err) { setMessage(err.response.data.message); }
   }
   return (
     <div className=" relative w-full min-h-screen flex justify-center items-center flex-col p-4">
@@ -25,6 +26,8 @@ function VerifyEmail() {
 
         <h1 className=' font-bold text-4xl tracking-wide text-[#5f6061] '>Forgot password</h1>
         <p>Resseting your password is easy. Just type your email, and we will send you email to reset your password</p>
+
+        <p className='mt-2 text-red-400 text-center'>{message}</p>
 
         <div className=' relative w-full mt-16 flex flex-col items-start justify-start gap-y-5 '>
           <input type="email" autoFocus name="adminEmail" id='email' value={email} className=' peer appearance-none indent-2 p-3 text-sm w-full rounded bg-transparent outline-none placeholder-transparent border placeholder-shown:border-[#c2c8d0] focus:border-sky-400 border-[#c2c8d0] font-normal text-[#3a332d]' placeholder='Email' onChange={(e) => setEmail(e.target.value)} />

@@ -42,7 +42,7 @@ export const disableDentist = (data) =>{
         try {
             const response = await axios.post(`${DENTIST_LINK}/disable`,data);
             dispatch({ type:STATUS_DENTIST_SUCCESS, payload:response.data });
-            toastHandler("success", "Successfully update dentist information");
+            toastHandler("warning", "Successfully update dentist status");
         } catch (error) {
         }
     }

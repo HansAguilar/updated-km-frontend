@@ -30,13 +30,15 @@ function CustomCalendar({ selectedDate }) {
         <div className="text-center text-gray-500 font-bold">Thu</div>
         <div className="text-center text-gray-500 font-bold">Fri</div>
         <div className="text-center text-gray-500 font-bold">Sat</div>
-        {days.map((day) => (
-          <div key={day.getTime()} className={isSameMonth(day, currentMonth) ? "bg-white p-2 text-center " : "bg-gray-100 p-2 text-center"}>
-            <div className={isSameDay(day, new Date(selectedDate)) ? "bg-cyan-500 w-full p-2 text-white font-bold  mx-auto flex items-center justify-center" : ""}>
-              {format(day, "d")}
+        {
+          days.map((day) => (
+            <div key={day.getTime()} className={isSameMonth(day, currentMonth) ? "bg-white p-2 text-center " : "bg-gray-100 p-2 text-center"}>
+              <div className={isSameDay(day, new Date(selectedDate)) ? "bg-cyan-500 w-full p-2 text-white font-bold  mx-auto flex items-center justify-center" : ""}>
+                {format(day, "d")}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        }
       </div>
     </div>
   );

@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { updatePayment,paymentAccept } from "../redux/action/PaymentAction";
+import { updatePayment, paymentAccept } from "../redux/action/PaymentAction";
 import { toastHandler } from '../ToastHandler';
 import moment from 'moment/moment';
 
-function UpdatePaymentModal({info,setAcceptData,setCancelModal}) {
+function UpdatePaymentModal({ info, setAcceptData, setCancelModal }) {
   const dispatch = useDispatch();
-  const {data} = info;
+  const { data } = info;
 
   return (
     <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute left-0 top-0 z-40 flex justify-center items-center`}>
-        <div className=" z-50">
-          <div className="m-auto w-[500px] h-auto p-8 bg-white rounded-lg shadow-lg">
+      <div className=" z-50">
+        <div className="m-auto w-[500px] h-auto p-8 bg-white rounded-lg shadow-lg">
 
-            {/* HEADER */}
-            <div className="text-left py-4">
-              <h2 className="text-xl font-bold mb-2">Approved Payment</h2>
-              <hr />
-            </div>
+          {/* HEADER */}
+          <div className="text-left py-4">
+            <h2 className="text-xl font-bold mb-2">Approved Payment</h2>
+            <hr />
+          </div>
 
-            {/* <div className=' mb-2 '>
+          {/* <div className=' mb-2 '>
               <p className=' text-xs '>Dentist</p>
                
             </div>
@@ -29,34 +29,34 @@ function UpdatePaymentModal({info,setAcceptData,setCancelModal}) {
               <input type='text' value={data.method} className=' capitalize bg-zinc-100 w-full py-2 px-3 text-sm rounded-md ' />
             </div> */}
 
-            <div className=' mb-2 '>
-              <p className=' text-xs mb-2 '>Receipt</p>
-              <img src={data.paymentPhoto} className=' w-full h-[500px] ' />
-            </div>
+          <div className=' mb-2 '>
+            <p className=' text-xs mb-2 '>Receipt</p>
+            <img src={data.paymentPhoto} className=' w-full h-[500px] ' />
+          </div>
 
-            <div className="flex justify-end pt-2 gap-2">
-                <button className="bg-cyan-500 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded"
-                onClick={()=>{
-                  dispatch(paymentAccept(data.paymentId));
-                  setAcceptData({...info, isActive:false})
-                }} 
-                >
-                Approved
-              </button>
-              <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
-                onClick={()=>{
-                  setCancelModal(true)
-                  setAcceptData({...info, isActive:false})
-                }} 
-                >
-                Cancel Payment
-              </button>
-              <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={()=>setAcceptData({...info, isActive:false})}>
-                Close
-              </button>
-            </div>
+          <div className="flex justify-end pt-2 gap-2">
+            <button className="bg-cyan-500 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => {
+                dispatch(paymentAccept(data.paymentId));
+                setAcceptData({ ...info, isActive: false })
+              }}
+            >
+              Approved
+            </button>
+            <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => {
+                setCancelModal(true)
+                setAcceptData({ ...info, isActive: false })
+              }}
+            >
+              Cancel Payment
+            </button>
+            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => setAcceptData({ ...info, isActive: false })}>
+              Close
+            </button>
           </div>
         </div>
+      </div>
     </div>
   )
 }

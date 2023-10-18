@@ -27,7 +27,7 @@ function PrivateRoutes() {
     verifyLogin();
   },[])
 
-  if(loading) return <div className=' w-full h-screen flex justify-center items-center '>
+  if(loading) return <div className=' w-full min-h-screen flex justify-center items-center '>
       <LoadingSpinner loading={loading} />
     </div>
   return(

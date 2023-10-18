@@ -1,72 +1,73 @@
 import React from 'react';
 
 
-function HistoryTable({tableHeaders, results, search, currentPage }) {
-  
- console.log(results);
-  return (
-    <div className=' h-[550px] px-4 py-3 overflow-auto '>
-        
-        <table className='w-full  '>
-            {/*Head*/}
-            <thead className=' bg-gray-100 '>
-                <tr className=" text-gray-600">
-                {
-                    tableHeaders.map((header, index)=>(
-                        <th className='py-3 px-2 capitalize' key={index}>{header}</th>
-                    ))
-                }
-                </tr>
-            </thead>
-            <tbody>
-                {
-                search.length > 0 ? 
-                results
-                //       firstItem         LastItem
-                .slice((currentPage*8)-8,currentPage*8 )
-                .map((result)=>(
-                    <tr className='' key={result.historyId}>
-                        <td className='p-2 text-center '>
-                            {result.name}
-                        </td>
-                        <td className='p-2 text-center  '>
-                            {result.description}
-                        </td>
-                        <td className='p-2 text-center '>
-                            {result.appointmentDate}
-                        </td>
-                        <td className={`p-2 text-center capitalize ${result.status === "DONE" ? `text-green-500`:`text-red-500`}`} >
-                            {result.status.toLowerCase()}
-                        </td>
-                    </tr> 
-                ))
-                :results
-                    //       firstItem         LastItem
-                    .slice((currentPage*8)-8,currentPage*8 )
-                    .map((result)=>(
-                        <tr className='' key={result.historyId}>
-                            <td className='p-2 text-center '>
-                                {result.name}
-                            </td>
-                            <td className='p-2 text-center '>
-                                {result.dentist}
-                            </td>
-                            <td className='p-2 text-center  '>
-                                {result.description}
-                            </td>
-                            <td className='p-2 text-center '>
-                                {result.appointmentDate}
-                            </td>
-                            <td className={`p-2 text-center capitalize ${result.status === "DONE" ? `text-green-500`:`text-red-500`}`} >
-                                {result.status.toLowerCase()}
-                            </td>
-                        </tr> 
-                    ))
-                }
-            </tbody>
-        </table>
-    </div>
-  )
+function HistoryTable({ tableHeaders, results, search, currentPage }) {
+	console.log(results);
+	return (
+		<div className='p-5'>
+			<table className='min-w-full'>
+
+				{/*//~ HEAD */}
+				<thead className='bg-slate-700'>
+					<tr>
+						{
+							tableHeaders.map((header, index) => (
+								<th className='p-2 uppercase text-slate-100' key={index}>{header}</th>
+							))
+						}
+					</tr>
+				</thead>
+				{/*//~ HEAD */}
+
+				<tbody>
+					{
+						search.length > 0 ?
+							results
+								//       firstItem         LastItem
+								.slice((currentPage * 8) - 8, currentPage * 8)
+								.map((result) => (
+									<tr className={`font-medium border`} key={result.historyId}>
+										<td className='text-center p-5 '>
+											{result.name}
+										</td>
+										<td className='text-center p-5  '>
+											{result.description}
+										</td>
+										<td className='text-center p-5 '>
+											{result.appointmentDate}
+										</td>
+										<td className={`text-center p-5 capitalize ${result.status === "DONE" ? `text-green-500` : `text-red-500`}`} >
+											{result.status.toLowerCase()}
+										</td>
+									</tr>
+								))
+							: results
+								//       firstItem         LastItem
+								.slice((currentPage * 8) - 8, currentPage * 8)
+								.map((result) => (
+									<tr className={`font-medium border`} key={result.historyId}>
+										<td className='text-center p-5'>
+											{result.name}
+										</td>
+										<td className='text-center p-5'>
+											{result.dentist}
+										</td>
+										<td className='text-center p-5'>
+											{result.description}
+										</td>
+										<td className='text-center p-5'>
+											{result.appointmentDate}
+										</td>
+										<td className={`text-center p-5 capitalize ${result.status === "DONE" ? `text-green-500` : `text-red-500`}`} >
+											{result.status.toLowerCase()}
+										</td>
+									</tr>
+								))
+					}
+				</tbody>
+			</table>
+		</div>
+	)
 }
 
 export default HistoryTable
