@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoArrowBackSharp } from "react-icons/io5";
-import ExcelButton from './MedicalRecordExcel';
-import PDFButton from './PDFMedicalButton';
 import { TEETH_LINK } from '../ApiLinks';
 import axios from 'axios';
 
@@ -22,6 +20,9 @@ function ViewPatient(props) {
 				return { date: val.appointmentDate, time: `${moment(val.timeStart, "HH:mm").format("LT")} - ${moment(val.timeEnd, "HH:mm").format("LT")}`, dentist: `Dr. ${val.dentist.fullname}`, status: val.status, patient: `${val.patient.firstname} ${val.patient.lastname}` };
 			});
 	});
+
+	console.log(patient);
+	console.log(appointment);
 
 	const history = appointment.filter(val => val.status === "DONE" || val.status === "CANCELLED")
 		.map(val => {
@@ -240,26 +241,32 @@ function ViewPatient(props) {
 			<div className='p-4 flex gap-4 w-full'>
 
 				{/*//~ PROFILE */}
-				<div className='w-1/4 shadow rounded px-5 py-5 bg-white flex flex-col justify-center items-center gap-4'>
+				<div className='w-1/4 shadow rounded p-5 bg-white flex flex-col justify-center items-center gap-4'>
 
 					{/*//~ IMAGE AND NAME */}
 					<div className='flex flex-col gap-2'>
 						<img src={patient.profile} className='w-44 h-44 rounded-full aspect-auto mx-auto' alt='patient profile' />
 						<div className='flex flex-col gap-2 items-center'>
 							<h3 className='text-3xl font-semibold text-cyan-900'>{patient.firstname.charAt(0).toUpperCase() + patient.firstname.substring(1)} {patient.lastname.charAt(0).toUpperCase() + patient.lastname.substring(1)}</h3>
-							<p className='text-blue-500' >{patient.email}</p>
 						</div>
 					</div>
 					{/*//~ IMAGE AND NAME */}
 
 
-					<div className='divide-y flex items-center flex-col justify-between w-full'>
+					<div className='divide-y flex items-center flex-col justify-between w-full gap-4'>
 						{/*//~ GENDER */}
 						<div className=' w-full flex justify-between p-2 border-gray-300 '>
 							<p className='text-slate-800 font-medium'>Gender</p>
 							<p className='capitalize text-slate-600'>{patient.gender}</p>
 						</div>
 						{/*//~ GENDER */}
+
+						{/*//~ EMAIL */}
+						<div className=' w-full flex justify-between p-2 border-gray-300 '>
+							<p className='text-slate-800 font-medium'>Email</p>
+							<p className='capitalize text-slate-600'>{patient.email.toLowerCase()}</p>
+						</div>
+						{/*//~ EMAIL */}
 
 						{/*//~ BIRTHDAY */}
 						<div className=' w-full flex justify-between p-2 border-gray-300 '>
@@ -276,7 +283,7 @@ function ViewPatient(props) {
 						{/*//~ PHONE */}
 
 						{/*//~ ADDRESS */}
-						<div className=' w-full flex justify-between p-2 border-gray-300 '>
+						<div className=' w-full flex justify-between p-2 border-gray-300'>
 							<p className='text-slate-800 font-medium'>Address</p>
 							<p className='capitalize text-slate-600'>{patient.address}</p>
 						</div>

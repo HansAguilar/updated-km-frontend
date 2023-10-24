@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import SidebarIcon from './SidebarIcon';
 import { NavLink } from 'react-router-dom';
-import { BiArrowFromBottom, BiArrowToBottom } from 'react-icons/bi'
 import { AiFillHome, AiFillMessage, AiFillSetting, AiFillSchedule } from 'react-icons/ai';
 import { BsCalendarEventFill, BsFillCalendarCheckFill, BsFillCalendar3Fill } from 'react-icons/bs'
 import { FaUserAlt, FaUserCog, FaUserMd, FaMoneyBill } from 'react-icons/fa';

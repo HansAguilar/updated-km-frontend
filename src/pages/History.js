@@ -62,7 +62,7 @@ function History() {
           <div className='w-full p-4 flex justify-between items-center'>
 
             {/*//~ TITLE */}
-            <h1 className=' text-xl font-bold '>Appointment History</h1>
+            <h1 className=' text-xl font-bold text-slate-600'>Appointment History</h1>
             {/*//~ TITLE */}
 
             {/*//~ FILES */}

@@ -15,7 +15,11 @@ function Login() {
     message: ""
   })
   const navigate = useNavigate();
-  useEffect(() => { localStorage.removeItem("token") }, []);
+  useEffect(() => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("adminInfo");
+  }, []);
+
   const handleOnChange = (e) => { setAccount({ ...account, [e.target.name]: e.target.value }); }
 
   const handleSubmit = (e) => {

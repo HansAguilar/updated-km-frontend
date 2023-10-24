@@ -104,7 +104,7 @@ function AdminModal({ show, setModal, type }) {
 
     else if (adminInfo.password.replace(/\s+/g, '') !== adminInfo.confirmPassword.replace(/\s+/g, '')) return toastHandler("error", "Passwords do not match");
 
-    else if (!isLegalAge) return toastHandler("error", "Must be 18 or older");
+    else if (!isLegalAge && type != "patient" ) return toastHandler("error", "Must be 18 or older");
 
     else if (!contactClean.test(adminInfo.contactNumber)) return toastHandler("error", "Please enter an 11-digit number starting with 09");
 
@@ -127,7 +127,6 @@ function AdminModal({ show, setModal, type }) {
           <h2 className="text-2xl text-slate-100 tracking-wider uppercase font-bold ">{`Add ${type}`}</h2>
         </div>
         {/*//~ HEADER */}
-
 
         <form action="post" className='grid gap-3 p-4 border-t-2' >
 

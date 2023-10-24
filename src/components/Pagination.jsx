@@ -4,7 +4,7 @@ import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 function Pagination({ setCurrentPage, pageNumber }) {
     return (
         <div className='py-3 flex justify-center '>
-            <button className='py-2 px-4 text-cyan-900 border-gray-500 cursor-pointer flex items-center hover:bg-blue-600 hover:text-white ' onClick={() => { setCurrentPage(prev => prev === 1 ? prev = 1 : prev -= 1) }} >
+            <button className='py-2 px-4 text-blue-900 border-gray-500 cursor-pointer flex items-center hover:bg-blue-600 hover:text-white ' onClick={() => { setCurrentPage(prev => prev === 1 ? prev = 1 : prev -= 1) }} >
                 <AiFillCaretLeft />
             </button>
             {

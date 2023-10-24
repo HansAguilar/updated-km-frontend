@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import Update from './UpdateAnnouncement';
 import axios from 'axios';
 import { ANNOUNCEMENT_LINK } from '../ApiLinks';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
+import { toastHandler } from '../ToastHandler';
 
 function AnnouncementTable({ tableHeaders, results, search, currentPage }) {
 	const [details, setDetails] = useState(null);
@@ -11,24 +12,13 @@ function AnnouncementTable({ tableHeaders, results, search, currentPage }) {
 
 	const deleteAnnouncement = async (id) => {
 		try {
-			const response = await axios.delete(`${ANNOUNCEMENT_LINK}/${id}`)
-			if (response.data) {
-				toast.success(`${response.data.message}`, {
-					position: "top-right",
-					autoClose: 1500,
-					hideProgressBar: false,
-					pauseOnHover: false,
-					closeOnClick: false,
-					draggable: false,
-					progress: undefined,
-					theme: "colored",
-				});
-
-				window.setTimeout(() => {
-					window.location.reload();
-				}, 1500)
-			}
-		} catch (error) {
+			await axios.delete(`${ANNOUNCEMENT_LINK}/${id}`)
+			toastHandler("success", "Successfully deleted!")
+			return window.setTimeout(() => {
+				window.location.reload();
+			}, 1500)
+		}
+		catch (error) {
 			console.log(error);
 		}
 	}
@@ -36,21 +26,12 @@ function AnnouncementTable({ tableHeaders, results, search, currentPage }) {
 	const disableAccountBtn = async (id, disable) => {
 		try {
 			const newDisableInformation = { id: id, verified: disable };
-			await axios.put(`${ANNOUNCEMENT_LINK}disable`, newDisableInformation, {
+			await axios.put(`${ANNOUNCEMENT_LINK}/disable`, newDisableInformation, {
 				headers: { Accept: 'application/json' },
 			});
-			toast.success(`Disable${disable ? '' : 'd'} Account Successfully!}`, {
-				position: "top-right",
-				autoClose: 1500,
-				hideProgressBar: false,
-				pauseOnHover: false,
-				closeOnClick: false,
-				draggable: false,
-				progress: undefined,
-				theme: "colored",
-			});
+			toastHandler("success", `Disable${disable ? '' : 'd'} Account Successfully!}`)
 
-			window.setTimeout(() => {
+			return window.setTimeout(() => {
 				window.location.reload();
 			}, 1500)
 		} catch (err) {
