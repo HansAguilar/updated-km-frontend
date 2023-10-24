@@ -57,7 +57,7 @@ function Header({ toggleBar, setToggleBar }) {
       {/* NOTIFICATION BOX */}
       {
         isNotificationToggle && (
-          <div className=' bg-slate-400 w-96 h-96 max-h-96 overflow-auto absolute rounded shadow-lg top-16 right-5 p-3 z-30 flex flex-col gap-4 '>
+          <div className=' bg-slate-100 w-96 h-96 max-h-96 overflow-auto absolute rounded shadow-xl border-2 top-16 right-5 p-3 z-30 flex flex-col gap-4 '>
             {
               notification.map((data, idx) => (
                 <div key={idx} className={`w-full ${data.status === "READ" ? "bg-white" : "bg-slate-200"}  flex gap-3 p-4 `}>

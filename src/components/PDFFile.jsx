@@ -2,18 +2,18 @@ import React from 'react';
 import { Page, Text, Document, StyleSheet, View } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
-  body:{
-    paddingTop: 35,
-    paddingBottom: 65,
-    paddingHorizontal:35,
+  body: {
+    paddingTop: 25,
+    paddingBottom: 55,
+    paddingHorizontal: 25,
   },
-  title:{
-    fontSize:24,
+  title: {
+    fontSize: 24,
     textAlign: "center"
   },
-  text:{
-    margin:12,
-    fontSize:14,
+  text: {
+    margin: 12,
+    fontSize: 14,
     textAlign: "justify",
     fontFamily: "Times-Roman"
   },
@@ -26,76 +26,69 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "grey",
   },
-  tableHeader:{
+  tableHeader: {
     flexDirection: "row",
     backgroundColor: '#06b6d4',
     padding: 3,
     fontSize: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#075985',
-    // flex:"flex",
-    // justifyContent:"space-between",
   },
-  tableBody:{
+  tableBodyOdd: {
     flexDirection: "row",
-    backgroundColor: '#f1f5f9',
+    backgroundColor: 'rgb(241 245 230)',
     padding: 3,
     fontSize: 10,
-    // flex:"flex",
-    // justifyContent:"space-between",
+  },
+  tableBodyEven: {
+    flexDirection: "row",
+    backgroundColor: "rgb(241 245 249)",
+    padding: 3,
+    fontSize: 10,
   },
   tableHeaderText: {
-    flex: 1,
-    fontWeight: 'bold',
+    fontWeight: 'extrabold',
     textAlign: 'center',
-    color:'white'
+    color: 'white'
   },
   tableBodyText: {
-    flex: 1,
-    fontWeight: 'bold',
     textAlign: 'center',
-    color:'#1f2937'
+    color: '#1f2937'
   },
 });
-function PDFFile({data}) {
+
+function PDFFile({ data }) {
   return (
-      <Document >
-        <Page style={styles.body} >
-          <View style={styles.tableHeader} >
-            <Text style={styles.tableHeaderText}>Name</Text>
-            <Text style={styles.tableHeaderText}>Gender</Text>
-            <Text style={styles.tableHeaderText}>Address</Text>
-            <Text style={styles.tableHeaderText}>Email</Text>
-            <Text style={styles.tableHeaderText}>Phone<br />Number</Text>
-            <Text style={styles.tableHeaderText}>Age</Text>
-            <Text style={styles.tableHeaderText}>Birthday</Text>
+    <Document>
+      <Page style={styles.body}>
+        <View style={styles.tableHeader}>
+          <Text style={{ ...styles.tableHeaderText, flex: 3 }}>Name</Text>
+          <Text style={{ ...styles.tableHeaderText, flex: 1 }}>Gender</Text>
+          <Text style={{ ...styles.tableHeaderText, flex: 2 }}>Address</Text>
+          <Text style={{ ...styles.tableHeaderText, flex: 3 }}>Email</Text>
+          <Text style={{ ...styles.tableHeaderText, flex: 1 }}>Phone No.</Text>
+          <Text style={{ ...styles.tableHeaderText, flex: 1 }}>Age</Text>
+        </View>
+        {data.map((val, idx) => (
+          <View style={idx % 2 === 0 ? styles.tableBodyEven : styles.tableBodyOdd} key={idx}>
+            <Text style={{ ...styles.tableBodyText, flex: 3 }}>{`${val.firstname} ${val.middlename} ${val.lastname}`}</Text>
+            <Text style={{ ...styles.tableBodyText, flex: 1 }}>{val.gender}</Text>
+            <Text style={{ ...styles.tableBodyText, flex: 2 }}>{val.address}</Text>
+            <Text style={{ ...styles.tableBodyText, flex: 3 }}>{val.email}</Text>
+            <Text style={{ ...styles.tableBodyText, flex: 1 }}>{val.contactNumber}</Text>
+            <Text style={{ ...styles.tableBodyText, flex: 1 }}>{val.age}</Text>
           </View>
-          {
-            data.map((val,idx)=>
-              <View style={styles.tableBody} key={idx}>
-                <Text style={styles.tableBodyText}>{`${val.firstname} ${val.middlename} ${val.lastname}`}</Text>
-                <Text style={styles.tableBodyText}>{val.gender}</Text>
-                <Text style={styles.tableBodyText}>{val.address}</Text>
-                <Text style={styles.tableBodyText}>{val.email}</Text>
-                <Text style={styles.tableBodyText}>{val.phoneNumber}</Text>
-                <Text style={styles.tableBodyText}>{val.age}</Text>
-                <Text style={styles.tableBodyText}>{val.birthday}</Text>
-              </View>
-            )  
-          }
-          
-
-
-
-          {/*Page Number*/}
-          <Text 
+        ))}
+        {/* Page Number */}
+        <Text
           style={styles.pageNumber}
-          render={({pageNumber, totalPages})=>
-            `${pageNumber}/${totalPages}`
-          }/>
-        </Page>
-      </Document>
-  )
+          render={({ pageNumber, totalPages }) =>
+            `${pageNumber} / ${totalPages}`
+          }
+        />
+      </Page>
+    </Document>
+  );
 }
 
-export default PDFFile
+export default PDFFile;

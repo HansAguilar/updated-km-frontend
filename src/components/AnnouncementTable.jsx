@@ -62,7 +62,7 @@ function AnnouncementTable({ tableHeaders, results, search, currentPage }) {
 				<tbody>
 					{
 						results.map((val) => (
-							<tr key={val.announcementId} className='font-medium border text-cyan-900'>
+							<tr key={val.announcementId} className='font-medium border text-cyan-900 even:bg-slate-100'>
 								<td className='py-2 text-center flex justify-center '>
 									<img src={val.picture} className='m-auto w-28 h-28 object-fill aspect-auto ' alt="User" />
 								</td>

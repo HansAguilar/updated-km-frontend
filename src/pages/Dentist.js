@@ -74,7 +74,7 @@ function Dentist() {
           {/*//~ BUTTON FILES SEARCH CONTAINER */}
 
           <DentistTable tableHeaders={tableHeaders} results={search.length > 0 ? filteredDentist : dentistList} search={search} currentPage={currentPage} />
-          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
+          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} currentPage={currentPage}/>
         </div>
       </div>
     </div>

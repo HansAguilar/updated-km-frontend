@@ -75,7 +75,7 @@ function Admin() {
           {/*//~ BUTTON FILES SEARCH CONTAINER */}
 
           <Table tableHeaders={tableHeaders} results={search.length > 0 ? filteredAdminList : adminList.sort()} search={search} currentPage={currentPage} />
-          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
+          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} currentPage={currentPage}/>
         </div>
       </div>
     </div>

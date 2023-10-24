@@ -132,7 +132,7 @@ function Payments() {
           </div>
 
           <Table tableHeaders={tableHeaders} results={search.length > 0 ? filteredPatient : payload.sort()} search={search} setUpdateModal={setUpdateModal} currentPage={currentPage} updateData={updateData} setUpdateData={setUpdateData} acceptData={acceptData} setAcceptData={setAcceptData} />
-          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
+          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} currentPage={currentPage}/>
           <div>
           </div>
         </div>

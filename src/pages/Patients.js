@@ -46,7 +46,7 @@ function Patients() {
           <div className='w-full p-4 flex justify-between items-center'>
 
             {/*//~ ADD BUTTON */}
-            <div className='flex items-center justify-between p-2 bg-blue-400 hover:bg-blue-500 rounded cursor-pointer text-white' onClick={() => setModal(true)}>
+            <div className='flex items-center justify-between p-2 bg-blue-500 hover:bg-blue-800 rounded cursor-pointer text-white' onClick={() => setModal(true)}>
               <IoAdd size={30} />
               <button className='font-bold pr-2'>Add Patient</button>
             </div>
@@ -77,7 +77,7 @@ function Patients() {
           {/*//~ BUTTON FILES SEARCH CONTAINER */}
 
           <Table tableHeaders={tableHeaders} results={search.length > 0 ? filteredPatient : payload.sort()} search={search} currentPage={currentPage} />
-          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} />
+          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} currentPage={currentPage}/>
         </div>
       </div>
     </div>

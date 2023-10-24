@@ -71,6 +71,7 @@ export default function QRScanPage() {
     }
     window.location.reload(navigate("/admin/dashboard/"));
   }
+  
   return appointmentDetails && (
     <div className='h-screen overflow-hidden relative bg-gray-200 '>
       <ToastContainer limit={1} autoClose={1500} />

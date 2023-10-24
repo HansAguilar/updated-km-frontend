@@ -7,9 +7,10 @@ import { ToastContainer } from 'react-toastify';
 export default function QRCodeModal({ setToggleQR }) {
   const navigate = useNavigate();
   const [scanResult, setScanResult] = useState(null);
+  let scanner;
 
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner('reader', {
+    scanner = new Html5QrcodeScanner('reader', {
       qrbox: {
         width: 150,
         height: 150,
@@ -25,8 +26,15 @@ export default function QRCodeModal({ setToggleQR }) {
     }
 
     function error(err) {
+      console.error('QR Code scan error:', err);
     }
-  }, [])
+
+    return () => {
+      if (scanner) {
+        scanner.clear()
+      }
+    };
+  }, []);
 
   return (
     <div className="w-full min-h-screen bg-gray-900 bg-opacity-75 absolute z-10 flex flex-grow justify-center items-center">
