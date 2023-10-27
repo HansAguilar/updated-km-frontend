@@ -273,7 +273,9 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     setModal(false);
   };
 
-  const minDate = new Date().toISOString().split('T')[0];
+  const currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() + 1); // Subtract one day
+  const minDate = currentDate.toISOString().split('T')[0];
   return (
     <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 absolute -top-10 z-10 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
       <div className="m-auto w-[900px] min-h-max bg-zinc-100 rounded overflow-auto">
@@ -438,7 +440,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
 
                 </div>
                 {/*//~ DENTAL SERVICE */}
-                
+
               </div>
               {/*//~ APPOINTMENT NAMES */}
 

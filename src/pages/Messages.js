@@ -2,20 +2,22 @@ import React, { useState } from "react";
 import * as io from "socket.io-client";
 import { SOCKET_LINK } from "../ApiLinks";
 import { useDispatch, useSelector } from "react-redux";
-import { BiMessageEdit } from "react-icons/bi";
+import { BiMessageEdit, BiSearchAlt } from "react-icons/bi";
 import { fetchIncomingMessage, sendMessage } from "../redux/action/MessageAction";
 import MessageBox from "../components/MessageBox";
+import { AiOutlineClose } from "react-icons/ai";
 
 const socket = io.connect(SOCKET_LINK);
 function Messages({ admin }) {
   const dispatch = useDispatch();
-  const [suggestions, setSuggestions] = useState([]);
+
   const [modal, setModal] = useState(false);
   const messages = useSelector((state) => { return state.messages.payload; });
   const [roomKey, setRoomKey] = useState("");
 
   const MessageModal = () => {
     const admin = useSelector((state) => { return state.admin.loginAdmin; })
+    const [suggestions, setSuggestions] = useState([]);
     const [messageDetails, setMessageDetails] = useState({
       inputHandler: "",
       adminId: admin.adminId,
@@ -41,38 +43,44 @@ function Messages({ admin }) {
     }
 
     return (
-      <div className=" w-full h-full absolute z-50 flex justify-center items-center " style={{ background: "linear-gradient(rgb(75,85,99,0.5),rgb(75,85,99,0.5))" }}>
-        <div className="bg-white w-auto h-auto p-5 z-40 relative ">
-          <p className=" p-5 bg-cyan-500 absolute rounded-full right-[-20px] top-[-20px] flex justify-center items-center w-2 h-2 text-lg text-white cursor-pointer "
-            onClick={() => setModal(false)}
-          >
-            X
-          </p>
-          <h3 className=" w-96 font-bold text-lg border-b-2 py-2 ">Create Message</h3>
+      <div className={`w-full h-screen bg-gray-900 bg-opacity-75 absolute left-0 top-0 z-10 flex flex-grow justify-center items-center `}>
+        <div className="relative m-auto w-[500px] h-[500px] bg-zinc-100 rounded p-4">
+          <div className="bg-red-400 absolute top-3 right-3 rounded-full p-2 cursor-pointer hover:bg-red-600" onClick={() => setModal(false)}>
+            <AiOutlineClose className='text-white' size={24} />
+          </div>
+
+          <h3 className="font-bold text-xl border-b-2 py-2">Create Message</h3>
+
           <div>
-            <input type="search" name="inputHandler" value={messageDetails.inputHandler} placeholder="Search" className=" w-full p-2 mt-2 bg-gray-200 focus:outline-none " onChange={(e) => searchPatientOnChangeHandler(e)} />
-            <div>
+            <div className="w-full my-2 relative">
+              <BiSearchAlt className="absolute left-2 top-2 text-slate-400" size={24} />
+              <input type="search" name="inputHandler" value={messageDetails.inputHandler} placeholder="Search patient..." className="indent-8 w-full p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none" onChange={(e) => searchPatientOnChangeHandler(e)} />
+            </div>
+
+            <div className="w-full max-h-96 overflow-auto">
               {
                 messageDetails.inputHandler !== "" && suggestions.length > 0 ? (
-                  suggestions.map((val, idx) => (
-                    <ul key={idx} className=" w-full h-auto mt-3 ">
-                      <li
-                        className=" w-full py-2 px-3 rounded-md flex gap-2 items-center justify-start hover:bg-cyan-500 hover:text-white cursor-pointer "
-                        onClick={() => {
-                          setMessageDetails({
-                            ...messageDetails,
-                            inputHandler: "",
-                            receiverId: val.patientId,
-                            receiverName: `${val.firstname} ${val.lastname}`
-                          });
-                          setSuggestions([]);
-                        }}
-                      >
-                        <img src={val.profile} className=" w-11 h-11 rounded-full " />
-                        <p>{val.firstname} {val.lastname}</p>
-                      </li>
-                    </ul>
-                  ))
+                  <ul>
+                    {
+                      suggestions.map((val, idx) => (
+                        <li key={idx} className="border-b-slate-300 border-b transition-all duration-150 w-full p-3 rounded flex gap-4 items-center justify-start hover:bg-blue-500 hover:text-white cursor-pointer "
+                          onClick={() => {
+                            setMessageDetails({
+                              ...messageDetails,
+                              inputHandler: "",
+                              receiverId: val.patientId,
+                              receiverName: `${val.firstname} ${val.lastname}`
+                            });
+                            setSuggestions([]);
+                          }}
+                        >
+                          <img src={val.profile} className=" w-11 h-11 rounded-full aspect-auto" />
+                          <p>{val.firstname} {val.lastname}</p>
+                        </li>
+                      ))
+                    }
+
+                  </ul>
                 )
                   : messageDetails.inputHandler !== "" ? <h1 className=" w-full py-2 text-zinc-400 font-bold ">No Existing Patient</h1>
                     : <div></div>
@@ -84,52 +92,55 @@ function Messages({ admin }) {
                       <span className=" bg-emerald-500 text-white py-1 px-5 mr-2 rounded-md ">Patient Name</span>
                       {messageDetails.receiverName}
                     </p>
-                    <textarea className="min-h-auto max-h-[250px] overflow-auto w-full py-3 px-5 border-zinc-700 border-[1px] focus:outline-none resize-none " placeholder="Message..." onChange={(e) => setMessageDetails({
+                    <textarea autoFocus className="p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none w-full resize-none" rows="5" placeholder="Message..." onChange={(e) => setMessageDetails({
                       ...messageDetails,
                       messageContent: e.target.value
                     })}>
                     </textarea>
-                    <div className=" w-full h-auto flex justify-end items-start ">
-                      <button className=" text-white bg-cyan-500 py-2 px-5 rounded-md "
-                        onClick={sendMessageButton}
-                      >Send Message</button>
+
+                    <div className=" w-full flex justify-end items-start ">
+                      <button className="py-2 px-4 font-medium bg-blue-500 text-white rounded hover:bg-blue-700" onClick={sendMessageButton}>Send Message</button>
                     </div>
                   </div>
                 )
               }
             </div>
           </div>
-
-
         </div>
       </div>
     )
   }
 
   return (
-    <div className='h-screen overflow-hidden relative bg-gray-200'>
+    <div className='w-full h-screen overflow-hidden relative flex flex-row bg-gray-200 gap-4 p-4'>
       {modal && <MessageModal />}
-      <div className="  w-1/4 h-full p-5 flex flex-col gap-3 ">
 
-        {/* HEADER */}
-        <div className=" w-full flex flex-col gap-5  ">
+      <div className="bg-white rounded w-1/4 h-full p-5 flex flex-col gap-3 shadow-md">
+
+        {/*//~ HEADER */}
+        <div className=" w-full flex flex-col gap-5 ">
           <div className=" flex justify-between items-center ">
-            <h1 className=" text-xl font-bold text-zinc-700 ">All Message</h1>
-            <div onClick={() => setModal(true)} className=" p-2 cursor-pointer rounded-lg bg-blue-600 hover:bg-blue-700 "><BiMessageEdit size={25} color="#fff" /></div>
+            <h1 className=" text-xl font-bold text-slate-800">Recent Messages</h1>
+            <div onClick={() => setModal(true)} className=" p-2 cursor-pointer rounded-lg bg-blue-500 hover:bg-blue-700 "><BiMessageEdit size={25} color="#fff" /></div>
           </div>
-          <input type="text" name="search" placeholder="Search Patient" className=" rounded-lg bg-white py-2 px-5 focus:outline-none " />
+
+          <div className="relative">
+            <BiSearchAlt className="absolute left-2 top-2 text-slate-400" size={24} />
+            <input type="text" name="search" placeholder="Search Patient..." className="w-full indent-8 p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none" />
+          </div>
         </div>
+        {/*//~ HEADER */}
 
         {/* LIST OF MESSAGE */}
-        <div className=" w-full max-h-[680px] overflow-x-auto flex flex-col gap-2 mb-10 ">
+        <div className=" w-full max-h-[680px] overflow-x-auto flex flex-col gap-2 mb-10 divide-y-2 ">
           {
             Object.entries(messages).map(([keys, message]) => (
-              <div key={keys} className=" w-full p-3 bg-white cursor-pointer rounded-md flex justify-center items-center gap-3 hover:shadow-lg " onClick={() => { setRoomKey(keys); }} >
+              <div key={keys} className=" w-full p-3 bg-white cursor-pointer rounded-md flex justify-center items-center gap-3 hover:bg-gray-200 " onClick={() => { setRoomKey(keys); }} >
 
-                <img src={message[0].receiverId.profile} alt="Patient Profile" className=" rounded-md w-14 h-14 " />
+                <img src={message[0].receiverId.profile} alt="Patient Profile" className=" rounded w-14 h-14 aspect-auto " />
                 {/* MESSAGE CONTENT */}
                 <div className=" w-full h-auto ">
-                  <h1 className=" text-md font-bold text-zinc-600 ">{message[0].receiverId.firstname} {message[0].receiverId.lastname}</h1>
+                  <h1 className=" text-md font-bold text-slate-700 ">{message[0].receiverId.firstname} {message[0].receiverId.lastname}</h1>
                   <p className=" text-sm max-w-[250px] truncate ">{message[message.length - 1].messageContent}</p>
                 </div>
               </div>
@@ -143,7 +154,7 @@ function Messages({ admin }) {
 
 
       {/* MESSSAGE ROOM */}
-      <div className=" flex flex-grow flex-col rounded-lg p-5">
+      <div className="bg-white rounded flex flex-grow flex-col shadow-md">
 
         {roomKey ? (
           <MessageBox roomKey={roomKey} />

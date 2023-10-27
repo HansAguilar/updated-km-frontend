@@ -94,7 +94,7 @@ function Appointments() {
 
             {/*//~ BUTTON */}
             <div className='flex items-center gap-4'>
-              <div className='flex items-center justify-between p-2 bg-blue-400 hover:bg-blue-500 rounded cursor-pointer text-white' onClick={() => setModal(true)}>
+              <div className='flex items-center justify-between p-2 bg-blue-500 hover:bg-blue-800 rounded cursor-pointer text-white' onClick={() => setModal(true)}>
                 <IoAdd size={30} />
                 <button className='font-bold pr-2'>Add Appointment</button>
               </div>

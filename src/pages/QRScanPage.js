@@ -30,6 +30,13 @@ export default function QRScanPage() {
 
   console.log(payment);
 
+  // const checkIfExistingAppointment = () => {
+  //   const appointmentTime = moment(appointment[0].timeStart, "HH:mm:00").add(10, "minutes");
+  //   const appointmentDate = moment(appointment[0].appointmentDate).format("YYYY-MM-DD");
+  //   setAppointmentDetails(...appointment);
+  //   toastHandler("success", "Successfully scan the QR");
+  // }
+
   const checkIfExistingAppointment = () => {
     if (appointment.length > 0) {
       const appointmentTime = moment(appointment[0].timeStart, "HH:mm:00").add(10, "minutes");
@@ -42,7 +49,8 @@ export default function QRScanPage() {
         toastHandler("error", "Invalid Appointment");
         navigate(-1);
       }
-    } else if (appointment.length < 1 || appointment === null) {
+    }
+    else if (appointment.length < 1 || appointment === null) {
       toastHandler("error", "Appointment not found");
       navigate("/admin/dashboard/");
     }
@@ -71,9 +79,8 @@ export default function QRScanPage() {
     }
     window.location.reload(navigate("/admin/dashboard/"));
   }
-  
   return appointmentDetails && (
-    <div className='h-screen overflow-hidden relative bg-gray-200 '>
+    <div className='h-screen w-[800px] m-auto mt-32 overflow-hidden relative bg-gray-200 '>
       <ToastContainer limit={1} autoClose={1500} />
       <div className=' w-auto h-auto bg-white p-5 rounded-md '>
 

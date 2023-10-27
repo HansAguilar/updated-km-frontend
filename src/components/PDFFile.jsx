@@ -61,6 +61,9 @@ function PDFFile({ data }) {
   return (
     <Document>
       <Page style={styles.body}>
+        <View style={{ paddingBottom: 4 }}>
+          <Text style={{ color: "#06b6d4", textAlign: 'center' }}>KM Geronimo Dental Clinic</Text>
+        </View>
         <View style={styles.tableHeader}>
           <Text style={{ ...styles.tableHeaderText, flex: 3 }}>Name</Text>
           <Text style={{ ...styles.tableHeaderText, flex: 1 }}>Gender</Text>
