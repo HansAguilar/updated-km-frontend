@@ -97,6 +97,7 @@ function Dashboard() {
       dispatch(responseToCancelledAppointment(data.value));
     });
     socket.on("received_by_admin", (data) => {
+      console.log(data);
       dispatch(fetchIncomingMessage(data.key, data.value));
     })
     return () => { socket.off() }

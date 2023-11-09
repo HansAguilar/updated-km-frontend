@@ -3,7 +3,7 @@ import * as io from "socket.io-client";
 import { SOCKET_LINK } from "../ApiLinks";
 import { useDispatch, useSelector } from "react-redux";
 import { BiMessageEdit, BiSearchAlt } from "react-icons/bi";
-import { fetchIncomingMessage, sendMessage } from "../redux/action/MessageAction";
+import { createNewMessage,sendMessage } from "../redux/action/MessageAction";
 import MessageBox from "../components/MessageBox";
 import { AiOutlineClose } from "react-icons/ai";
 
@@ -33,12 +33,18 @@ function Messages({ admin }) {
       const filteredData = patient.filter((val) => (val.firstname + val.middlename + val.lastname).toLowerCase().includes(inputValue));
       setSuggestions(filteredData);
       setMessageDetails({ ...messageDetails, [e.target.name]: e.target.value });
-      console.log(filteredData);
     };
 
     const sendMessageButton = () => {
+      if(!messageDetails.messageContent) return;
       const key = `${messageDetails.adminId}-${messageDetails.receiverId}`;
-      dispatch(sendMessage(key, messageDetails));
+      const filteredMessages = messages.filter((val)=>val.roomId===key);
+      
+      if(filteredMessages.length > 0){
+        dispatch(sendMessage(key, messageDetails));
+      }else{
+        dispatch(createNewMessage(key, messageDetails));
+      }
       setModal(false)
     }
 
@@ -134,20 +140,19 @@ function Messages({ admin }) {
         {/* LIST OF MESSAGE */}
         <div className=" w-full max-h-[680px] overflow-x-auto flex flex-col gap-2 mb-10 divide-y-2 ">
           {
-            Object.entries(messages).map(([keys, message]) => (
-              <div key={keys} className=" w-full p-3 bg-white cursor-pointer rounded-md flex justify-center items-center gap-3 hover:bg-gray-200 " onClick={() => { setRoomKey(keys); }} >
+            messages && messages.map((val, idx) => (
+              <div key={idx} className=" w-full p-3 bg-white cursor-pointer rounded-md flex justify-center items-center gap-3 hover:bg-gray-200 " onClick={() => { setRoomKey(val.roomId); }} >
 
-                <img src={message[0].receiverId.profile} alt="Patient Profile" className=" rounded w-14 h-14 aspect-auto " />
+                <img src={val.receiverId.profile} alt="Patient Profile" className=" rounded w-14 h-14 aspect-auto " />
                 {/* MESSAGE CONTENT */}
                 <div className=" w-full h-auto ">
-                  <h1 className=" text-md font-bold text-slate-700 ">{message[0].receiverId.firstname} {message[0].receiverId.lastname}</h1>
-                  <p className=" text-sm max-w-[250px] truncate ">{message[message.length - 1].messageContent}</p>
+                  <h1 className=" text-md font-bold text-slate-700 ">{val.receiverId.firstname} {val.receiverId.lastname}</h1>
+                  <p className=" text-sm max-w-[250px] truncate ">{
+                    val.messageEntityList[val.messageEntityList.length-1].messageContent
+                  }</p>
                 </div>
               </div>
             ))
-            // Object.entries(messages).map(([keys, message])=>{
-            //   console.log(message);
-            // })
           }
         </div>
       </div>

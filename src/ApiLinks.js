@@ -13,7 +13,8 @@ export const FEE_LINK = "http://localhost:8080/api/v1/fee";
 export const SCHEDULE_LINK = "http://localhost:8080/api/v1/schedule";
 export const TEETH_LINK = "http://localhost:8080/api/v1/teeth";
 
-export const SOCKET_LINK = "http://localhost:8081/";
+const PORT = `192.168.254.102`;
+export const SOCKET_LINK = `http://${PORT}:8081/`;
 
 
 // export const DENTIST_LINK = "https://kmgeronimo-backend-api.onrender.com/api/v1/dentist";

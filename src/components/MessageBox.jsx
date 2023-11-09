@@ -3,10 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from "moment/moment";
 import { AiOutlineSend } from "react-icons/ai";
 import { sendMessage } from "../redux/action/MessageAction";
+import * as io from "socket.io-client";
+import { SOCKET_LINK } from '../ApiLinks';
 
+const socket = io.connect(SOCKET_LINK);
 function MessageBox({ roomKey }) {
   const dispatch = useDispatch();
-  const messageHistory = useSelector((state) => { return state.messages.payload[roomKey] });
+  const messageHistory = useSelector((state) => { return state.messages.payload.filter((val)=>val.roomId===roomKey) });
   const admin = useSelector((state) => { return state.admin.loginAdmin; })
 
   const [feedback, setFeedback] = useState({
@@ -37,11 +40,11 @@ function MessageBox({ roomKey }) {
       {/*//~ HEADER */}
 
       <div className="w-full h-[550px] min-h-[550px] overflow-y-auto flex flex-col items-baseline p-4 gap-3 ">
-        {messageHistory.map((val, idx) => (
+        {messageHistory[0].messageEntityList.map((val, idx) => (
           <div
             className={`w-full h-auto flex flex-col gap-3 ${val.type === "CLIENT"
-              ? "justify-end items-end"
-              : "justify-start items-start"
+              ? "justify-start items-start"
+              : "justify-end items-end"
               }`}
             key={idx} // Add a unique key to each element in the loop
             ref={(el) => {
@@ -58,7 +61,7 @@ function MessageBox({ roomKey }) {
             >
               <p className="whitespace-normal">{val.messageContent}</p>
             </div>
-            <p className="text-xs">{moment(val.date).format("LLLL")}</p>
+            <p className="text-xs">{moment(val.createdDateAndTime).format("LLLL")}</p>
           </div>
         ))}
       </div>
