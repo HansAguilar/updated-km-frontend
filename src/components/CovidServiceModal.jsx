@@ -8,7 +8,7 @@ import { createAppointment, fetchPatientAppointment } from "../redux/action/Appo
 import { fetchPatientPayments } from "../redux/action/PaymentAction";
 import { toastHandler } from '../ToastHandler';
 
-function CovidServiceModal({ show, setModal, setAddModal, data, setAppointment }) {
+function CovidServiceModal({ show, setModal, setAddModal, data, setAppointment,clearData }) {
   const dispatch = useDispatch();
 
   const backPrevious = () => {
@@ -32,26 +32,7 @@ function CovidServiceModal({ show, setModal, setAddModal, data, setAppointment }
       type: data.type,
       insuranceId: data.insuranceId
     }
-    dispatch(createAppointment(newData, setModal));
-
-
-    // setAppointment({
-    //   patient: '',
-    //   patientId:"",
-    //   dentist: '',
-    //   dentistId:"",
-    //   serviceValue: "",
-    //   serviceSelected:[],
-    //   date:"",
-    //   numberOfMonths:0,
-    //   timeStart: "",
-    //   timeEnd:"",
-    //   totalAmount:fee.status === "AVAILABLE"?fee.price:0.00,
-    //   timeSubmitted:"",
-    //   method: "",
-    //   type: "",
-    //   insuranceId: ""
-    // })
+    dispatch(createAppointment(newData, setModal,clearData));
   }
   const rules = [
     {

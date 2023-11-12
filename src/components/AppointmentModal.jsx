@@ -8,7 +8,7 @@ import { BiSearchAlt } from 'react-icons/bi';
 
 const inputStyle = "p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none";
 
-function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppointment }) {
+function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppointment,clearData }) {
   const patient = useSelector((state) => { return state.patient; });
   const dentist = useSelector((state) => { return state.dentist; });
   const service = useSelector((state) => { return state.service; });
@@ -130,8 +130,6 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
           return value.appointmentDate === e.target.value;
         });
 
-        console.log(filteredAppointments);
-
         if (getAppointmentDate.length > 0) {
           const indexesToRemove = [];
           for (let x = 0; x < getAppointmentDate.length; x++) {
@@ -141,7 +139,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
             const end = prevTimeStartList.findIndex((value) => {
               return value.timeStart === getAppointmentDate[x].timeEnd;
             })
-            for (let begin = start; begin <= end; begin++) {
+            for (let begin = start; begin < end; begin++) {
               indexesToRemove.push(begin);
             }
           }
@@ -253,23 +251,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     return totalAmount;
   }
   const btnClose = () => {
-    setAppointment({
-      patient: '',
-      patientId: "",
-      dentist: '',
-      dentistId: "",
-      serviceValue: "",
-      serviceSelected: [],
-      date: "",
-      numberOfMonths: 0,
-      timeStart: "",
-      timeEnd: "",
-      totalAmount: fee.status === "AVAILABLE" ? fee.price : 0.00,
-      timeSubmitted: "",
-      method: "",
-      type: "",
-      insuranceId: ""
-    })
+    clearData();
     setModal(false);
   };
 

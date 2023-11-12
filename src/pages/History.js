@@ -18,7 +18,6 @@ function History() {
   const searchHandle = (e) => {
     setSearch(e.target.value);
   }
-
   for (let x = 1; x <= Math.ceil(historyList.length / 8); x++) {
     pageNumber.push(x);
   }
@@ -34,7 +33,7 @@ function History() {
         appointmentDate: moment(val.appointmentDate).format("L"),
         name: `${formattedName}`,
         dentist: `Dr. ${val.dentist.fullname}`,
-        description: val.status === "DONE" ? `Appointment for ${formattedName} was successful` : `Appointment for ${formattedName} has been cancelled`,
+        description: val.status === "DONE" ? `Appointment for ${formattedName} was successful` : `${val.reasonOfCancellation}`,
         status: val.status
       }
     });

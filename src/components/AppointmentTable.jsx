@@ -48,12 +48,10 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 		setUpdate(true);
 	}
 
-	const statusSubmit = async (id, value) => {
-		if (value.status === "APPROVED") {
+	const statusSubmit = (id) => {
 			dispatch(approvedAppointment(id));
-			toastHandler("success", "Approved appointment successfully!");
-		}
-		setStatus({ ...status, selectedId: null });
+			// toastHandler("success", "Approved appointment successfully!");
+			setStatus({ ...status, selectedId: null });
 	}
 
 	const cancelButton = (id) => {
