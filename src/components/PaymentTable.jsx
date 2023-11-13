@@ -1,12 +1,8 @@
 import React from 'react';
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
-import { useDispatch } from 'react-redux';
 import moment from 'moment/moment';
 
 function PaymentTable({ tableHeaders, results, search, currentPage, setUpdateModal, updateData, setUpdateData, acceptData, setAcceptData }) {
-	const dispatch = useDispatch();
-
-	console.log(results);
 	return (
 		<>
 			<div className='p-4'>

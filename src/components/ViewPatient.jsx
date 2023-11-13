@@ -17,23 +17,26 @@ function ViewPatient(props) {
 				return (val.patient.patientId === id);
 			})
 			.map((val) => {
-				return { date: val.appointmentDate, time: `${moment(val.timeStart, "HH:mm").format("LT")} - ${moment(val.timeEnd, "HH:mm").format("LT")}`, dentist: `Dr. ${val.dentist.fullname}`, status: val.status, patient: `${val.patient.firstname} ${val.patient.lastname}` };
+				return { 
+				date: val.appointmentDate, 
+				time: `${moment(val.timeStart, "HH:mm").format("LT")} - ${moment(val.timeEnd, "HH:mm").format("LT")}`, 
+				dentist: `Dr. ${val.dentist.fullname}`, 
+				status: val.status, 
+				patient: `${val.patient.firstname} ${val.patient.lastname}`,
+				cancellation: val.reasonOfCancellation 
+			};
 			});
 	});
-
-	console.log(patient);
-	console.log(appointment);
 
 	const history = appointment.filter(val => val.status === "DONE" || val.status === "CANCELLED")
 		.map(val => {
 			return {
 				date: moment(val.appointmentDate).format("L"),
 				dentist: val.dentist,
-				description: val.status === "DONE" ? `Appointment for ${val.patient} was successful` : `Appointment for ${val.patient} has been cancelled`,
+				description: val.status === "DONE" ? `Appointment for ${val.patient} was successful` : `${val.cancellation}`,
 				status: val.status
 			}
 		});
-
 
 	const [teethList, setTeethList] = useState([]);
 	const toothChart = [...Array(32)].map((_, idx) => {

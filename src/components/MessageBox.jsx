@@ -3,10 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from "moment/moment";
 import { AiOutlineSend } from "react-icons/ai";
 import { sendMessage } from "../redux/action/MessageAction";
-import * as io from "socket.io-client";
-import { SOCKET_LINK } from '../ApiLinks';
 
-const socket = io.connect(SOCKET_LINK);
 function MessageBox({ roomKey }) {
   const dispatch = useDispatch();
   const messageHistory = useSelector((state) => { return state.messages.payload.filter((val)=>val.roomId===roomKey) });

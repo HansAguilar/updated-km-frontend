@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import moment from 'moment/moment';
@@ -10,27 +10,6 @@ import { BiSearchAlt } from 'react-icons/bi';
 const inputStyle = "p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none";
 
 function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
-  const [minDate, setMinDate] = useState(new Date().toISOString().split('T')[0]);
-  const dispatch = useDispatch();
-  const dentist = useSelector((state) => { return state.dentist; });
-  const service = useSelector((state) => { return state.service; });
-  const schedule = useSelector((state) => { return state.schedule.payload; }); const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => val.status === "PENDING" || val.status === "APPROVED" || val.status === "TREATMENT") })
-
-  const serviceIds = initialAppointment?.dentalServices.map((val) => val.serviceId);
-  const [appointment, setAppointment] = useState({
-    patient: `${initialAppointment?.patient.firstname} ${initialAppointment?.patient.lastname}`,
-    dentist: initialAppointment?.dentist.fullname,
-    dentistId: initialAppointment?.dentist.dentistId,
-    serviceSelected: [...serviceIds],
-    date: initialAppointment?.appointmentDate,
-    timeStart: initialAppointment?.timeStart,
-    timeEnd: initialAppointment?.timeEnd,
-    timeSubmitted: initialAppointment?.timeSubmitted,
-  });
-
-  const [active, setActive] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-
   let [timeStartList, setTimeStartList] = useState(
     [
       { timeValue: "09:00 Am", timeStart: "09:00:00" },
@@ -49,6 +28,30 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
       { timeValue: "04:00 Pm", timeStart: "16:00:00" },
     ]
   );
+  const [minDate, setMinDate] = useState(new Date().toISOString().split('T')[0]);
+  const dispatch = useDispatch();
+  const dentist = useSelector((state) => { return state.dentist; });
+  const service = useSelector((state) => { return state.service; });
+  const schedule = useSelector((state) => { return state.schedule.payload; }); 
+  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => val.status === "PENDING" || val.status === "APPROVED" || val.status === "TREATMENT") })
+
+  const serviceIds = initialAppointment?.dentalServices.map((val) => val.serviceId);
+
+  const [appointment, setAppointment] = useState({
+    patient: `${initialAppointment?.patient.firstname} ${initialAppointment?.patient.lastname}`,
+    dentist: initialAppointment?.dentist.fullname,
+    dentistId: initialAppointment?.dentist.dentistId,
+    serviceSelected: [...serviceIds],
+    date: initialAppointment?.appointmentDate,
+    timeStart: initialAppointment?.timeStart,
+    timeEnd: initialAppointment?.timeEnd,
+    timeSubmitted: initialAppointment?.timeSubmitted,
+  });
+  const initialTime = timeStartList.filter(v=>v.timeStart===initialAppointment?.timeStart).map((v)=>v.timeValue)
+  const timeStartRef = useRef(`${initialTime[0]}`);
+  const [active, setActive] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+
 
   useEffect(() => {
     const newTimeList = [
@@ -74,7 +77,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
 
     setTimeStartList([...newTimeList]);
 
-
+    // const removeCurrentTime = newTimeList.filter((val)=>val.timeStart!==appointment.timeStart && val.timeStart!==appointment.timeEnd)
     const filteredTime = newTimeList.filter((val) =>
       moment(appointment.date, 'YYYY-MM-DD').isSame(moment(), 'day') &&
       moment(val.timeStart, 'HH:mm:ss').isAfter(newHour)
@@ -103,12 +106,13 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
       return updatedSchedList;
     });
 
+    //REMOVE ALL THE OTHER PATIENT APPOINTMENT
     setTimeStartList(prevTimeStartList => {
       let updatedTimeStartList = [...prevTimeStartList];
       const getAppointmentDate = filteredAppointments.filter((value) => {
-        return value.appointmentDate === appointment.date;
+        return moment(value.appointmentDate, "YYYY-MM-DD").isSame(moment(appointment.date)) 
+        && value.patient.patientId !== initialAppointment.patient.patientId
       });
-
       if (getAppointmentDate.length > 0) {
         const indexesToRemove = [];
         for (let x = 0; x < getAppointmentDate.length; x++) {
@@ -118,11 +122,10 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
           const end = prevTimeStartList.findIndex((value) => {
             return value.timeStart === getAppointmentDate[x].timeEnd;
           })
-          for (let begin = start; begin <= end; begin++) {
+          for (let begin = start; begin < end; begin++) {
             indexesToRemove.push(begin);
           }
         }
-        // console.log(indexesToRemove);
 
         updatedTimeStartList = updatedTimeStartList.filter((_, index) => {
           return !indexesToRemove.includes(index);
@@ -131,7 +134,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
 
       return updatedTimeStartList;
     })
-  }, [appointment.date])
+  }, [timeStartRef.current,appointment.date])
 
   const handleOnChange = (e) => {
     if (e.target.name === "dentist") {
@@ -156,65 +159,75 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
       setSuggestions(filteredService)
       setActive("service")
     }
-
-    setAppointment({
-      ...appointment,
-      [e.target.name]: e.target.value
-    });
+    if(e.target.name === "timeValue"){
+      const timeStartValue = timeStartList.filter((v)=>v.timeValue===e.target.value);
+      setAppointment({ ...appointment, ["timeStart"]:timeStartValue[0].timeStart });
+      timeStartRef.current = e.target.value;
+    }
+    else{ setAppointment({ ...appointment, [e.target.name]: e.target.value }); }
   };
 
-
-  const nextButton = async () => {
+  const nextButton = () => {
     if (!appointment.dentist || !appointment.date || !appointment.timeStart || appointment.serviceSelected.length < 1) {
       return toastHandler("error", "Fill up empty field!");
     }
     if (appointment.method === "hmo" && !appointment.insuranceId) {
       return toastHandler("error", "Please select your insurance");
     }
-    const current = new Date();
-    current.setHours(0, 0, 0, 0);
-    const selectedDate = new Date(appointment.date);
-    selectedDate.setHours(0, 0, 0, 0);
-    if (selectedDate < current) {
-      return alert("You can't select previous date")
+
+    const checkIfPatientAlreadyHaveAppointment = filteredAppointments.filter((val) =>
+      moment(val.appointmentDate, "YYYY-MM-DD").isSame(moment(appointment.date))
+      && val.patient.patientId === initialAppointment.patient.patientId
+      && val.appointmentId !== initialAppointment.appointmentId
+    );
+    if(checkIfPatientAlreadyHaveAppointment.length > 0){
+      return toastHandler("error", "You already have existing appointment in this date!")
     }
+    // const current = new Date();
+    // current.setHours(0, 0, 0, 0);
+    // const selectedDate = new Date(appointment.date);
+    // selectedDate.setHours(0, 0, 0, 0);
+    // if (selectedDate < current) {
+    //   return alert("You can't select previous date")
+    // }
     const end = calculateTotalTime();
     const data = {
       timeEnd: end,
     }
 
-    const timeTotal = calculateTotalServiceTime();
-    const totalTimeDuration = moment('00:00:00', 'HH:mm:ss');
+    // const timeTotal = calculateTotalServiceTime();
+    // const totalTimeDuration = moment('00:00:00', 'HH:mm:ss');
 
-    let start = moment(appointment.timeStart, 'HH:mm:ss');
-    while (start.isBefore(moment(end, "HH:mm:ss").add(30, 'minutes'))) {
-      const startTime = start.format('HH:mm:ss');
-      const matchingTime = timeStartList.find(time => time.timeStart === startTime);
-      console.log("start time", startTime);
-      if (startTime === "12:30:00" || startTime === "16:30:00") {
-        toastHandler("error", `Kindly select ${totalTimeDuration.format('HH:mm:ss') === "01:00:00"
-          ? '30 minutes'
-          : '1 hour'
-          } service or change other dates`);
-        return;
-      }
-      if (!matchingTime) {
-        if (timeTotal !== totalTimeDuration.format("HH:mm:ss")) {
-          toastHandler('error', `Your selected time range should be less than or equal ${totalTimeDuration.format('HH:mm:ss') === "00:30:00"
-            ? totalTimeDuration.minute() + ' minutes'
-            : totalTimeDuration.hour() + ' hour'
-            }`)
-          return;
-        }
-      }
-      totalTimeDuration.add(30, 'minutes');
-      start.add(30, "minutes");
-    }
+    // let start = moment(appointment.timeStart, 'HH:mm:ss');
+    // while (start.isBefore(moment(end, "HH:mm:ss").add(30, 'minutes'))) {
+    //   const startTime = start.format('HH:mm:ss');
+    //   const matchingTime = timeStartList.find(time => time.timeStart === startTime);
+    //   console.log("start time", startTime);
+    //   if (startTime === "12:30:00" || startTime === "16:30:00") {
+    //     toastHandler("error", `Kindly select ${totalTimeDuration.format('HH:mm:ss') === "01:00:00"
+    //       ? '30 minutes'
+    //       : '1 hour'
+    //       } service or change other dates`);
+    //     return;
+    //   }
+    //   if (!matchingTime) {
+    //     if (timeTotal !== totalTimeDuration.format("HH:mm:ss")) {
+    //       toastHandler('error', `Your selected time range should be less than or equal ${totalTimeDuration.format('HH:mm:ss') === "00:30:00"
+    //         ? totalTimeDuration.minute() + ' minutes'
+    //         : totalTimeDuration.hour() + ' hour'
+    //         }`)
+    //       return;
+    //     }
+    //   }
+    //   totalTimeDuration.add(30, 'minutes');
+    //   start.add(30, "minutes");
+    // }
     const result = {
       dentist: appointment.dentistId,
       dentalServices: appointment.serviceSelected,
       date: appointment.date,
       timeStart: appointment.timeStart,
+      timeEnd:end
     }
     dispatch(updateAppointment(initialAppointment.appointmentId, result));
     setModal(false);
@@ -246,28 +259,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
     return timeStart.add(calculateTotalServiceTime()).format("HH:mm:ss");
   }
 
-  const btnClose = () => {
-    // setAppointment({
-    //     patient: '',
-    //     patientId:"",
-    //     dentist: '',
-    //     dentistId:"",
-    //     serviceValue: "",
-    //     serviceSelected:[],
-    //     date:"",
-    //     numberOfMonths:0,
-    //     timeStart: "",
-    //     timeEnd:"",
-    //     totalAmount:fee.status === "AVAILABLE"?fee.price:0.00,
-    //     timeSubmitted:"",
-    //     method: "",
-    //     type: "",
-    //     insuranceId: ""
-    //   })
-    setModal(false);
-  };
-
-
+  const btnClose = () => setModal(false);
 
   return initialAppointment && (
     <div className={`w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-10 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
@@ -409,15 +401,20 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
 
             <div className=' mb-2 flex flex-col gap-1 relative w-full'>
               <label htmlFor='time' className='font-medium text-slate-600'>Appointment Time</label>
-              <select id='time' name="timeStart" value={appointment.timeStart} onChange={(e) => handleOnChange(e)} className={inputStyle}>
-                <option value="" disabled >Choose time...</option>
+              <select id='time' name="timeValue" value={timeStartRef.current} onChange={(e) => handleOnChange(e)} className={inputStyle}>
                 {
                   timeStartList
                     .filter((val) => {
                       return val.timeStart !== "12:00:00" && val.timeStart !== "16:00:00";
                     })
                     .map((val, index) => (
-                      <option value={val.timeStart} key={index}>{val.timeValue}</option>
+                      <>
+                      {
+                        val.timeValue === timeStartRef.current
+                        ? <option value={val.timeValue} key={index} disabled>{val.timeValue}</option>
+                        :<option value={val.timeValue} key={index}>{val.timeValue}</option>
+                      }
+                      </>
                     ))
                 }
               </select>

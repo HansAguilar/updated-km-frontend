@@ -9,7 +9,6 @@ export const fetchMessages = (adminId) =>{
         try {
             dispatch({type:FETCH_MESSAGE_REQUEST});
             const response = await axios.get(`${MESSAGE_LINK}/admin_login/${adminId}`);
-            console.log(response.data);
             dispatch({
                 type: FETCH_MESSAGE_SUCCESS,
                 payload: response.data

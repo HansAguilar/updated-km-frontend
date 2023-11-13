@@ -79,10 +79,30 @@ function Appointments() {
     };
   });
 
+  const clearData = () =>{
+    setAppointment({
+      patient: '',
+      patientId: "",
+      dentist: '',
+      dentistId: "",
+      serviceValue: "",
+      serviceSelected: [],
+      date: "",
+      numberOfMonths: 0,
+      timeStart: "",
+      timeEnd: "",
+      totalAmount: fee.status === "AVAILABLE" ? fee.price : 0.00,
+      timeSubmitted: "",
+      method: "",
+      type: "",
+      insuranceId: ""
+    })
+  }
+
   return (
     <div className='h-screen overflow-hidden relative bg-gray-200 '>
-      <Modal show={show} setModal={setModal} setCovidModal={setCovidModal} appointment={appointment} setAppointment={setAppointment} filteredAppointments={filteredAppointments} />
-      <CovidTestModal show={covidShow} setModal={setCovidModal} setAddModal={setModal} data={appointment} setAppointment={setAppointment} />
+      <Modal show={show} setModal={setModal} setCovidModal={setCovidModal} appointment={appointment} setAppointment={setAppointment} filteredAppointments={filteredAppointments} clearData={clearData}/>
+      <CovidTestModal show={covidShow} setModal={setCovidModal} setAddModal={setModal} data={appointment} setAppointment={setAppointment} clearData={clearData} />
       <PageHeader link={'Appointment'} />
       <ToastContainer limit={1} autoClose={1500} />
 
