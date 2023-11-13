@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ADMIN_LINK } from '../ApiLinks';
 import axios from 'axios';
+import clinic from "../assets/dental-clinic.jpg"
 
 function Profile() {
   const adminInfo = localStorage.getItem("adminInfo");
@@ -15,7 +16,7 @@ function Profile() {
         <div className='flex flex-col items-center justify-between w-[28rem] gap-8'>
 
           <div className='bg-white w-full h-72 flex items-center justify-center rounded'>
-            <img src={adminData[0].profile} className='h-52 w-52 aspect-auto rounded-full border-2' alt='admin'/>
+            <img src={adminData[0].profile} className='h-52 w-52 aspect-auto rounded-full border-2' alt='admin' />
           </div>
 
           <div className='bg-white divide-y flex items-center flex-col justify-between w-full gap-4 p-4 rounded'>
@@ -63,10 +64,8 @@ function Profile() {
           </div>
         </div>
 
-        <div className='flex-1 bg-white rounded'>
-          <div>
-            <h1>Test</h1>
-          </div>
+        <div className='flex-1 bg-white rounded w-full'>
+            <img src={clinic} className='aspect-auto object-fill h-[700px] w-full' />
         </div>
       </div>
 
