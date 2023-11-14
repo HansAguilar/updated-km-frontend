@@ -7,6 +7,7 @@ import { BsCalendarEventFill, BsFillCalendarCheckFill, BsFillCalendar3Fill } fro
 import { FaUserAlt, FaUserCog, FaUserMd, FaMoneyBill } from 'react-icons/fa';
 import { MdMedicalServices, MdAnnouncement, MdManageAccounts, MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
+import { GiHealthNormal } from "react-icons/gi";
 import { FaPowerOff } from 'react-icons/fa';
 import logo from '../assets/small-logo.jpg';
 
@@ -68,11 +69,11 @@ function Sidebar({ toggleBar, children }) {
 			name: 'Services',
 			icon: <SidebarIcon Icon={MdMedicalServices} />
 		},
-		// {
-		// 	path: '/admin/dashboard/treatment',
-		// 	name: 'Treatment',
-		// 	icon: <SidebarIcon Icon={GiHealthNormal} />
-		// },
+		{
+			path: '/admin/dashboard/treatment',
+			name: 'Treatment',
+			icon: <SidebarIcon Icon={GiHealthNormal} />
+		},
 		{
 			path: '/admin/dashboard/messages',
 			name: 'Messages',

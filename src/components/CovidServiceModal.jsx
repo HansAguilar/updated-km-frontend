@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { createAppointment, fetchPatientAppointment } from "../redux/action/AppointmentAction";
+import { sendNotification } from "../redux/action/NotificationAction";
 import { fetchPatientPayments } from "../redux/action/PaymentAction";
 import { toastHandler } from '../ToastHandler';
 
@@ -32,7 +33,16 @@ function CovidServiceModal({ show, setModal, setAddModal, data, setAppointment,c
       type: data.type,
       insuranceId: data.insuranceId
     }
+    const notificationData = {
+      name: "Created an Appointment",
+      time: moment().format("HH:mm:ss"),
+      date: moment().format("YYYY-MM-DD"),
+      patientId: data.patientId,
+      description: `You have new appointment ${moment(data.date).format("L").toString()===moment().format("L").toString() ? "today": "on"} ${moment(data.date).format("MMM DD YYYY")}`,
+      receiverType: "PATIENT"
+    }
     dispatch(createAppointment(newData, setModal,clearData));
+    dispatch(sendNotification(notificationData));
   }
   const rules = [
     {

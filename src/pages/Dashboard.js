@@ -22,7 +22,7 @@ import Schedule from "./Schedule";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPatient } from '../redux/action/PatientAction';
 import { fetchDentist } from '../redux/action/DentistAction';
-import { fetchAppointment, deleteByPatientAppointment,fetchPatientAppointment } from '../redux/action/AppointmentAction';
+import { fetchAppointment, deleteByPatientAppointment,fetchPatientAppointment, updateAppointment,patientChanges,insertAppointment } from '../redux/action/AppointmentAction';
 import { fetchAdmin, fetchLoginAdmin } from '../redux/action/AdminAction';
 import { fetchServices } from '../redux/action/ServicesAction';
 import { fetchInstallment } from '../redux/action/InstallmentAction';
@@ -39,7 +39,7 @@ import { useNavigate } from 'react-router-dom';
 import QRCodeModal from '../components/QRCodeModal';
 import * as io from "socket.io-client";
 import { SOCKET_LINK } from '../ApiLinks';
-import { fetchPayments, clientChanges,fetchPatientPayments } from "../redux/action/PaymentAction";
+import { fetchPayments, clientChanges,fetchPatientPayments,fetchPaymentDetails } from "../redux/action/PaymentAction";
 import { fetchIncomingMessage } from "../redux/action/MessageAction";
 
 const socket = io.connect(SOCKET_LINK);
@@ -89,10 +89,15 @@ function Dashboard() {
     socket.on("response_payment_changes", (data) => {
       dispatch(clientChanges(data.value));
     });
-    socket.on("response_changes", (data) => {
+    socket.on("new_response_patient_changes", (data) => {
       const parseData = JSON.parse(data);
       dispatch(fetchPatientAppointment(parseData.value));
       dispatch(fetchPatientPayments(parseData.value));
+    });
+    socket.on("response_changes", (data) => {
+      const parseData = JSON.parse(data);
+      dispatch(patientChanges(parseData.value));
+      dispatch(fetchPaymentDetails(parseData.value));
     });
     socket.on("response_cancel", (data) => {
       const parseData = JSON.parse(data);
