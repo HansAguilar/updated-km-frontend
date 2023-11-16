@@ -23,6 +23,8 @@ function ServicesModal({ show, setModal }) {
   const submitButton = async () => {
     if (!services.name || !services.type || !services.description || services.price == 0 || !services.price) return toastHandler("error", "Fill up empty field.")
 
+    if(services.price == 0 || services.price < 0) return toastHandler("error", "You input invalid price")
+
     const words = services.description.split(' ');
     if (words.length > 60) return toastHandler("error", "Description must be under 60 words")
 

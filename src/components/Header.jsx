@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { IoNotificationsSharp } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
-import { createNotification } from "../redux/action/NotificationAction";
+import { fetchNewNotification } from "../redux/action/NotificationAction";
 import * as io from "socket.io-client";
 import { SOCKET_LINK } from '../ApiLinks';
 import { BsCalendar2Check } from "react-icons/bs";
@@ -20,8 +20,9 @@ function Header({ toggleBar, setToggleBar }) {
   }
 
   useEffect(() => {
-    socket.on(("receive_notification"), (data) => {
-      dispatch(createNotification(data.value))
+    socket.on("receive_notification", (data) => {
+      const parseData = JSON.parse(data);
+      dispatch(fetchNewNotification(parseData.value))
     })
     return () => {
       socket.off();
@@ -57,7 +58,7 @@ function Header({ toggleBar, setToggleBar }) {
       {/* NOTIFICATION BOX */}
       {
         isNotificationToggle && (
-          <div className=' bg-slate-100 w-96 h-96 max-h-96 overflow-auto absolute rounded shadow-xl border-2 top-16 right-5 p-3 z-30 flex flex-col gap-4 '>
+          <div className=' bg-slate-100 w-96 h-96 max-h-96 overflow-auto absolute rounded shadow-xl border-2 top-16 right-5 p-3 z-30 flex flex-col-reverse gap-4 '>
             {
               notification.map((data, idx) => (
                 <div key={idx} className={`w-full ${data.status === "READ" ? "bg-white" : "bg-slate-200"}  flex gap-3 p-4 `}>

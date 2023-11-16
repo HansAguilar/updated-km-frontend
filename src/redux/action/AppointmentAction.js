@@ -57,7 +57,7 @@ export const createAppointment = (data,setModal,clearData) =>{
             clearData();
             setModal(false);
         } catch (error) {
-            toastHandler("error",error.response.data.message);
+            alert(error.response.data.message);
         }
     }
 }
@@ -82,8 +82,8 @@ export const approvedAppointment = (id) => {
           payload: appointmentData,
         });
         dispatch(fetchPaymentDetails(appointmentData.id));
-        // const sendData = {value: appointmentData.appointmentId}
-        // socket.emit("appointment_changes",JSON.stringify(sendData));
+        const sendData = {value: appointmentData.appointmentId}
+        socket.emit("appointment_changes",JSON.stringify(sendData));
       } catch (error) {
         // Handle the error
       }

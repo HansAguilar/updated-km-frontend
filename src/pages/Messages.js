@@ -6,14 +6,19 @@ import { BiMessageEdit, BiSearchAlt } from "react-icons/bi";
 import { createNewMessage,sendMessage } from "../redux/action/MessageAction";
 import MessageBox from "../components/MessageBox";
 import { AiOutlineClose } from "react-icons/ai";
+import { useEffect } from "react";
 
 const socket = io.connect(SOCKET_LINK);
 function Messages({ admin }) {
   const dispatch = useDispatch();
 
   const [modal, setModal] = useState(false);
-  const messages = useSelector((state) => { return state.messages.payload; });
+  const newMessage = useSelector((state) => { return state.messages.payload; });
   const [roomKey, setRoomKey] = useState("");
+  const selectMessageRoom = (key) =>{
+    setRoomKey(key);
+  }
+  const [messages, setMessage] = useState(null);
 
   const MessageModal = () => {
     const admin = useSelector((state) => { return state.admin.loginAdmin; })
@@ -117,6 +122,11 @@ function Messages({ admin }) {
     )
   }
 
+  useEffect(()=>{
+    console.log("new message");
+    setMessage(newMessage);
+  },[newMessage])
+
   return (
     <div className='w-full h-screen overflow-hidden relative flex flex-row bg-gray-200 gap-4 p-4'>
       {modal && <MessageModal />}
@@ -141,15 +151,19 @@ function Messages({ admin }) {
         <div className=" w-full max-h-[680px] overflow-x-auto flex flex-col gap-2 mb-10 divide-y-2 ">
           {
             messages && messages.map((val, idx) => (
-              <div key={idx} className=" w-full p-3 bg-white cursor-pointer rounded-md flex justify-center items-center gap-3 hover:bg-gray-200 " onClick={() => { setRoomKey(val.roomId); }} >
+              <div key={idx} className=" w-full p-3 bg-white cursor-pointer rounded-md flex justify-center items-center gap-3 hover:bg-gray-200 " onClick={() => selectMessageRoom(val.roomId)} >
 
                 <img src={val.receiverId.profile} alt="Patient Profile" className=" rounded w-14 h-14 aspect-auto " />
                 {/* MESSAGE CONTENT */}
                 <div className=" w-full h-auto ">
                   <h1 className=" text-md font-bold text-slate-700 ">{val.receiverId.firstname} {val.receiverId.lastname}</h1>
-                  <p className=" text-sm max-w-[250px] truncate ">{
-                    val.messageEntityList[val.messageEntityList.length-1].messageContent
-                  }</p>
+                  {
+                    val.messageEntityList && val.messageEntityList.slice(-1).map((v) => (
+                      <p className={`text-sm max-w-[250px] truncate ${(v.type === "CLIENT" && v.status === "UNREAD") ? 'font-bold ' : ''}`}>
+                        {v.messageContent}
+                      </p>
+                    ))
+                  }
                 </div>
               </div>
             ))

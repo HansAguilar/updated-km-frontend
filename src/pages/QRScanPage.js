@@ -28,15 +28,11 @@ export default function QRScanPage() {
     return state.payment.payload.filter(val => val.appointment.appointmentId === id);
   });
 
-  console.log(payment);
-
   const checkIfExistingAppointment = () => {
     const appointmentTime = moment(appointment[0].timeStart, "HH:mm:00").add(10, "minutes");
     const appointmentDate = moment(appointment[0].appointmentDate).format("YYYY-MM-DD");
     setAppointmentDetails(...appointment);
     toastHandler("success", "Successfully scan the QR");
-
-    console.log("Appoiontment details: " + appointmentDetails);
   }
 
   // const checkIfExistingAppointment = () => {

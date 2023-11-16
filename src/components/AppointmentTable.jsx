@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { toastHandler } from "../ToastHandler";
 import { approvedAppointment, deleteAppointment, cancelledAppointment } from "../redux/action/AppointmentAction";
+import { sendNotification } from "../redux/action/NotificationAction";
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import { AiFillCheckSquare } from "react-icons/ai"
@@ -48,9 +49,19 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 		setUpdate(true);
 	}
 
-	const statusSubmit = (id) => {
-			dispatch(approvedAppointment(id));
-			// toastHandler("success", "Approved appointment successfully!");
+	const statusSubmit = (id, data) => {
+			const notificationData = {
+				name: "Approved Appointment",
+				time: moment().format("HH:mm:ss"),
+				date: moment().format("YYYY-MM-DD"),
+				patientId: data.patientId,
+				description: `You're appointment ${moment(data.date).format("L").toString()===moment().format("L").toString() ? "today": "on"} ${moment(data.date).format("MMM DD YYYY")} has been approved`,
+				receiverType: "PATIENT"
+			  }
+			
+			  dispatch(approvedAppointment(id));
+			  dispatch(sendNotification(notificationData));
+			  alert("Approved appointment successfully!");
 			setStatus({ ...status, selectedId: null });
 	}
 
@@ -141,7 +152,7 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 														<select name="status" value={result.status} className='p-2 border focus:border-blue-400 rounded focus:outline-none'
 															onChange={(e) => {
 																if (e.target.value === "CANCELLED") return cancelButton(result.appointmentId);
-																const data = { status: e.target.value, description: "", }
+																const data = { status: e.target.value, description: "", patientId:result.patient.patientId, date:result.appointmentDate}
 																statusSubmit(result.appointmentId, data);
 															}}
 															onBlur={() => setStatus({ ...status, selectedId: null })}

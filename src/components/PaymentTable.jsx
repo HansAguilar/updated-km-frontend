@@ -83,7 +83,7 @@ function PaymentTable({ tableHeaders, results, search, currentPage, setUpdateMod
 												{result.type}
 											</td>
 											<td className='text-center'>
-												{result.totalPayment}
+												Php. {result.totalPayment.toLocaleString()}
 											</td>
 											<td className='text-center capitalize'>
 												<span className={`py-1 px-3 rounded-full max-w-max mx-auto ${result.status.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-600' : 'bg-green-100 text-green-600'}`}>• {result.status.toLowerCase()}</span>
