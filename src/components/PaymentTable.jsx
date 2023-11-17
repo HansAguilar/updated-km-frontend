@@ -97,6 +97,14 @@ function PaymentTable({ tableHeaders, results, search, currentPage, setUpdateMod
 														<AiFillEdit size={25} />
 														<p className='pr-2'>Update</p>
 													</span>
+													{
+														result.status === "CHECKING" && <span className='transition-all ease-linear duration-150 rounded p-2 bg-emerald-500 hover:bg-emerald-600 text-white cursor-pointer flex items-center' onClick={() => {
+															setAcceptData({...acceptData, isActive:true, data:result})
+														}}>
+															<AiFillEdit size={25} />
+															<p className='pr-2'>Accept</p>
+														</span>
+													}
 												</div>
 											</td>
 										</tr>

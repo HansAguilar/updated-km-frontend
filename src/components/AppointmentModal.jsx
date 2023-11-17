@@ -14,7 +14,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
   const service = useSelector((state) => { return state.service; });
   const fee = useSelector((state) => { return state.fee.payload; });
   const schedule = useSelector((state) => { return state.schedule.payload; });
-  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => val.status === "PENDING" || val.status === "APPROVED" || val.status === "TREATMENT") })
+  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => val.status !== "DONE" || val.status !== "CANCELLED") })
   const [active, setActive] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [insuranceList, setInsuranceList] = useState([]);
@@ -151,7 +151,6 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
         return updatedTimeStartList;
       })
     }
-
     setAppointment({
       ...appointment,
       [e.target.name]: e.target.value
@@ -171,10 +170,18 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     selectedDate.setHours(0, 0, 0, 0);
     if (selectedDate < current) return toastHandler("error", "You can't select previous date");
 
-    const end = calculateTotalTime();
-    const data = {
-      timeEnd: end,
+    const checkIfPatientAlreadyHaveAppointment = filteredAppointments.filter((val) => {return (
+        moment(val.appointmentDate, "YYYY-MM-DD").isSame(moment(appointment.date)) &&
+        val.patient.patientId === appointment.patientId
+        // && val.appointmentId !== appointment.appointmentId
+      );
+    });
+    
+    if (checkIfPatientAlreadyHaveAppointment.length > 0) {
+      return toastHandler("error","You already have an existing appointment on this date!");
     }
+    const end = calculateTotalTime();
+    const data = { timeEnd: end, }
 
     const timeTotal = calculateTotalServiceTime();
     const totalTimeDuration = moment('00:00:00', 'HH:mm:ss');
@@ -203,11 +210,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
       totalTimeDuration.add(30, 'minutes');
       start.add(30, "minutes");
     }
-
-    setAppointment({
-      ...appointment,
-      ...data
-    })
+    setAppointment({ ...appointment, ...data })
     setModal(false);
     setCovidModal(true);
   }

@@ -15,7 +15,7 @@ const reducer = (state={}, action) =>{
         case CANCELLED_PAYMENT_SUCCESS:
             return { ...state, payload:state.payload.map((val)=>val.paymentId === action.payload.paymentId ? action.payload : val), loading:false }  
         case ACCEPT_PAYMENT_SUCCESS:
-            return { ...state, payload:state.payload.map((val)=>val.paymentId === action.payload.paymentId ? action.payload : val), loading:false }  
+            return { ...state, payload:state.payload.filter((val)=>val.paymentId !== action.payload), loading:false }  
         case FETCH_PAYMENT_FAILED:
             return { ...state, error:action.error, loading:false };
         default: return state;

@@ -81,7 +81,6 @@ export const approvedAppointment = (id) => {
           type: APPROVED_APPOINTMENT_SUCCESS,
           payload: appointmentData,
         });
-        dispatch(fetchPaymentDetails(appointmentData.id));
         const sendData = {value: appointmentData.appointmentId}
         socket.emit("appointment_changes",JSON.stringify(sendData));
       } catch (error) {
@@ -105,7 +104,7 @@ export const updateAppointment = (id,value) =>{
         }
     }
 }
-export const  deleteAppointment = (id) =>{
+export const  deleteAppointment = (id,toastHandler) =>{
     return async dispatch=>{
         try {
             await axios.delete(`${APPOINTMENT_LINK}/${id}`);
@@ -116,6 +115,7 @@ export const  deleteAppointment = (id) =>{
             });
             const sendData = { value: `${id}` };
             socket.emit("delete_appointment",JSON.stringify(sendData));
+            toastHandler("success", "Deleted successfully!");
         } catch (error) {
             toastHandler("error",error.response.data.message);
         }
