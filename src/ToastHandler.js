@@ -5,7 +5,7 @@ export const toastHandler = (type, message) => {
     case "success":
       toast.success(`${message}`, {
         position: "top-right",
-        autoClose: 1500,
+        autoClose: 500,
         hideProgressBar: false,
         pauseOnHover: false,
         closeOnClick: false,
@@ -17,7 +17,7 @@ export const toastHandler = (type, message) => {
     case "warning":
       toast.warning(`${message}`, {
         position: "top-right",
-        autoClose: 1500,
+        autoClose: 500,
         hideProgressBar: false,
         pauseOnHover: false,
         closeOnClick: false,
@@ -29,7 +29,7 @@ export const toastHandler = (type, message) => {
     case "update":
       toast.update(`${message}`, {
         position: "top-right",
-        autoClose: 1500,
+        autoClose: 500,
         hideProgressBar: false,
         pauseOnHover: false,
         closeOnClick: false,
@@ -41,7 +41,7 @@ export const toastHandler = (type, message) => {
     default:
       toast.error(`${message}`, {
         position: "top-right",
-        autoClose: 1500,
+        autoClose: 500,
         hideProgressBar: false,
         pauseOnHover: false,
         closeOnClick: false,

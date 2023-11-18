@@ -1,5 +1,5 @@
 import axios from "axios";
-import { APPROVED_PAYMENT_SUCCESS, CANCELLED_PAYMENT_SUCCESS, CREATE_PAYMENT_SUCCESS, FETCH_PAYMENT_FAILED, FETCH_PAYMENT_REQUEST, FETCH_PAYMENT_SUCCESS, UPDATE_PAYMENT_SUCCESS } from "../ActionTypes";
+import { ACCEPT_PAYMENT_SUCCESS, APPROVED_PAYMENT_SUCCESS, CANCELLED_PAYMENT_SUCCESS, CREATE_PAYMENT_SUCCESS, FETCH_PAYMENT_FAILED, FETCH_PAYMENT_REQUEST, FETCH_PAYMENT_SUCCESS, UPDATE_PAYMENT_SUCCESS } from "../ActionTypes";
 import { PAYMENT_LINK, SOCKET_LINK } from "../../ApiLinks";
 import * as io from "socket.io-client";
 
@@ -127,7 +127,7 @@ export const paymentAccept = (id)=>{
     return async dispatch => {
         try {
             await axios.get(`${PAYMENT_LINK}/accept/${id}`);
-            dispatch(fetchPatientPayments());
+            dispatch(fetchPaymentsQuickly())
         } catch (error) {
         }
     } 
@@ -137,6 +137,7 @@ export const fetchAdminPayment = (id) =>{
     return async dispatch =>{
         try {
             const response = await axios.get(`${PAYMENT_LINK}/fetch/new_payment/${id}`);
+            console.log(response.data);
             dispatch({type:UPDATE_PAYMENT_SUCCESS, payload:response.data});
         } catch (error) {
         }

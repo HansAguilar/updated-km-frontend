@@ -61,3 +61,13 @@ export const sendNotification = (data) =>{
         }
     }
 }
+
+export const sendNotificationLater = (data) =>{
+    return async dispatch =>{
+        try {
+            await axios.post(`${NOTIFICATION_LINK}/`,data);
+        } catch (error) {
+            console.log("Create notification",error);
+        }
+    }
+}

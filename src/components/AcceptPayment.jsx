@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { updatePayment, paymentAccept } from "../redux/action/PaymentAction";
+import { sendNotificationLater} from "../redux/action/NotificationAction";
 import { toastHandler } from '../ToastHandler';
 import moment from 'moment/moment';
 
@@ -36,8 +37,17 @@ function UpdatePaymentModal({ info, setAcceptData, setCancelModal }) {
 
           <div className="flex justify-end pt-2 gap-2">
             <button className="bg-cyan-500 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded"
-              onClick={() => {
-                dispatch(paymentAccept(data.paymentId));
+              onClick={async() => {
+                await dispatch(paymentAccept(data.paymentId));
+                const notificationData = {
+                  name: "Invoice for Patient Payment",
+                  time: moment().format("HH:mm:ss"),
+                  date: moment().format("YYYY-MM-DD"),
+                  patientId: data.patient.patientId,
+                  description: `Your payment for appointment ${moment(data.appointment.appointmentDate).format("L").toString()===moment().format("L").toString() ? "today": "on"} ${moment(data.appointment.appointmentDate).format("MMM DD YYYY")} has been receive`,
+                  receiverType: "PATIENT"
+                }
+                dispatch(sendNotificationLater(notificationData));
                 setAcceptData({ ...info, isActive: false })
               }}
             >

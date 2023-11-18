@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { toastHandler } from "../ToastHandler";
 import { approvedAppointment, deleteAppointment, cancelledAppointment } from "../redux/action/AppointmentAction";
+import { fetchPaymentDetails } from "../redux/action/PaymentAction";
 import { sendNotification } from "../redux/action/NotificationAction";
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
@@ -40,8 +41,7 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 	})
 
 	const deleteAppointmentButton = async (id) => {
-		dispatch(deleteAppointment(id))
-		return toastHandler("success", "Deleted successfully!");
+		dispatch(deleteAppointment(id,toastHandler))
 	}
 
 	const updateButton = (id) => {
@@ -60,6 +60,7 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 			  }
 			
 			  dispatch(approvedAppointment(id));
+			  dispatch(fetchPaymentDetails(id));
 			  dispatch(sendNotification(notificationData));
 			  alert("Approved appointment successfully!");
 			setStatus({ ...status, selectedId: null });

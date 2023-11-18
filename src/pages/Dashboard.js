@@ -39,7 +39,7 @@ import { useNavigate } from 'react-router-dom';
 import QRCodeModal from '../components/QRCodeModal';
 import * as io from "socket.io-client";
 import { SOCKET_LINK } from '../ApiLinks';
-import { fetchPayments, clientChanges,fetchPatientPayments,fetchPaymentDetails } from "../redux/action/PaymentAction";
+import { fetchPayments, clientChanges,fetchPatientPayments,fetchPaymentDetails, fetchAdminPayment } from "../redux/action/PaymentAction";
 import { fetchIncomingMessage } from "../redux/action/MessageAction";
 
 const socket = io.connect(SOCKET_LINK);
@@ -87,7 +87,8 @@ function Dashboard() {
 
   useEffect(() => {
     socket.on("response_payment_changes", (data) => {
-      dispatch(clientChanges(data.value));
+      const parseData = JSON.parse(data);
+      dispatch(fetchPaymentDetails(parseData.value));
     });
     socket.on("new_response_patient_changes", (data) => {
       const parseData = JSON.parse(data);

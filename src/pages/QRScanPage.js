@@ -59,10 +59,9 @@ export default function QRScanPage() {
 
 
   const approvedPaymentButton = () => {
-    if (payment[0]?.method !== "cash") {
+    if (payment[0]?.method !== "cash" && payment[0]?.status !== "APPROVED") {
       return toastHandler("error", "Please pay first your payment online either Gcash or Paymaya");
     }
-    if (payment[0]?.status === "APPROVED") return;
     dispatch(approvedPayment(payment[0].paymentId));
   }
 
