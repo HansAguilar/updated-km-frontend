@@ -17,14 +17,14 @@ function ViewPatient(props) {
 				return (val.patient.patientId === id);
 			})
 			.map((val) => {
-				return { 
-				date: val.appointmentDate, 
-				time: `${moment(val.timeStart, "HH:mm").format("LT")} - ${moment(val.timeEnd, "HH:mm").format("LT")}`, 
-				dentist: `Dr. ${val.dentist.fullname}`, 
-				status: val.status, 
-				patient: `${val.patient.firstname} ${val.patient.lastname}`,
-				cancellation: val.reasonOfCancellation 
-			};
+				return {
+					date: val.appointmentDate,
+					time: `${moment(val.timeStart, "HH:mm").format("LT")} - ${moment(val.timeEnd, "HH:mm").format("LT")}`,
+					dentist: `Dr. ${val.dentist.fullname}`,
+					status: val.status,
+					patient: `${val.patient.firstname} ${val.patient.lastname}`,
+					cancellation: val.reasonOfCancellation
+				};
 			});
 	});
 
@@ -107,115 +107,149 @@ function ViewPatient(props) {
 					</div>
 				</div>
 
-				{
-					teethHeader.length > 0 && (
-						<div className=' bg-white rounded-md w-full h-full '>
-							{/* HEADER */}
-							<div className=' w-full grid grid-cols-4 bg-slate-700 border p-2 uppercase text-slate-100 even:bg-slate-100 '>
-								{
-									teethHeader.map((val, idx) => (
-										<p key={idx} className='uppercase text-sm font-bold '>{val}</p>
-									))
-								}
-							</div>
+				<table className='table-fixed relative text-center'>
+					<thead className='bg-slate-700'>
+						<tr>
+							{
+								teethHeader.map((val, idx) => (
+									<th key={idx} className='p-2 uppercase text-slate-100'>{val}</th>
+								))
+							}
+						</tr>
+					</thead>
 
-							<div className=' w-full h-full overflow-auto grid gap-3' >
+					{
+						teethHistory.length > 0 ?
+							<tbody>
 								{
 									teethHistory.map((val, idx) => (
-										<div key={idx} className=' grid grid-cols-4 w-full '>
-											<p className=' text-sm text-zinc-700 '>{moment(val.treatmentDate).format('MMM DD, YYYY')}</p>
-											<p className='text-sm text-zinc-700 '>{moment(val.treatmentEnd).format('MMM DD, YYYY')}</p>
-											<div className=' w-full flex flex-wrap gap-2 '>{
+										<tr key={idx} className='font-medium border text-slate-900 even:bg-slate-100'>
+											<td className='text-zinc-700 '>{moment(val.treatmentDate).format('MMM DD, YYYY')}</td>
+											<td className='text-zinc-700 '>{moment(val.treatmentEnd).format('MMM DD, YYYY')}</td>
+											<td className='flex gap-2 justify-center p-2'>{
 												val.appointment.dentalServices.map((val, idx) => (
-													<p key={idx} className=' px-3 py-1 rounded-md w-auto bg-cyan-500 text-white capitalize text-sm'>{val.name.toLowerCase()}</p>
+													<span key={idx} className=' p-2 rounded-md w-auto bg-blue-400 text-white capitalize'>{val.name.toLowerCase()}</span>
 												))
-											}</div>
-											<p className=' capitalize text-sm text-zinc-700 '>{val.status === "UNDER_TREATMENT" ? "TREATMENT".toLowerCase() : val.status.toLowerCase()}</p>
-										</div>
+											}
+											</td>
+											<td className=' capitalize text-zinc-700 '>{val.status === "UNDER_TREATMENT" ? "TREATMENT".toLowerCase() : val.status.toLowerCase()}</td>
+										</tr>
 									))
 								}
-							</div>
-						</div>
-					)
-				}
-			</section>
+							</tbody>
+							:
+							<h2 className='absolute top-1/2 text-center text-xl text-slate-400 w-full'>Sorry, no data found!</h2>
+					}
+
+				</table >
+			</section >
 		)
 	}
 
 	const HistoryPage = () => {
-		return (
+		const headerHistory = ["Date", "Dentist", "Description", "Status"];
 
-			<section className='w-full h-full flex flex-col '>
+		return (
+			<section className='w-full h-full flex flex-col bg-white'>
+				<table className='table-fixed relative text-center'>
+					<thead className='bg-slate-700'>
+						<tr>
+							{
+								headerHistory.map((val, idx) => (
+									<th key={idx} className='p-2 uppercase text-slate-100'>{val}</th>
+								))
+							}
+						</tr>
+					</thead>
+
+					{
+						history.length > 0 ?
+							<tbody>
+								{
+									history.map((val, idx) => (
+										<tr key={idx} className='font-medium border text-slate-900 even:bg-slate-100'>
+											<td>{val.date}</td>
+											<td>{val.dentist}</td>
+											<td>{val.description}</td>
+											<td className='flex gap-2 justify-center p-2'>
+												<span className={`${val.status === "CANCELLED" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"} py-1 px-3 rounded-full max-w-max mx-auto capitalize`}>• {val.status.toLowerCase()}</span>
+											</td>
+										</tr>
+									))
+								}
+							</tbody>
+							:
+							<h2 className='absolute top-1/2 text-center text-xl text-slate-400 w-full'>Sorry, no data found!</h2>
+					}
+				</table>
+
 				{/* <div   div className=' w-full p-4 flex justify-between items-center '>
                             <div className=' inline-flex gap-2  '>
                                 <ExcelButton users={history} title={`${patient.lastname} ${patient.firstname} medical history`} />
                                 <PDFButton data={history} />
                             </div>    
                         </div> */}
-				<section className=' w-full p-2 text-center text-white bg-slate-700 font-bold uppercase flex justify-around items-center '>
-					<p className=' w-[200px] max-w-[200px] text-left '>Date</p>
-					<p className=' w-[200px] max-w-[200px] text-left '>Dentist</p>
-					<p className=' w-[200px] max-w-[200px] text-left '>Description</p>
-					<p className=' w-[200px] max-w-[200px] text-right '>Status</p>
-				</section>
-				<section className=' w-full min-h-[490px] max-h-[490px] overflow-auto bg-white'>
-					{
-						history.map((val, idx) => (
-							<div className=' w-full px-6 py-3 shadow-sm hover:bg-gray-100 text-cyan-900 flex justify-between items-center' key={idx}>
-								<p className=' w-auto max-w-[100px] text-left '>{val.date}</p>
-								<p className=' w-[200px] max-w-[200px] '>{val.dentist}</p>
-								<p className=' w-[400px] max-w-[200px] text-left '>{val.description}</p>
-								<p className={`
-                                    ${val.status === "CANCELLED" ? "bg-red-500" : " bg-emerald-500 "}
-                                     text-white px-5 py-1 capitalize rounded-full 
-                                    `}>{val.status.toLowerCase()}</p>
-							</div>
-						))
-					}
-					{/* <div className=' w-full px-6 py-3 text-cyan-900 flex justify-between items-center'>
+				{/* <div className=' w-full px-6 py-3 text-cyan-900 flex justify-between items-center'>
                                     <p>val.date</p>
                                     <p>val.time</p>
                                     <p>val.dentist</p>
                                     <p>val.status</p>
                                 </div> */}
-				</section>
 			</section>
 		)
 	}
 
 	const TreatementPage = () => {
+		const headerTreatment = ["Date", "Time", "Dentist", "Status"];
+
 		return (
-			<section section className=' h-full flex flex-col flex-grow ' >
-				<section className=' w-full px-6 py-3 text-white bg-slate-700 font-bold uppercase flex justify-around items-center '>
-					<p>Date</p>
-					<p>Time</p>
-					<p>Dentist</p>
-					<p>Status</p>
-				</section>
-				<section className=' w-full min-h-[490px] max-h-[490px] overflow-auto bg-white '>
+			<section section className='bg-white h-full flex flex-col flex-grow ' >
+
+				<table className='table-fixed relative text-center'>
+					<thead className='bg-slate-700'>
+						<tr>
+							{
+								headerTreatment.map((val, idx) => (
+									<th key={idx} className='p-2 uppercase text-slate-100'>{val}</th>
+								))
+							}
+						</tr>
+					</thead>
+
 					{
-						appointment
-							.filter((val) => {
-								return (
-									(val.status === "TREATMENT")
-								);
-							})
-							.map((val, idx) => (
-								<div className=' w-full px-6 py-3 shadow-sm hover:bg-gray-100 text-cyan-900 flex justify-between items-center' key={idx}>
-									<p >{moment(val.date).format("MMMM DD YYYY")}</p>
-									<p>{val.time}</p>
-									<p>{val.dentist}</p>
-									<p>{val.status}</p>
-								</div>
-							))
+						appointment.length > 0 ?
+							<tbody>
+								{
+									appointment
+										.filter((val) => {
+											return (
+												(val.status === "TREATMENT")
+											);
+										})
+										.map((val, idx) => (
+
+
+											<tr key={idx} className='font-medium border text-slate-900 even:bg-slate-100'>
+												<td>{moment(val.date).format("MMMM DD YYYY")}</td>
+												<td>{val.time}</td>
+												<td>{val.dentist}</td>
+												<td className='flex gap-2 justify-center p-2'>
+													<span className={`${val.status === "CANCELLED" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"} py-1 px-3 rounded-full max-w-max mx-auto capitalize`}>• {val.status.toLowerCase()}</span>
+												</td>
+											</tr>
+										))
+								}
+							</tbody>
+							:
+							<h2 className='absolute top-1/2 text-center text-xl text-slate-400 w-full'>Sorry, no data found!</h2>
 					}
-					{/* <div className=' w-full px-6 py-3 text-cyan-900 flex justify-between items-center'>
+				</table>
+				{/* <div className=' w-full px-6 py-3 text-cyan-900 flex justify-between items-center'>
                                     <p>val.date</p>
                                     <p>val.time</p>
                                     <p>val.dentist</p>
                                     <p>val.status</p>
                                 </div> */}
-				</section>
 			</section >
 		)
 	}
@@ -267,7 +301,7 @@ function ViewPatient(props) {
 						{/*//~ EMAIL */}
 						<div className=' w-full flex justify-between p-2 border-gray-300 '>
 							<p className='text-slate-800 font-medium'>Email</p>
-							<p className='capitalize text-slate-600'>{patient.email.toLowerCase()}</p>
+							<p className='text-slate-600'>{patient.email.toLowerCase()}</p>
 						</div>
 						{/*//~ EMAIL */}
 

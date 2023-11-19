@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-import { ADMIN_LINK } from '../ApiLinks';
-import axios from 'axios';
 import clinic from "../assets/dental-clinic.jpg"
 
 function Profile() {
@@ -10,7 +8,7 @@ function Profile() {
   const [adminData] = useState([data]);
 
   return (
-    <div className=' h-screen overflow-hidden relative bg-gray-200 '>
+    <div className=' h-screen overflow-hidden relative bg-gray-200'>
 
       <div className='flex justify-between p-4 gap-8'>
         <div className='flex flex-col items-center justify-between w-[28rem] gap-8'>
@@ -21,9 +19,9 @@ function Profile() {
 
           <div className='bg-white divide-y flex items-center flex-col justify-between w-full gap-4 p-4 rounded'>
             {/*//~ NAME */}
-            <div className=' w-full flex justify-between p-2 border-gray-300 '>
-              <p className='text-slate-800 font-medium'>Name</p>
-              <p className='capitalize text-slate-600'>{`${adminData[0].firstname} ${adminData[0].middlename} ${adminData[0].lastname}`}</p>
+            <div className=' w-full flex justify-between items-center p-2 border-gray-300 '>
+              <p className='text-slate-800 font-medium min-w-max'>Name</p>
+              <p className='capitalize text-slate-600'>{`${adminData[0].firstname} ${!adminData[0].middlename ? "" : adminData[0].middlename} ${adminData[0].lastname}`}</p>
             </div>
             {/*//~ NAME */}
 
@@ -65,7 +63,7 @@ function Profile() {
         </div>
 
         <div className='flex-1 bg-white rounded w-full'>
-            <img src={clinic} className='aspect-auto object-fill h-[700px] w-full' />
+          <img src={clinic} className='aspect-auto object-fill h-[700px] w-full' />
         </div>
       </div>
 

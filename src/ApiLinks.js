@@ -13,7 +13,7 @@ export const FEE_LINK = "http://localhost:8080/api/v1/fee";
 export const SCHEDULE_LINK = "http://localhost:8080/api/v1/schedule";
 export const TEETH_LINK = "http://localhost:8080/api/v1/teeth";
 
-const PORT = `192.168.1.9`;
+const PORT = `192.168.1.5`;
 export const SOCKET_LINK = `http://${PORT}:8081/`;
 
 

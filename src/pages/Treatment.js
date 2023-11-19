@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import PageHeader from '../components/PageHeader';
-import { IoAdd } from 'react-icons/io5';
 import { ToastContainer } from "react-toastify";
 import Table from '../components/AppointmentTable';
 import Modal from '../components/TreatmentModal';
@@ -15,7 +14,7 @@ function Appointments() {
   const [search, setSearch] = useState("");
   const appointmentList = useSelector((state) => { return state.appointment.payload.filter((val) => val.status === "TREATMENT"); })
   const [currentPage, setCurrentPage] = useState(1);
-  const tableHeaders = ["Patient Name", "Dentist Name", "Treatment Date", "Treatment Start", "Treatment End", "Treatment Duration", "Teeth Number ", "Status", "Action"];
+  const tableHeaders = ["Patient Name", "Dentist Name", "Treatment Date", "Treatment Start", "Treatment End", "Treatment Duration",  "Status", "Action"];
   const pageNumber = [];
 
   const [appointment, setAppointment] = useState({
