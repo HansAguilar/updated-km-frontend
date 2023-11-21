@@ -7,7 +7,7 @@ import ViewAppointment from './ViewAppointment';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { toastHandler } from "../ToastHandler";
-import { approvedAppointment, deleteAppointment, cancelledAppointment } from "../redux/action/AppointmentAction";
+import { approvedAppointment, deleteAppointment } from "../redux/action/AppointmentAction";
 import { fetchPaymentDetails } from "../redux/action/PaymentAction";
 import { sendNotification } from "../redux/action/NotificationAction";
 import moment from 'moment';
@@ -41,7 +41,7 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 	})
 
 	const deleteAppointmentButton = async (id) => {
-		dispatch(deleteAppointment(id,toastHandler))
+		dispatch(deleteAppointment(id, toastHandler))
 	}
 
 	const updateButton = (id) => {
@@ -50,20 +50,20 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 	}
 
 	const statusSubmit = (id, data) => {
-			const notificationData = {
-				name: "Approved Appointment",
-				time: moment().format("HH:mm:ss"),
-				date: moment().format("YYYY-MM-DD"),
-				patientId: data.patientId,
-				description: `You're appointment ${moment(data.date).format("L").toString()===moment().format("L").toString() ? "today": "on"} ${moment(data.date).format("MMM DD YYYY")} has been approved`,
-				receiverType: "PATIENT"
-			  }
-			
-			  dispatch(approvedAppointment(id));
-			  dispatch(fetchPaymentDetails(id));
-			  dispatch(sendNotification(notificationData));
-			  alert("Approved appointment successfully!");
-			setStatus({ ...status, selectedId: null });
+		const notificationData = {
+			name: "Approved Appointment",
+			time: moment().format("HH:mm:ss"),
+			date: moment().format("YYYY-MM-DD"),
+			patientId: data.patientId,
+			description: `You're appointment ${moment(data.date).format("L").toString() === moment().format("L").toString() ? "today" : "on"} ${moment(data.date).format("MMM DD YYYY")} has been approved`,
+			receiverType: "PATIENT"
+		}
+
+		dispatch(approvedAppointment(id));
+		dispatch(fetchPaymentDetails(id));
+		dispatch(sendNotification(notificationData));
+		alert("Approved appointment successfully!");
+		setStatus({ ...status, selectedId: null });
 	}
 
 	const cancelButton = (id) => {
@@ -73,6 +73,7 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 		})
 		setCancelModal(true);
 	}
+	console.log(results);
 	return (
 		<>
 			{update && (<UpdateAppointmentModal show={update} setModal={setUpdate} initialAppointment={appointmentId} />)}
@@ -153,7 +154,7 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 														<select name="status" value={result.status} className='p-2 border focus:border-blue-400 rounded focus:outline-none'
 															onChange={(e) => {
 																if (e.target.value === "CANCELLED") return cancelButton(result.appointmentId);
-																const data = { status: e.target.value, description: "", patientId:result.patient.patientId, date:result.appointmentDate}
+																const data = { status: e.target.value, description: "", patientId: result.patient.patientId, date: result.appointmentDate }
 																statusSubmit(result.appointmentId, data);
 															}}
 															onBlur={() => setStatus({ ...status, selectedId: null })}
@@ -170,9 +171,9 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 																	:
 																	result.status === "APPROVED" ? "bg-green-100 text-green-600 hover:bg-green-400"
 																		:
-																		result.status === "DONE" ? "bg-red-100 text-slate-600 hover:bg-slate-400"
+																		result.status === "TREATMENT" ? "bg-red-100 text-red-600 hover:bg-red-400"
 																			:
-																			"bg-red-500"} 
+																			"bg-red-100 text-red-600"} 
 																			transition-all ease-linear duration-150 py-1 px-3 rounded-full max-w-max mx-auto cursor-pointer hover:text-white`}
 															onClick={() => {
 																setStatus({

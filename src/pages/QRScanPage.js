@@ -16,7 +16,6 @@ export default function QRScanPage() {
   const todaysDate = moment().format("YYYY-MM-DD");
   const todaysTime = moment();
 
-
   const appointment = useSelector((state) => {
     return state.appointment.payload.filter((val) => {
       return val.appointmentId === id
@@ -113,7 +112,7 @@ export default function QRScanPage() {
 
             <div className='flex justify-between items-center'>
               <p className='text-slate-500 font-medium'>Status:</p>
-              <p className={`text-sm font-medium text-white py-1 px-3 rounded-full ${payment[0]?.status === "APPROVED" ? "bg-green-100 text-green-600 cursor-default" : "bg-yellow-100 text-yellow-600 hover:bg-yellow-400 hover:text-white cursor-pointer"}`} onClick={approvedPaymentButton}>{payment[0]?.status === "PENDING" ? "Accept Payment" : payment[0]?.status.toLowerCase()}</p>
+              <p className={`text-sm font-medium py-1 px-3 rounded-full ${payment[0]?.status === "APPROVED" ? "bg-green-100 text-green-600" : "bg-yellow-100 text-yellow-600 hover:bg-yellow-400 hover:text-white cursor-pointer"}`} onClick={approvedPaymentButton}>{payment[0]?.status === "PENDING" ? "Accept Payment" : payment[0]?.status.toLowerCase()}</p>
             </div>
 
             <div className='flex flex-col flex-grow gap-2 '>
