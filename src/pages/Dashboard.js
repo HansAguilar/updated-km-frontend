@@ -41,6 +41,7 @@ import * as io from "socket.io-client";
 import { SOCKET_LINK } from '../ApiLinks';
 import { fetchPayments, clientChanges,fetchPatientPayments,fetchPaymentDetails, fetchAdminPayment } from "../redux/action/PaymentAction";
 import { fetchIncomingMessage } from "../redux/action/MessageAction";
+import NotificationModal from '../components/NotificationModal';
 
 const socket = io.connect(SOCKET_LINK);
 function Dashboard() {
@@ -48,6 +49,10 @@ function Dashboard() {
   const navigate = useNavigate();
   const [isToggleQR, setToggleQR] = useState(false);
   const [toggleBar, setToggleBar] = useState(false);
+  const [notificationToggle, setNotificationToggle] = useState({
+    data:null,
+    isShow:false
+  });
   const patient = useSelector(state => { return state.patient });
   const history = useSelector(state => { return state.history });
   const installment = useSelector(state => { return state.installment });
@@ -115,8 +120,11 @@ function Dashboard() {
     <div className='w-full h-screen flex z-10 relative '>
       <Sidebar toggleBar={toggleBar} />
       <div className=' relative flex flex-grow flex-col bg-slate-200'>
+
         {isToggleQR && (<QRCodeModal setToggleQR={setToggleQR} />)}
-        <Header toggleBar={toggleBar} setToggleBar={setToggleBar} />
+        {notificationToggle.isShow && (<NotificationModal notificationToggle={notificationToggle} setNotificationToggle={setNotificationToggle} />)}
+
+        <Header toggleBar={toggleBar} setToggleBar={setToggleBar} setNotificationToggleModal={setNotificationToggle} notificationToggle={notificationToggle} />
         <Routes>
           <Route element={
             <Home />}
