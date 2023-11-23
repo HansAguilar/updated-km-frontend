@@ -2,17 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { IoNotificationsSharp } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchNewNotification } from "../redux/action/NotificationAction";
+import { fetchNewNotification, readPatientNotification } from "../redux/action/NotificationAction";
 import * as io from "socket.io-client";
 import { SOCKET_LINK } from '../ApiLinks';
 import { BsCalendar2Check } from "react-icons/bs";
 // BsCalendar2Check
 
 const socket = io.connect(SOCKET_LINK);
-function Header({ toggleBar, setToggleBar }) {
+function Header({ toggleBar, setToggleBar,setNotificationToggleModal, notificationToggle }) {
   const [isNotificationToggle, setNotificationToggle] = useState(false);
   const { loginAdmin } = useSelector((state) => { return state.admin; });
-  const notification = useSelector((state) => { return state.notification.payload; });
+  const notificationCounter = useSelector((state) => { return state.notification.payload.filter(val => {
+    return val.status === "UNREAD";
+  }); });
+  const notification = useSelector((state) => { return state.notification.payload});
   const dispatch = useDispatch();
   const toggleMenuEvent = () => {
     if (toggleBar) return setToggleBar(false);
@@ -29,9 +32,10 @@ function Header({ toggleBar, setToggleBar }) {
     }
   }, [socket])
 
-  const countUnread = notification.filter(val => {
-    return val.status === "UNREAD";
-  })
+  const readNotification = (data) =>{
+    dispatch(readPatientNotification(data.notificationId, notificationToggle, setNotificationToggleModal));
+    setNotificationToggle(false);
+  }
 
   return (
     <div className=' w-full h-auto sticky top-0 z-50  bg-transparent ' >
@@ -44,9 +48,8 @@ function Header({ toggleBar, setToggleBar }) {
           <div className=' relative h-12 flex justify-center items-center max-w-max cursor-pointer' onClick={() => setNotificationToggle((state) => { return !state; })}>
             <IoNotificationsSharp size={30} className=' text-blue-500 ' />
             {
-              countUnread.length !== 0 && (
+              notificationCounter.length > 0 && (
                 <div className=' w-4 h-4 absolute bg-red-600 p-1 rounded-full flex items-center justify-center bottom-2 right-1 '>
-                  <span className=' text-white font-bold '>{notification.length}</span>
                 </div>
               )
             }
@@ -58,10 +61,10 @@ function Header({ toggleBar, setToggleBar }) {
       {/* NOTIFICATION BOX */}
       {
         isNotificationToggle && (
-          <div className=' bg-slate-100 w-96 h-96 max-h-96 overflow-auto absolute rounded shadow-xl border-2 top-16 right-5 p-3 z-30 flex flex-col-reverse gap-4 '>
+          <div className=' bg-slate-100 w-96 h-96 max-h-96 overflow-auto absolute rounded shadow-xl border-2 top-16 right-5 p-3 z-30 flex flex-col gap-4 '>
             {
               notification.map((data, idx) => (
-                <div key={idx} className={`w-full ${data.status === "READ" ? "bg-white" : "bg-slate-200"}  flex gap-3 p-4 `}>
+                <div key={idx} className={`w-full cursor-pointer ${data.status === "READ" ?  "bg-slate-200" : "bg-white"}  flex gap-3 p-4 `} onClick={()=>readNotification(data)}>
                   <div className="bg-blue-400 p-3">
                     <BsCalendar2Check size={25} className=' text-white ' />
                   </div>

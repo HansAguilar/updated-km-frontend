@@ -73,7 +73,6 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 		})
 		setCancelModal(true);
 	}
-	console.log(results);
 	return (
 		<>
 			{update && (<UpdateAppointmentModal show={update} setModal={setUpdate} initialAppointment={appointmentId} />)}

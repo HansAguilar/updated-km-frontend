@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CREATE_NOTIFICATION_SUCCESS, FETCH_NEW_NOTIFICATION_SUCCESS, FETCH_NOTIFICATION_FAILED, FETCH_NOTIFICATION_REQUEST, FETCH_NOTIFICATION_SUCCESS } from "../ActionTypes";
+import { CREATE_NOTIFICATION_SUCCESS, FETCH_NEW_NOTIFICATION_SUCCESS, FETCH_NOTIFICATION_FAILED, FETCH_NOTIFICATION_REQUEST, FETCH_NOTIFICATION_SUCCESS, UPDATE_NOTIFICATION_SUCCESS } from "../ActionTypes";
 import { NOTIFICATION_LINK, SOCKET_LINK } from "../../ApiLinks";
 import * as io from "socket.io-client";
 
@@ -70,4 +70,20 @@ export const sendNotificationLater = (data) =>{
             console.log("Create notification",error);
         }
     }
+}
+
+export const readPatientNotification = (notificationId,notificationToggle, setNotificationToggleModal) =>{
+    return async dispatch =>{
+        try {
+            const response = await axios.put(`${NOTIFICATION_LINK}/read_notification/${notificationId}`);
+            const appointmentData = response.data;
+            dispatch({
+                type: UPDATE_NOTIFICATION_SUCCESS,
+                payload: appointmentData
+            })
+            setNotificationToggleModal({ ...notificationToggle, data:appointmentData, isShow:true});
+        } catch (error) {
+            
+        }
+    } 
 }

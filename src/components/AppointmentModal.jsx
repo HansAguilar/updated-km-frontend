@@ -1,4 +1,4 @@
-import React, { useState, } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { CiCircleRemove } from "react-icons/ci";
 import { ToastContainer } from 'react-toastify';
 import moment from 'moment/moment';
@@ -71,91 +71,98 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
       setActive("service")
     }
 
-    // DATE LOGIC
-    if (e.target.name === "date") {
-      const newTimeList = [
-        { timeValue: "09:00 Am", timeStart: "09:00:00" },
-        { timeValue: "09:30 Am", timeStart: "09:30:00" },
-        { timeValue: "10:00 Am", timeStart: "10:00:00" },
-        { timeValue: "10:30 Am", timeStart: "10:30:00" },
-        { timeValue: "11:00 Am", timeStart: "11:00:00" },
-        { timeValue: "11:30 Am", timeStart: "11:30:00" },
-        { timeValue: "12:00 Am", timeStart: "12:00:00" },
-        { timeValue: "01:00 Pm", timeStart: "13:00:00" },
-        { timeValue: "01:30 Pm", timeStart: "13:30:00" },
-        { timeValue: "02:00 Pm", timeStart: "14:00:00" },
-        { timeValue: "02:30 Pm", timeStart: "14:30:00" },
-        { timeValue: "03:00 Pm", timeStart: "15:00:00" },
-        { timeValue: "03:30 Pm", timeStart: "15:30:00" },
-        { timeValue: "04:00 Pm", timeStart: "16:00:00" },
-      ];
-
-      const currentTime = moment();
-      const newTime = currentTime.add(1, "hour");
-      const newHour = moment(newTime);
-
-      setTimeStartList([...newTimeList]);
-
-      const filteredTime = newTimeList.filter((val) =>
-        moment(e.target.value, 'YYYY-MM-DD').isSame(moment(), 'day') &&
-        moment(val.timeStart, 'HH:mm:ss').isAfter(newHour)
-      );
-      if (filteredTime.length > 0) {
-        setTimeStartList(filteredTime);
-      }
-
-      setTimeStartList((prev) => {
-        let updatedSchedList = [...prev];
-        const filteredSchedule = schedule.filter((val) => moment(e.target.value, "YYYY-MM-DD").isSame(moment(val.dateSchedule).format("YYYY-MM-DD")) && val.dentist.dentistId === appointment.dentistId);
-        if (filteredSchedule.length > 0) {
-          const indicesScheduleToRemain = [];
-          for (let x = 0; x < filteredSchedule.length; x++) {
-            let start = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeStart);
-            let end = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeEnd);
-
-            for (let i = start; i < end; i++) {
-              indicesScheduleToRemain.push(i);
-            }
-          }
-          console.log(indicesScheduleToRemain);
-          updatedSchedList = updatedSchedList.filter((_, idx) => { return indicesScheduleToRemain.includes(idx) });
-        }
-
-        return updatedSchedList;
-      });
-
-      setTimeStartList(prevTimeStartList => {
-        let updatedTimeStartList = [...prevTimeStartList];
-        const getAppointmentDate = filteredAppointments.filter((value) => {
-          return value.appointmentDate === e.target.value;
-        });
-
-        if (getAppointmentDate.length > 0) {
-          const indexesToRemove = [];
-          for (let x = 0; x < getAppointmentDate.length; x++) {
-            const start = prevTimeStartList.findIndex((value) => {
-              return value.timeStart === getAppointmentDate[x].timeStart;
-            });
-            const end = prevTimeStartList.findIndex((value) => {
-              return value.timeStart === getAppointmentDate[x].timeEnd;
-            })
-            for (let begin = start; begin < end; begin++) {
-              indexesToRemove.push(begin);
-            }
-          }
-          updatedTimeStartList = updatedTimeStartList.filter((_, index) => {
-            return !indexesToRemove.includes(index);
-          })
-        }
-
-        return updatedTimeStartList;
-      })
-    }
     setAppointment({
       ...appointment,
       [e.target.name]: e.target.value
     });
   };
+
+  useEffect(()=>{
+    const newTimeList = [
+      { timeValue: "09:00 Am", timeStart: "09:00:00" },
+      { timeValue: "09:30 Am", timeStart: "09:30:00" },
+      { timeValue: "10:00 Am", timeStart: "10:00:00" },
+      { timeValue: "10:30 Am", timeStart: "10:30:00" },
+      { timeValue: "11:00 Am", timeStart: "11:00:00" },
+      { timeValue: "11:30 Am", timeStart: "11:30:00" },
+      { timeValue: "12:00 Am", timeStart: "12:00:00" },
+      { timeValue: "01:00 Pm", timeStart: "13:00:00" },
+      { timeValue: "01:30 Pm", timeStart: "13:30:00" },
+      { timeValue: "02:00 Pm", timeStart: "14:00:00" },
+      { timeValue: "02:30 Pm", timeStart: "14:30:00" },
+      { timeValue: "03:00 Pm", timeStart: "15:00:00" },
+      { timeValue: "03:30 Pm", timeStart: "15:30:00" },
+      { timeValue: "04:00 Pm", timeStart: "16:00:00" },
+    ];
+
+    const currentTime = moment();
+    const newTime = currentTime.add(1, "hour");
+    const newHour = moment(newTime);
+
+    // setTimeStartList([...newTimeList]);
+
+    // const filteredTime = newTimeList.filter((val) =>
+    //   moment(appointment.date, 'YYYY-MM-DD').isSame(moment(), 'day') &&
+    //   moment(val.timeStart, 'HH:mm:ss').isAfter(newHour)
+    // );
+    // if (filteredTime.length > 0) {
+    //   setTimeStartList(filteredTime);
+    // }else{
+    //   setTimeStartList([...newTimeList]);
+    // }
+
+    // setTimeStartList((prev) => {
+    //   let updatedSchedList = [...prev];
+    //   const filteredSchedule = schedule.filter((val) => moment(appointment.date, "YYYY-MM-DD").isSame(moment(val.dateSchedule).format("YYYY-MM-DD")) && val.dentist.dentistId === appointment.dentistId);
+    //   if (filteredSchedule.length > 0) {
+    //     const indicesScheduleToRemain = [];
+    //     for (let x = 0; x < filteredSchedule.length; x++) {
+    //       let start = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeStart);
+    //       let end = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeEnd);
+
+    //       for (let i = start; i < end; i++) {
+    //         indicesScheduleToRemain.push(i);
+    //       }
+    //     }
+    //     console.log(indicesScheduleToRemain);
+    //     updatedSchedList = updatedSchedList.filter((_, idx) => { return indicesScheduleToRemain.includes(idx) });
+    //   }
+
+    //   return updatedSchedList;
+    // });
+
+    setTimeStartList(newTimeList)
+    console.log(timeStartList);
+    setTimeStartList(prevTimeStartList => {
+      let updatedTimeStartList = [...prevTimeStartList];
+      const getAppointmentDate = filteredAppointments.filter((value) => {
+        return moment(appointment.date, "YYYY-MM-DD").isSame(moment(value.appointmentDate).format("YYYY-MM-DD"));
+      });
+      console.log(timeStartList);
+      if (getAppointmentDate.length > 0) {
+        const indexesToRemove = [];
+        for (let x = 0; x < getAppointmentDate.length; x++) {
+          const start = prevTimeStartList.findIndex((value) => {
+            return value.timeStart === getAppointmentDate[x].timeStart;
+          });
+          const end = prevTimeStartList.findIndex((value) => {
+            return value.timeStart === getAppointmentDate[x].timeEnd;
+          })
+          console.log(start," end",end," "+[]);
+          for (let begin = start; begin < end; begin++) {
+            indexesToRemove.push(begin);
+          }
+        }
+        console.log(indexesToRemove);
+        updatedTimeStartList = updatedTimeStartList.filter((_, index) => {
+          return !indexesToRemove.includes(index);
+        })
+      }
+      return updatedTimeStartList;
+    })
+    console.log(timeStartList);
+  },[appointment.date])
+
 
   const nextButton = async () => {
     // appointment.serviceSelected.length < 1 ||
@@ -261,6 +268,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
   const currentDate = new Date();
   currentDate.setDate(currentDate.getDate() + 1); // Subtract one day
   const minDate = currentDate.toISOString().split('T')[0];
+
   return (
     <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 absolute -top-10 z-10 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
       <div className="m-auto w-[900px] min-h-max bg-zinc-100 rounded overflow-auto">

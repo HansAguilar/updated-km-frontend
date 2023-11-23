@@ -15,24 +15,29 @@ export const fetchDentist = () =>{
     }
 }
 
-export const createDentist = (data) =>{
+export const createDentist = (data,toastHandler, setModal,clearData) =>{
     return async dispatch => {
         try {
             const response = await axios.post(`${DENTIST_LINK}/register`,data);
             dispatch({ type:CREATE_DENTIST_SUCCESS, payload:response.data });
             toastHandler("success", "Successfully registered new dentist");
+            clearData();
+            setModal(false);
         } catch (error) {
+            toastHandler("error", error.response.data.message);
         }
     }
 }
 
-export const updateDentist = (id,data) =>{
+export const updateDentist = (id,data,toastHandler,setModal) =>{
     return async dispatch => {
         try {
             const response = await axios.put(`${DENTIST_LINK}/update/dentist/login/${id}`,data);
             dispatch({ type:UPDATE_DENTIST_SUCCESS, payload:response.data });
             toastHandler("success", "Successfully update dentist information");
+            setModal(false);
         } catch (error) {
+            toastHandler("error", error.response.data.message);
         }
     }
 }

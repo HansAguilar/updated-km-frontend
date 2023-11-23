@@ -44,7 +44,7 @@ export const createPatient = (data,setModal,setAdminInfo,setProfile) =>{
     }
 }
 
-export const updatePatient = (id,data) =>{
+export const updatePatient = (id,data,toastHandler,setModal) =>{
     return async dispatch=>{
         try {
             const response = await axios.put(`${PATIENT_LINK}/update/${id}`,data);
@@ -52,6 +52,8 @@ export const updatePatient = (id,data) =>{
                 type: UPDATE_PATIENT_SUCCESS,
                 payload: response.data
             });
+            toastHandler("success", "Update patient record successfully!")
+            setModal(false);
         } catch (error) {
             toastHandler("error",error.response.data.message);
         }

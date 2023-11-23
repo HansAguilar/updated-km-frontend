@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoAddSharp, IoRemoveOutline } from 'react-icons/io5';
 import { createPatient } from '../redux/action/PatientAction';
 import { createAdmin } from '../redux/action/AdminAction';
@@ -29,6 +29,28 @@ function AdminModal({ show, setModal, type }) {
   const [numberOfComponents, setNumberOfComponents] = useState(1);
   const [insuranceInfo, setInsuranceInfo] = useState([{ card: "", cardNumber: "", company: "" }]);
 
+  const clearText = () =>{
+    setAdminInfo({
+    firstname: "",
+    middlename: "",
+    lastname: "",
+    birthday: "",
+    address: "",
+    gender: "",
+    contactNumber: "",
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+    haveInsurance: "no"
+    });
+    setProfile((prev)=>"");
+  }
+
+  useEffect(()=>{
+    clearText();
+  }, [show])
+ 
   const handleInsuranceChange = (e, index) => {
     const { name, value } = e.target;
     const updatedInsurance = [...insuranceInfo];
@@ -91,6 +113,7 @@ function AdminModal({ show, setModal, type }) {
     let data = {};
 
     if (!adminInfo.firstname || !adminInfo.lastname || !adminInfo.birthday || !adminInfo.address || !adminInfo.gender || !adminInfo.contactNumber || !adminInfo.email || !adminInfo.username || !profile) {
+      console.log(adminInfo);
       return toastHandler("error", "Fill up empty field!");
     }
 
