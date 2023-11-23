@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { updateDentist } from "../redux/action/DentistAction";
 import { ToastContainer } from 'react-toastify';
+import { toastHandler } from '../ToastHandler';
 
 const inputStyle = "p-2 border focus:border-blue-400 rounded text-sm focus:outline-none";
 
@@ -52,8 +53,7 @@ function UpdateDentistModal({ show, setModal, setData, data }) {
       specialty: data.specialty,
       profile: data.profile
     }
-    dispatch(updateDentist(data.dentistId, newData));
-    setModal(false);
+    dispatch(updateDentist(data.dentistId, newData,toastHandler,setModal));
   }
 
   return (

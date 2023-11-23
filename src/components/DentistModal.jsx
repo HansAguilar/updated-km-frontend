@@ -20,7 +20,7 @@ function DenstistModal({ show, setModal }) {
     password: "",
     confirmPassword: ""
   });
-  const [profile, setProfile] = useState("");
+  const [profile, setProfile] = useState(null);
 
   const handleFormChange = (e) => {
     setDentistInfo({
@@ -47,6 +47,22 @@ function DenstistModal({ show, setModal }) {
     return age >= 18;
   }
 
+  const clearData = () =>{
+    setDentistInfo({
+      fullname: "",
+      birthday: "",
+      address: "",
+      gender: "",
+      contactNumber: "",
+      email: "",
+      specialty: "",
+      username: "",
+      password: "",
+      confirmPassword: ""
+    });
+    setProfile(null)
+  }
+
   const btnSubmit = () => {
     dentistInfo.password = dentistInfo.password.replace(/\s+/g, '');
     dentistInfo.confirmPassword = dentistInfo.confirmPassword.replace(/\s+/g, '');
@@ -68,8 +84,7 @@ function DenstistModal({ show, setModal }) {
     else if (!contactClean.test(dentistInfo.contactNumber)) return toastHandler("error", "Please enter an 11-digit number starting with 09");
 
     const data = { ...dentistInfo, profile };
-    dispatch(createDentist(data));
-    setModal(false);
+    dispatch(createDentist(data, toastHandler, setModal,clearData));
   }
 
   return (

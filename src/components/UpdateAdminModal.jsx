@@ -79,12 +79,11 @@ function UpdateAdminModal({ show, setModal, setAdminInfo, adminInfo, type }) {
       };
 
       if (type === "patient") {
-        dispatch(updatePatient(adminInfo.userId, data));
+        console.log("patient");
+        dispatch(updatePatient(adminInfo.userId, data, toastHandler, setModal));
       } else {
-        dispatch(updateAdmin(adminInfo.userId, data));
+        dispatch(updateAdmin(adminInfo.userId, data,toastHandler,setModal));
       }
-      toastHandler("success", "Update Successfully!");
-      setModal(false);
     } catch (err) {
       console.log(err);
     }
