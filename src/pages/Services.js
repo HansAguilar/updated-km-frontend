@@ -7,6 +7,8 @@ import Pagination from '../components/Pagination';
 import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { BiSearchAlt } from 'react-icons/bi';
+import PDFButton from '../components/PDFButton';
+import ServicesExcelFile from '../components/ServicesExcelFile';
 
 function Services() {
   const [show, setModal] = useState(false);
@@ -20,7 +22,6 @@ function Services() {
   for (let x = 1; x <= Math.ceil(payload.length / 8); x++) {
     pageNumber.push(x);
   }
-
 
   const searchHandle = (e) => {
     setSearch(e.target.value);
@@ -48,6 +49,12 @@ function Services() {
             </div>
             {/*//~ ADD BUTTON */}
 
+            {/*//~ FILES */}
+            <div className=' inline-flex gap-2  '>
+              <ServicesExcelFile users={payload} title="services" />
+              <PDFButton data={payload} type="services" />
+            </div>
+            {/*//~ FILES */}
 
             {/*//~ SEARCH */}
             <div className='relative z-0'>
@@ -66,7 +73,7 @@ function Services() {
           {/*//~ BUTTON FILES SEARCH CONTAINER */}
 
           <Table tableHeaders={tableHeaders} results={search.length > 0 ? filteredServices : payload} search={search} currentPage={currentPage} />
-          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} currentPage={currentPage}/>
+          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} currentPage={currentPage} />
         </div>
       </div>
     </div>

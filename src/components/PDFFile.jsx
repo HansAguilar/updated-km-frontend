@@ -1,5 +1,6 @@
 import React from 'react';
-import { Page, Text, Document, StyleSheet, View } from '@react-pdf/renderer';
+import { Page, Text, Document, StyleSheet, View, Image } from '@react-pdf/renderer';
+import kmlogo from "../assets/kmlogo.jpg";
 
 const styles = StyleSheet.create({
   body: {
@@ -28,58 +29,108 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: "row",
-    backgroundColor: '#06b6d4',
-    padding: 3,
-    fontSize: 10,
+    backgroundColor: '#d9d9d9',
     borderBottomWidth: 1,
-    borderBottomColor: '#075985',
+    borderBottomColor: '#2b2b2b',
   },
   tableBodyOdd: {
     flexDirection: "row",
     backgroundColor: 'rgb(241 245 230)',
-    padding: 3,
-    fontSize: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#d1d5db',
   },
   tableBodyEven: {
     flexDirection: "row",
-    backgroundColor: "rgb(241 245 249)",
-    padding: 3,
-    fontSize: 10,
   },
+  cell: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#2b2b2b',
+    padding: 1
+  },
+
   tableHeaderText: {
-    fontWeight: 'extrabold',
-    textAlign: 'center',
-    color: 'white'
+    fontWeight: 'bold',
+    textAlign: 'left',
+    color: '#2b2b2b',
+    fontSize: 10,
+    padding: 2,
   },
   tableBodyText: {
-    textAlign: 'center',
-    color: '#1f2937'
+    textAlign: 'left',
+    color: '#1f2937',
+    fontSize: 10,
+    padding: 2,
+  },
+  logoContainer: {
+    alignItems: 'center',
+  },
+  logo: {
+    height: 100, // Adjust the height as needed
   },
 });
 
-function PDFFile({ data }) {
+function PDFFile({ data, type }) {
   return (
     <Document>
       <Page style={styles.body}>
-        <View style={{ paddingBottom: 4 }}>
-          <Text style={{ color: "#06b6d4", textAlign: 'center' }}>KM Geronimo Dental Clinic</Text>
+        <View style={styles.logoContainer}>
+          <Image style={styles.logo} source={kmlogo} />
+        </View>
+        <View style={{ marginVertical: 4 }}>
+          <Text style={{ color: "#2b2b2b", fontSize: 12 }}>{type === "admin" ? "Admin" : "Patient"}'s List</Text>
         </View>
         <View style={styles.tableHeader}>
-          <Text style={{ ...styles.tableHeaderText, flex: 3 }}>Name</Text>
-          <Text style={{ ...styles.tableHeaderText, flex: 1 }}>Gender</Text>
-          <Text style={{ ...styles.tableHeaderText, flex: 2 }}>Address</Text>
-          <Text style={{ ...styles.tableHeaderText, flex: 3 }}>Email</Text>
-          <Text style={{ ...styles.tableHeaderText, flex: 1 }}>Phone No.</Text>
-          <Text style={{ ...styles.tableHeaderText, flex: 1 }}>Age</Text>
+          <View style={{ ...styles.cell, }}>
+            <Text style={{ ...styles.tableHeaderText }}>FULL NAME</Text>
+          </View>
+          <View style={{ ...styles.cell, maxWidth: "60" }}>
+            <Text style={{ ...styles.tableHeaderText }}>GENDER</Text>
+          </View>
+          <View style={{ ...styles.cell, }}>
+            <Text style={{ ...styles.tableHeaderText }}>ADDRESS</Text>
+          </View>
+          <View style={{ ...styles.cell, }}>
+            <Text style={{ ...styles.tableHeaderText }}>EMAIL</Text>
+          </View>
+          <View style={{ ...styles.cell, maxWidth: "70" }}>
+            <Text style={{ ...styles.tableHeaderText, }}>PHONE NO.</Text>
+          </View>
+          {
+            type === "admin" ?
+              null
+              :
+              <View style={{ ...styles.cell, maxWidth: "30" }}>
+                <Text style={{ ...styles.tableHeaderText }}>AGE</Text>
+              </View>
+          }
+
         </View>
         {data.map((val, idx) => (
-          <View style={idx % 2 === 0 ? styles.tableBodyEven : styles.tableBodyOdd} key={idx}>
-            <Text style={{ ...styles.tableBodyText, flex: 3 }}>{`${val.firstname} ${val.middlename} ${val.lastname}`}</Text>
-            <Text style={{ ...styles.tableBodyText, flex: 1 }}>{val.gender}</Text>
-            <Text style={{ ...styles.tableBodyText, flex: 2 }}>{val.address}</Text>
-            <Text style={{ ...styles.tableBodyText, flex: 3 }}>{val.email}</Text>
-            <Text style={{ ...styles.tableBodyText, flex: 1 }}>{val.contactNumber}</Text>
-            <Text style={{ ...styles.tableBodyText, flex: 1 }}>{val.age}</Text>
+          <View style={styles.tableBodyEven} key={idx}>
+            <View style={{ ...styles.cell, }}>
+              <Text style={styles.tableBodyText}>{`${val.firstname} ${val.middlename} ${val.lastname}`}</Text>
+            </View>
+            <View style={{ ...styles.cell, maxWidth: "60" }}>
+              <Text style={styles.tableBodyText}>{val.gender}</Text>
+            </View>
+            <View style={{ ...styles.cell, }}>
+              <Text style={styles.tableBodyText}>{val.address}</Text>
+            </View>
+            <View style={{ ...styles.cell, }}>
+              <Text style={styles.tableBodyText}>{val.email}</Text>
+            </View>
+            <View style={{ ...styles.cell, maxWidth: "70" }}>
+              <Text style={styles.tableBodyText}>{val.contactNumber}</Text>
+            </View>
+            {
+              type === "admin" ?
+                null
+                :
+                <View style={{ ...styles.cell, ...styles.lastCell, maxWidth: "30" }}>
+                  <Text style={{ ...styles.tableBodyText }}>{val.age}</Text>
+                </View>
+            }
           </View>
         ))}
         {/* Page Number */}
