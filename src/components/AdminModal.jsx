@@ -44,12 +44,14 @@ function AdminModal({ show, setModal, type }) {
     confirmPassword: "",
     haveInsurance: "no"
     });
-    setProfile((prev)=>"");
+    setProfile("");
+    setNumberOfComponents(1);
+    setInsuranceInfo([{ card: "", cardNumber: "", company: "" }]);
   }
 
   useEffect(()=>{
     clearText();
-  }, [show])
+  }, [])
  
   const handleInsuranceChange = (e, index) => {
     const { name, value } = e.target;
@@ -127,7 +129,7 @@ function AdminModal({ show, setModal, type }) {
 
     else if (adminInfo.password.replace(/\s+/g, '') !== adminInfo.confirmPassword.replace(/\s+/g, '')) return toastHandler("error", "Passwords do not match");
 
-    else if (!isLegalAge && type != "patient" ) return toastHandler("error", "Must be 18 or older");
+    else if (!isLegalAge && type !== "patient" ) return toastHandler("error", "Must be 18 or older");
 
     else if (!contactClean.test(adminInfo.contactNumber)) return toastHandler("error", "Please enter an 11-digit number starting with 09");
 
@@ -138,6 +140,7 @@ function AdminModal({ show, setModal, type }) {
       data = { ...adminInfo, profile };
       submitData(data);
     }
+    clearText();
   }
 
   return (
@@ -162,15 +165,15 @@ function AdminModal({ show, setModal, type }) {
               <div className='flex gap-4'>
                 <div className='flex flex-col w-full gap-1'>
                   <label className='font-medium text-slate-600' htmlFor="firstname">First name</label>
-                  <input type="text" id='firstname' name="firstname" value={adminInfo.firstname} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
+                  <input type="text" name="firstname" value={adminInfo.firstname} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
                 </div>
                 <div className='flex flex-col w-full gap-1'>
                   <label className='font-medium text-slate-600' htmlFor="middlename">Middle name</label>
-                  <input type="text" id='middlename' name="middlename" value={adminInfo.middlename} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
+                  <input type="text" name="middlename" value={adminInfo.middlename} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
                 </div>
                 <div className='flex flex-col w-full gap-1'>
                   <label className='font-medium text-slate-600' htmlFor="lastname">Last name</label>
-                  <input type="text" id='lastname' name="lastname" value={adminInfo.lastname} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
+                  <input type="text" name="lastname" value={adminInfo.lastname} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
                 </div>
               </div>
               {/*//~ NAME */}
@@ -179,11 +182,11 @@ function AdminModal({ show, setModal, type }) {
               <div className='flex gap-4'>
                 <div className='flex flex-col w-[32%] gap-1'>
                   <label className='font-medium text-slate-600' htmlFor="birthday">Birthday</label>
-                  <input type="date" id='birthday' name="birthday" max={(new Date(Date.now() + 86400000)).toISOString().split('T')[0]} value={adminInfo.birthday} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
+                  <input type="date" name="birthday" max={(new Date(Date.now() + 86400000)).toISOString().split('T')[0]} value={adminInfo.birthday} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
                 </div>
                 <div className='flex flex-col w-[32%] gap-1'>
                   <label className='font-medium text-slate-600' htmlFor="gender">Gender</label>
-                  <select name="gender" id='gender' value={adminInfo.gender} className={`${inputStyle} `} onChange={(e) => handleFormChange(e)}>
+                  <select name="gender" value={adminInfo.gender} className={`${inputStyle} `} onChange={(e) => handleFormChange(e)}>
                     <option value="" hidden >Choose...</option>
                     <option value="male" >Male</option>
                     <option value="female">Female</option>
@@ -203,15 +206,15 @@ function AdminModal({ show, setModal, type }) {
             <div className='flex gap-4'>
               <div className='flex flex-col w-full gap-1'>
                 <label className='font-medium text-slate-600' htmlFor="address">Address</label>
-                <input type="text" id='address' name="address" value={adminInfo.address} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
+                <input type="text" name="address" value={adminInfo.address} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
               </div>
               <div className='flex flex-col w-full gap-1'>
                 <label className='font-medium text-slate-600' htmlFor="contactNumber">Contact Number</label>
-                <input type="text" id='contactNumber' name="contactNumber" maxLength={11} value={adminInfo.contactNumber} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
+                <input type="text" name="contactNumber" maxLength={11} value={adminInfo.contactNumber} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
               </div>
               <div className='flex flex-col w-full gap-1'>
                 <label className='font-medium text-slate-600' htmlFor="email">Email</label>
-                <input type="email" id='email' name="email" value={adminInfo.email} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
+                <input type="email" name="email" value={adminInfo.email} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
               </div>
             </div>
           </div>
@@ -224,15 +227,15 @@ function AdminModal({ show, setModal, type }) {
             <div className='flex gap-4'>
               <div className='flex flex-col w-full gap-1'>
                 <label className='font-medium text-slate-600' htmlFor="username">Username</label>
-                <input type="text" id='username' name="username" value={adminInfo.username} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
+                <input type="text" name="username" value={adminInfo.username} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
               </div>
               <div className='flex flex-col w-full gap-1'>
                 <label className='font-medium text-slate-600' htmlFor="password">Password</label>
-                <input type="password" id='password' name="password" value={adminInfo.password} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
+                <input type="password" name="password" value={adminInfo.password} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
               </div>
               <div className='flex flex-col w-full gap-1'>
                 <label className='font-medium text-slate-600' htmlFor="confirmPassword">Confirm Password</label>
-                <input type="password" id='confirmPassword' name="confirmPassword" value={adminInfo.confirmPassword} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
+                <input type="password" name="confirmPassword" value={adminInfo.confirmPassword} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)} />
               </div>
             </div>
           </div>
@@ -249,7 +252,6 @@ function AdminModal({ show, setModal, type }) {
                   type="file"
                   name="profile"
                   accept="image/*"
-                  id="file"
                   className="text-sm p-2 border border-slate-300 bg-white focus:outline-none text-slate-300 font-bold rounded cursor-pointer file:hidden file:rounded-full file:border-0
               file:text-sm file:font-bold file:bg-blue-50 hover:file:bg-blue-100"
                   onChange={(e) => handleProfile(e)}
@@ -260,7 +262,7 @@ function AdminModal({ show, setModal, type }) {
                   type !== "patient" ? " " :
                     <div className='flex flex-col gap-1'>
                       <label className='font-medium text-slate-600' htmlFor='haveInsurance'>Do you have HMO? </label>
-                      <select name="haveInsurance" id='haveInsurance' value={adminInfo.haveInsurance} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)}>
+                      <select name="haveInsurance" value={adminInfo.haveInsurance} className={`${inputStyle}`} onChange={(e) => handleFormChange(e)}>
                         <option value="yes">Yes</option>
                         <option value="no">No</option>
                       </select>
@@ -276,6 +278,7 @@ function AdminModal({ show, setModal, type }) {
                     <>
                       <div className='flex flex-col border border-slate-300 p-4 rounded gap-2'>
                         <div className=' w-full flex justify-end gap-2'>
+                         
                           <button onClick={(e) => {
                             e.preventDefault();
                             setNumberOfComponents(numberOfComponents + 1);
@@ -301,7 +304,7 @@ function AdminModal({ show, setModal, type }) {
 
                         <div className='flex flex-col gap-2'>
                           <label className='font-medium text-slate-600' htmlFor="card">HMO Card</label>
-                          <select name="card" id='card' value={insuranceInfo[index].card} className={`${inputStyle}`} onChange={(e) => handleInsuranceChange(e, index)}>
+                          <select name="card" value={insuranceInfo[index].card} className={`${inputStyle}`} onChange={(e) => handleInsuranceChange(e, index)}>
                             <option value="" disabled>Select Insurance Card...</option>
                             <option value="Cocolife Health Care">Cocolife Health Care</option>
                             <option value="Inlife Insular Health Care">Inlife Insular Health Care</option>
@@ -314,14 +317,17 @@ function AdminModal({ show, setModal, type }) {
                             <option value="Health Access">Health Access</option>
                           </select>
                         </div>
+
                         <div className='flex flex-col gap-2'>
                           <label className='font-medium text-slate-600' htmlFor="cardNumber">HMO Card Number</label>
-                          <input type="text" id='cardNumber' name="cardNumber" value={insuranceInfo[index].cardNumber} className={`${inputStyle}`} onChange={(e) => handleInsuranceChange(e, index)} />
+                          <input type="text" name="cardNumber" value={insuranceInfo[index].cardNumber} className={`${inputStyle}`} onChange={(e) => handleInsuranceChange(e, index)} />
                         </div>
+
                         <div className='flex flex-col gap-2'>
                           <label className='font-medium text-slate-600' htmlFor="company">Company <span className='italic text-red-200'>(if none please type N/A)</span></label>
-                          <input type="text" id='company' name="company" value={insuranceInfo[index].company} className={`${inputStyle}`} onChange={(e) => handleInsuranceChange(e, index)} />
+                          <input type="text" name="company" value={insuranceInfo[index].company} className={`${inputStyle}`} onChange={(e) => handleInsuranceChange(e, index)} />
                         </div>
+
                       </div>
                     </>
                   ) : null}
@@ -329,11 +335,12 @@ function AdminModal({ show, setModal, type }) {
               ))}
             </div>
           </div>
+          
           {/*//~ ADDITIONAL INFORMATION */}
         </form>
 
         <div className='flex gap-2 p-4 justify-end'>
-          <button className='py-2 px-4 font-medium bg-red-500 text-white rounded hover:bg-red-700' onClick={() => setModal(false)}>Cancel</button>
+          <button className='py-2 px-4 font-medium bg-red-500 text-white rounded hover:bg-red-700' onClick={() =>{ clearText(); setModal(false)}}>Cancel</button>
           <button className='py-2 px-4 font-medium bg-blue-500 text-white rounded hover:bg-blue-700' onClick={btnSubmit}>Confirm</button>
         </div>
       </div>

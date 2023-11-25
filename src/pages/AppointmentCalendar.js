@@ -27,20 +27,10 @@ function AppointmentCalendar({ }) {
     const timeSplit = time.split(" ");
     const period = timeArray.includes(timeSplit[0]) ? "PM" : "AM";
     return timeSplit[0].concat(" ", period);
-    // let newTime = "";
-    // if (
-    //   timeSplit[0] === "12:00" || timeSplit[0] === "12:30" || timeSplit[0] === "1:00" || timeSplit[0] === "1:30" || timeSplit[0] === "2:00" || timeSplit[0] === "2:30" || timeSplit[0] === "3:00" || timeSplit[0] === "3:30" || timeSplit[0] === "4:00" || timeSplit[0] === "4:30" || timeSplit[0] === "5:00"
-    // ) {
-    //   newTime = timeSplit[0].concat(" ").concat("Pm");
-    // } else {
-    //   newTime = timeSplit[0].concat(" ").concat("Am");
-    // }
-    // return newTime;
   }
 
   useEffect(() => {
     const result = appointments.map((val) => {
-      console.log(new Date(moment(`${val.appointmentDate},${getTime(val.timeStart)}`).format('LLLL')));
       return {
         title: `Appointment for ${val.patient.firstname} ${val.patient.lastname}`,
         start: new Date(moment(`${val.appointmentDate},${getTime(val.timeStart)}`).format('LLLL')),
@@ -48,7 +38,7 @@ function AppointmentCalendar({ }) {
       }
     })
     setAppointment([...result])
-  }, [appointments])
+  }, [])
 
   return (
     <>

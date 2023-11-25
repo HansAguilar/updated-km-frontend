@@ -27,9 +27,7 @@ function Header({ toggleBar, setToggleBar,setNotificationToggleModal, notificati
       const parseData = JSON.parse(data);
       dispatch(fetchNewNotification(parseData.value))
     })
-    return () => {
-      socket.off();
-    }
+    return () => { socket.off(); }
   }, [socket])
 
   const readNotification = (data) =>{

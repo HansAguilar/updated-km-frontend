@@ -28,8 +28,6 @@ export default function QRScanPage() {
   });
 
   const checkIfExistingAppointment = () => {
-    const appointmentTime = moment(appointment[0].timeStart, "HH:mm:00").add(10, "minutes");
-    const appointmentDate = moment(appointment[0].appointmentDate).format("YYYY-MM-DD");
     setAppointmentDetails(...appointment);
     toastHandler("success", "Successfully scan the QR");
   }
