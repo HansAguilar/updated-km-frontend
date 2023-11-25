@@ -70,8 +70,8 @@ function AdminTable({ tableHeaders, results, search, currentPage }) {
 							search.length > 0 ?
 								results
 									.filter((val) => { return val.role === "STAFF"; })
-									.map((result) => (
-										<tr className='font-medium border text-cyan-900 even:bg-slate-100' key={result.adminId}>
+									.map((result,idx) => (
+										<tr className='font-medium border text-cyan-900 even:bg-slate-100' key={idx}>
 											<td className='p-2 text-center flex justify-center '>
 												<img src={result.profile} className='m-auto w-14 h-14 rounded-full object-fill aspect-auto border border-gray-400' alt="User" />
 											</td>
@@ -137,8 +137,8 @@ function AdminTable({ tableHeaders, results, search, currentPage }) {
 									//       firstItem         LastItem
 									.slice((currentPage * 8) - 8, currentPage * 8)
 									.filter((val) => { return val.role === "STAFF"; })
-									.map((result) => (
-										<tr className='font-medium border text-cyan-900 even:bg-slate-100' key={result.adminId}>
+									.map((result,idx) => (
+										<tr className='font-medium border text-cyan-900 even:bg-slate-100' key={idx}>
 											<td className='p-2 text-center'>
 												<img src={result.profile} className='m-auto w-14 h-14 rounded-full object-fill aspect-auto border border-gray-400' alt="User" />
 											</td>
@@ -156,10 +156,7 @@ function AdminTable({ tableHeaders, results, search, currentPage }) {
 											</td>
 											<td className='text-center'>
 												{
-													result.email.length >= 18 ?
-														<span>{result.email.substring(0, 18) + "..."}</span>
-														:
-														<span>{result.email}</span>
+													result.email.length >= 18 ? <span>{result.email.substring(0, 18) + "..."}</span> : <span>{result.email}</span>
 												}
 											</td>
 											<td className='text-center'>

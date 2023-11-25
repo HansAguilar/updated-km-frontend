@@ -105,6 +105,11 @@ function Sidebar({ toggleBar, children }) {
 					name: 'Profile',
 					icon: <SidebarIcon Icon={CgProfile} />
 				},
+				{
+					path: '/admin/dashboard/appointmentFee',
+					name: 'Appointment Fee',
+					icon: <SidebarIcon Icon={CgProfile} />
+				},
 			]
 		},
 
@@ -155,29 +160,33 @@ function Sidebar({ toggleBar, children }) {
 					{
 						menuItem.map((map, index) => (
 							<>
-								<NavLink to={map.path} key={map.path} className={`w-full px-5 py-4 flex items-center text-white gap-2 text-center hover:bg-blue-600 ${toggleBar ? 'justify-center flex-col' : ''}`} onClick={() => hover.active ? removeHover(map.value) : handleHover(map.value)}>
-									<p>{map.icon}</p>
-									<div className={`flex flex-grow items-center justify-between ${toggleBar ? ' text-xs ' : ''}`}>
-										<span>{map.name}</span>
-										<div className={`${toggleBar ? 'hidden' : 'visible'}`}>
-											{
-												map.sublinks && (
-													map.value === hover.value ? (<MdKeyboardArrowDown size={24}/>)
-														: (<MdKeyboardArrowUp size={24} />)
-												)
-											}
+								<div key={index}>
+									<NavLink to={map.path}  className={`w-full px-5 py-4 flex items-center text-white gap-2 text-center hover:bg-blue-600 ${toggleBar ? 'justify-center flex-col' : ''}`} onClick={() => hover.active ? removeHover(map.value) : handleHover(map.value)}>
+										<p>{map.icon}</p>
+										<div className={`flex flex-grow items-center justify-between ${toggleBar ? ' text-xs ' : ''}`}>
+											<span>{map.name}</span>
+											<div className={`${toggleBar ? 'hidden' : 'visible'}`}>
+												{
+													map.sublinks && (
+														map.value === hover.value ? (<MdKeyboardArrowDown size={24}/>)
+															: (<MdKeyboardArrowUp size={24} />)
+													)
+												}
+											</div>
 										</div>
-									</div>
-								</NavLink>
+									</NavLink>
+								</div>
 								{
 									map.value === hover.value && map.sublinks && (
 										<div className={` ${hover ? "visible" : "hidden"} w-full flex flex-col rounded-bl-md rounded-br-md overflow-hidden bg-blue-500`}>
 											{
 												map.sublinks.map((val, keys) => (
-													<NavLink to={val.path} key={val.path} className={`px-4 py-3 flex gap-x-2 hover:bg-blue-700 ${toggleBar ? "flex-col justify-center items-center text-center " : ""} `} onClick={() => removeHover(map.value)}>
-														<div>{val.icon}</div>
-														<div className={toggleBar ? ' text-xs ' : ''}>{toggleBar && map.value !== "ACCOUNTS" ? val.name.split(" ")[1] : toggleBar && map.value === "ACCOUNTS" ? val.name.split(" ")[0] : val.name}</div>
-													</NavLink>
+													<div key={keys}>
+														<NavLink to={val.path} className={`px-4 py-3 flex gap-x-2 hover:bg-blue-700 ${toggleBar ? "flex-col justify-center items-center text-center " : ""} `} onClick={() => removeHover(map.value)}>
+															<div>{val.icon}</div>
+															<div className={toggleBar ? ' text-xs ' : ''}>{toggleBar && map.value !== "ACCOUNTS" ? val.name.split(" ")[1] : toggleBar && map.value === "ACCOUNTS" ? val.name.split(" ")[0] : val.name}</div>
+														</NavLink>
+													</div>
 												))
 											}
 										</div>

@@ -12,12 +12,12 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
   const patient = useSelector((state) => { return state.patient; });
   const dentist = useSelector((state) => { return state.dentist; });
   const service = useSelector((state) => { return state.service; });
-  const fee = useSelector((state) => { return state.fee.payload; });
   const schedule = useSelector((state) => { return state.schedule.payload; });
-  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => val.status !== "DONE" || val.status !== "CANCELLED") })
+  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => val.status !== "DONE" || val.status !== "CANCELLED") });
+  const [availableHMO, setAvailableHMO] = useState(null);
   const [active, setActive] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const [insuranceList, setInsuranceList] = useState([]);
+
   let [timeStartList, setTimeStartList] = useState(
     [
       { timeValue: "09:00 Am", timeStart: "09:00:00" },
@@ -99,46 +99,42 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     const newTime = currentTime.add(1, "hour");
     const newHour = moment(newTime);
 
-    // setTimeStartList([...newTimeList]);
+    setTimeStartList([...newTimeList]);
 
-    // const filteredTime = newTimeList.filter((val) =>
-    //   moment(appointment.date, 'YYYY-MM-DD').isSame(moment(), 'day') &&
-    //   moment(val.timeStart, 'HH:mm:ss').isAfter(newHour)
-    // );
-    // if (filteredTime.length > 0) {
-    //   setTimeStartList(filteredTime);
-    // }else{
-    //   setTimeStartList([...newTimeList]);
-    // }
+    const filteredTime = newTimeList.filter((val) =>
+      moment(appointment.date, 'YYYY-MM-DD').isSame(moment(), 'day') &&
+      moment(val.timeStart, 'HH:mm:ss').isAfter(newHour)
+    );
+    if (filteredTime.length > 0) {
+      setTimeStartList(filteredTime);
+    }else{
+      setTimeStartList([...newTimeList]);
+    }
 
-    // setTimeStartList((prev) => {
-    //   let updatedSchedList = [...prev];
-    //   const filteredSchedule = schedule.filter((val) => moment(appointment.date, "YYYY-MM-DD").isSame(moment(val.dateSchedule).format("YYYY-MM-DD")) && val.dentist.dentistId === appointment.dentistId);
-    //   if (filteredSchedule.length > 0) {
-    //     const indicesScheduleToRemain = [];
-    //     for (let x = 0; x < filteredSchedule.length; x++) {
-    //       let start = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeStart);
-    //       let end = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeEnd);
+    setTimeStartList((prev) => {
+      let updatedSchedList = [...prev];
+      const filteredSchedule = schedule.filter((val) => moment(appointment.date, "YYYY-MM-DD").isSame(moment(val.dateSchedule).format("YYYY-MM-DD")) && val.dentist.dentistId === appointment.dentistId);
+      if (filteredSchedule.length > 0) {
+        const indicesScheduleToRemain = [];
+        for (let x = 0; x < filteredSchedule.length; x++) {
+          let start = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeStart);
+          let end = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeEnd);
 
-    //       for (let i = start; i < end; i++) {
-    //         indicesScheduleToRemain.push(i);
-    //       }
-    //     }
-    //     console.log(indicesScheduleToRemain);
-    //     updatedSchedList = updatedSchedList.filter((_, idx) => { return indicesScheduleToRemain.includes(idx) });
-    //   }
-
-    //   return updatedSchedList;
-    // });
+          for (let i = start; i < end; i++) {
+            indicesScheduleToRemain.push(i);
+          }
+        }
+        updatedSchedList = updatedSchedList.filter((_, idx) => { return indicesScheduleToRemain.includes(idx) });
+      }
+      return updatedSchedList;
+    });
 
     setTimeStartList(newTimeList)
-    console.log(timeStartList);
     setTimeStartList(prevTimeStartList => {
       let updatedTimeStartList = [...prevTimeStartList];
       const getAppointmentDate = filteredAppointments.filter((value) => {
         return moment(appointment.date, "YYYY-MM-DD").isSame(moment(value.appointmentDate).format("YYYY-MM-DD"));
       });
-      console.log(timeStartList);
       if (getAppointmentDate.length > 0) {
         const indexesToRemove = [];
         for (let x = 0; x < getAppointmentDate.length; x++) {
@@ -148,21 +144,23 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
           const end = prevTimeStartList.findIndex((value) => {
             return value.timeStart === getAppointmentDate[x].timeEnd;
           })
-          console.log(start," end",end," "+[]);
           for (let begin = start; begin < end; begin++) {
             indexesToRemove.push(begin);
           }
         }
-        console.log(indexesToRemove);
         updatedTimeStartList = updatedTimeStartList.filter((_, index) => {
           return !indexesToRemove.includes(index);
         })
       }
       return updatedTimeStartList;
     })
-    console.log(timeStartList);
-  },[appointment.date])
+  },[appointment.date]);
 
+  // INSURANCE
+  // useEffect(()=>{
+  //   const fetchAllPatientHMO = insurance.filter((val)=>val.patient.patientId===appointment.patientId);
+  //   setAvailableHMO(fetchAllPatientHMO);
+  // },[appointment.patientId])
 
   const nextButton = async () => {
     // appointment.serviceSelected.length < 1 ||
@@ -197,7 +195,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     while (start.isBefore(moment(end, "HH:mm:ss").add(30, 'minutes'))) {
       const startTime = start.format('HH:mm:ss');
       const matchingTime = timeStartList.find(time => time.timeStart === startTime);
-      console.log("start time", startTime);
+      
       if (startTime === "12:30:00" || startTime === "16:30:00") {
         toastHandler("error", `Kindly select ${totalTimeDuration.format('HH:mm:ss') === "01:00:00"
           ? '30 minutes'
@@ -293,7 +291,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
                 <div className=' mb-2 flex flex-col gap-1 relative w-full'>
                   <BiSearchAlt className="absolute left-2 top-9 text-slate-400" size={24} />
                   <label htmlFor='patient' className='font-medium text-slate-600'>Patient Name</label>
-                  <input type='search' name='patient' id='patient' value={appointment.patient} className={`${inputStyle} indent-8`} onChange={(e) => handleOnChange(e)} />
+                  <input type='search' name='patient' value={appointment.patient} className={`${inputStyle} indent-8`} onChange={(e) => handleOnChange(e)} />
 
                   {/*//^ HELPER STYLE */}
                   <ul className={`relative z-10 bg-white outline-none font-medium shadow-md min-w-full ${active === "patient" && appointment.patient !== "" ? 'border border-slate-400' : ''}`}>
@@ -307,7 +305,6 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
                                 patient: (patient.firstname + " " + patient.middlename + " " + patient.lastname),
                                 patientId: patient.patientId
                               });
-                              setInsuranceList([...patient.insurance]);
                               setSuggestions([]);
                               setActive("");
                             }}>
@@ -331,7 +328,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
                 <div className=' mb-2 flex flex-col gap-1 relative w-full'>
                   <BiSearchAlt className="absolute left-2 top-9 text-slate-400" size={24} />
                   <label htmlFor='dentist' className='font-medium text-slate-600'>Dentist Name</label>
-                  <input type='search' name='dentist' id='dentist' value={appointment.dentist} className={`${inputStyle} indent-8`} onChange={(e) => handleOnChange(e)} />
+                  <input type='search' name='dentist' value={appointment.dentist} className={`${inputStyle} indent-8`} onChange={(e) => handleOnChange(e)} />
 
                   {/*//^ HELPER STYLE */}
                   <ul className={`relative z-10 bg-white outline-none font-medium shadow-md min-w-full ${active === "dentist" && appointment.dentist !== "" ? 'border border-slate-400' : ''}`}>
@@ -369,7 +366,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
                 <div className=' mb-2 flex flex-col gap-1 relative w-full'>
                   <BiSearchAlt className="absolute left-2 top-9 text-slate-400" size={24} />
                   <label htmlFor='service' className='font-medium text-slate-600'>Dental Service</label>
-                  <input type='search' name='serviceValue' id='service' value={appointment.serviceValue} className={`${inputStyle} indent-8`} onChange={(e) => handleOnChange(e)} />
+                  <input type='search' name='serviceValue' value={appointment.serviceValue} className={`${inputStyle} indent-8`} onChange={(e) => handleOnChange(e)} />
 
                   {/*//^ HELPER STYLE */}
                   <ul className={`relative z-10 bg-white outline-none font-medium shadow-md min-w-full ${active === "service" && appointment.serviceValue !== "" ? 'border border-slate-400' : ''}`}>
@@ -444,12 +441,12 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
                 {/*//^ APPOINTMENT RAW STYLE */}
                 <div className=' mb-2 flex flex-col gap-1 relative w-full'>
                   <label htmlFor='date' className='font-medium text-slate-600'>Appointment Date</label>
-                  <input type='date' name='date' id='date' min={minDate} value={appointment.date} className={inputStyle} onChange={(e) => handleOnChange(e)} />
+                  <input type='date' name='date' min={minDate} value={appointment.date} className={inputStyle} onChange={(e) => handleOnChange(e)} />
                 </div>
 
                 <div className=' mb-2 flex flex-col gap-1 relative w-full'>
                   <label htmlFor='time' className='font-medium text-slate-600'>Appointment Time</label>
-                  <select id='time' name="timeStart" value={appointment.timeStart} onChange={(e) => handleOnChange(e)} className={inputStyle}>
+                  <select name="timeStart" value={appointment.timeStart} onChange={(e) => handleOnChange(e)} className={inputStyle}>
                     <option value="" disabled >Choose time...</option>
                     {
                       timeStartList
@@ -479,41 +476,41 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
               <div className='flex flex-col gap-1 relative w-full'>
                 {/*//~ PAYMENT METHOD */}
                 <label htmlFor='payment' className='font-medium text-slate-600'>Payment Method</label>
-                <select id='payment' name="method" value={appointment.method} onChange={(e) => handleOnChange(e)} className={inputStyle}>
+                <select name="method" value={appointment.method} onChange={(e) => handleOnChange(e)} className={inputStyle}>
                   <option value="" disabled>Select payment method...</option>
                   <optgroup label='Online Payment' className='font-medium'>
                     <option value="e-payment/gcash">GCash</option>
                     <option value="e-payment/paymaya">Paymaya</option>
                   </optgroup>
                   <option value="cash">Cash</option>
-                  {insuranceList.length > 0 ? (<option value="hmo">Health Insurance</option>) : ""}
+                  { availableHMO && availableHMO.length > 0 ? (<option value="hmo">Health Insurance</option>) : ""}
                 </select>
                 {/*//~ PAYMENT METHOD */}
               </div>
 
               {/*//~ INSURANCE CARD */}
-              {
-                appointment.method === "hmo" && insuranceList.length > 0 ?
+              {/* {
+                appointment.method === "hmo" && availableHMO && availableHMO.length > 0 ?
                   <div className='flex flex-col gap-1 relative w-full'>
                     <label htmlFor='insuranceId' className='font-medium text-slate-600'>Insurance Card</label>
                     <select name="insuranceId" value={appointment.insuranceId} onChange={(e) => handleOnChange(e)} className={inputStyle}>
                       <option value="" disabled >Select your insurance card...</option>
                       {
-                        insuranceList.map((val) => (
+                        availableHMO.map((val) => (
                           <option value={val.insuranceId} key={val.insuranceId}>{val.card}</option>
                         ))
                       }
                     </select>
                   </div>
                   : ""
-              }
+              } */}
               {/*//~ INSURANCE CARD */}
 
 
               {/*//~ PAYMENT TYPE */}
               <div className='flex flex-col gap-1 relative w-full'>
                 <label htmlFor='paymentType' className='font-medium text-slate-600'>Payment Type</label>
-                <select id='paymentType' name="type" value={appointment.type} onChange={(e) => handleOnChange(e)} className={inputStyle}>
+                <select name="type" value={appointment.type} onChange={(e) => handleOnChange(e)} className={inputStyle}>
                   <option value="" disabled >Select time...</option>
                   <option value="full-payment">Full Payment</option>
                   {appointment.method !== "hmo" && appointment.totalAmount >= 40000 ? <option value="installment">Installment</option> : ""}

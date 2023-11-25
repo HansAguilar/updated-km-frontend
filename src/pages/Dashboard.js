@@ -42,6 +42,8 @@ import { SOCKET_LINK } from '../ApiLinks';
 import { fetchPayments, clientChanges,fetchPatientPayments,fetchPaymentDetails, fetchAdminPayment } from "../redux/action/PaymentAction";
 import { fetchIncomingMessage } from "../redux/action/MessageAction";
 import NotificationModal from '../components/NotificationModal';
+import AppointmentFee from './AppointmentFee';
+import { fetchInsurance } from '../redux/action/InsuranceAction';
 
 const socket = io.connect(SOCKET_LINK);
 function Dashboard() {
@@ -85,6 +87,7 @@ function Dashboard() {
       dispatch(fetchMessages(admin.loginAdmin.adminId));
       dispatch(fetchAppointmentFee());
       dispatch(fetchSchedule());
+      dispatch(fetchInsurance());
       dispatch(fetchPatient());
       isLoading(false); // Make sure you have a function named `isLoading` defined
     }
@@ -182,6 +185,10 @@ function Dashboard() {
           <Route element={
             <Announcement />
           } path='/announcement' />
+
+          <Route element={
+            <AppointmentFee />
+          } path='/appointmentFee' />  
 
           <Route element={<QRScanPage />}
             path='/scan/:id' />

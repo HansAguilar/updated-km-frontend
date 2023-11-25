@@ -12,6 +12,7 @@ import notificationReducer from "../reducer/NotificationReducer";
 import messageReducer from "../reducer/MessageReducer";
 import feeReducer from "../reducer/AppointmentFeeReducer";
 import scheduleReducer from "../reducer/ScheduleReducer";
+import insuranceReducer from "../reducer/InsuranceReducer";
 import thunk from "redux-thunk";
 
 const store = configureStore({
@@ -28,7 +29,8 @@ const store = configureStore({
         notification: notificationReducer,
         messages:messageReducer,
         fee:feeReducer,
-        schedule: scheduleReducer
+        schedule: scheduleReducer,
+        insurance: insuranceReducer,
     },
     middleware:[thunk]
 });

@@ -195,33 +195,33 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
       timeEnd: end,
     }
 
-    // const timeTotal = calculateTotalServiceTime();
-    // const totalTimeDuration = moment('00:00:00', 'HH:mm:ss');
+    const timeTotal = calculateTotalServiceTime();
+    const totalTimeDuration = moment('00:00:00', 'HH:mm:ss');
 
-    // let start = moment(appointment.timeStart, 'HH:mm:ss');
-    // while (start.isBefore(moment(end, "HH:mm:ss").add(30, 'minutes'))) {
-    //   const startTime = start.format('HH:mm:ss');
-    //   const matchingTime = timeStartList.find(time => time.timeStart === startTime);
-    //   console.log("start time", startTime);
-    //   if (startTime === "12:30:00" || startTime === "16:30:00") {
-    //     toastHandler("error", `Kindly select ${totalTimeDuration.format('HH:mm:ss') === "01:00:00"
-    //       ? '30 minutes'
-    //       : '1 hour'
-    //       } service or change other dates`);
-    //     return;
-    //   }
-    //   if (!matchingTime) {
-    //     if (timeTotal !== totalTimeDuration.format("HH:mm:ss")) {
-    //       toastHandler('error', `Your selected time range should be less than or equal ${totalTimeDuration.format('HH:mm:ss') === "00:30:00"
-    //         ? totalTimeDuration.minute() + ' minutes'
-    //         : totalTimeDuration.hour() + ' hour'
-    //         }`)
-    //       return;
-    //     }
-    //   }
-    //   totalTimeDuration.add(30, 'minutes');
-    //   start.add(30, "minutes");
-    // }
+    let start = moment(appointment.timeStart, 'HH:mm:ss');
+    while (start.isBefore(moment(end, "HH:mm:ss").add(30, 'minutes'))) {
+      const startTime = start.format('HH:mm:ss');
+      const matchingTime = timeStartList.find(time => time.timeStart === startTime);
+      console.log("start time", startTime);
+      if (startTime === "12:30:00" || startTime === "16:30:00") {
+        toastHandler("error", `Kindly select ${totalTimeDuration.format('HH:mm:ss') === "01:00:00"
+          ? '30 minutes'
+          : '1 hour'
+          } service or change other dates`);
+        return;
+      }
+      if (!matchingTime) {
+        if (timeTotal !== totalTimeDuration.format("HH:mm:ss")) {
+          toastHandler('error', `Your selected time range should be less than or equal ${totalTimeDuration.format('HH:mm:ss') === "00:30:00"
+            ? totalTimeDuration.minute() + ' minutes'
+            : totalTimeDuration.hour() + ' hour'
+            }`)
+          return;
+        }
+      }
+      totalTimeDuration.add(30, 'minutes');
+      start.add(30, "minutes");
+    }
     const result = {
       dentist: appointment.dentistId,
       dentalServices: appointment.serviceSelected,
@@ -250,7 +250,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
       total += durationInMillis;
     }
 
-    const convertTotalTime = moment.duration(timeEnd);
+    const convertTotalTime = moment.duration(total);
     return moment.utc(convertTotalTime.asMilliseconds()).format('HH:mm:ss');
   }
   const calculateTotalTime = () => {
