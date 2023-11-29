@@ -55,7 +55,7 @@ function Patients() {
             {/*//~ FILES */}
             <div className=' inline-flex gap-2  '>
               <ExcelButton users={payload} title={"patients"} />
-              <PDFButton data={payload} />
+              <PDFButton data={payload} type="patients"/>
               <FileIcons Icon={AiFillPrinter} title={"Print"} />
             </div>
             {/*//~ FILES */}

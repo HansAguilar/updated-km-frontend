@@ -52,8 +52,8 @@ function Admin() {
 
             {/*//~ FILES */}
             <div className=' inline-flex gap-2  '>
-              <ExcelButton users={adminList} title={"patients"} />
-              <PDFButton data={adminList} />
+              <ExcelButton users={adminList} title="admin" />
+              <PDFButton data={adminList} type="admin"/>
               <FileIcons Icon={AiFillPrinter} title={"Print"} />
             </div>
             {/*//~ FILES */}
@@ -75,7 +75,7 @@ function Admin() {
           {/*//~ BUTTON FILES SEARCH CONTAINER */}
 
           <Table tableHeaders={tableHeaders} results={search.length > 0 ? filteredAdminList : adminList.sort()} search={search} currentPage={currentPage} />
-          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} currentPage={currentPage}/>
+          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} currentPage={currentPage} />
         </div>
       </div>
     </div>

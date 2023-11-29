@@ -34,7 +34,7 @@ function Dentist() {
     <div className=' h-screen overflow-hidden relative bg-gray-200 '>
       <DentistModal show={show} setModal={setModal} />
       <PageHeader link={'Dentist'} />
-			<ToastContainer limit={1} autoClose={1500} />
+      <ToastContainer limit={1} autoClose={1500} />
 
       <div className=' w-full flex flex-col justify-center p-4'>
         <div className=' w-full rounded shadow bg-white'>
@@ -74,7 +74,7 @@ function Dentist() {
           {/*//~ BUTTON FILES SEARCH CONTAINER */}
 
           <DentistTable tableHeaders={tableHeaders} results={search.length > 0 ? filteredDentist : dentistList} search={search} currentPage={currentPage} />
-          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} currentPage={currentPage}/>
+          <Pagination setCurrentPage={setCurrentPage} pageNumber={pageNumber} currentPage={currentPage} />
         </div>
       </div>
     </div>
