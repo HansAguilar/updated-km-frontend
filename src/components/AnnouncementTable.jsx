@@ -1,43 +1,20 @@
 import React, { useState } from 'react';
 import Update from './UpdateAnnouncement';
-import axios from 'axios';
-import { ANNOUNCEMENT_LINK } from '../ApiLinks';
 import { ToastContainer } from 'react-toastify';
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
 import { toastHandler } from '../ToastHandler';
+import { useDispatch } from 'react-redux';
+import { deleteAnnouncement } from '../redux/action/AnnouncementAction';
 
 function AnnouncementTable({ tableHeaders, results, search, currentPage }) {
 	const [details, setDetails] = useState(null);
 	const [update, setUpdate] = useState(false);
+	const dispatch = useDispatch();
 
-	const deleteAnnouncement = async (id) => {
-		try {
-			await axios.delete(`${ANNOUNCEMENT_LINK}/${id}`)
-			toastHandler("success", "Successfully deleted!")
-			return window.setTimeout(() => {
-				window.location.reload();
-			}, 1500)
-		}
-		catch (error) {
-			console.log(error);
-		}
+	const deleteButton = (id) => {
+		dispatch(deleteAnnouncement(id))
+		toastHandler("success", "Successfully deleted!");
 	}
-
-	const disableAccountBtn = async (id, disable) => {
-		try {
-			const newDisableInformation = { id: id, verified: disable };
-			await axios.put(`${ANNOUNCEMENT_LINK}/disable`, newDisableInformation, {
-				headers: { Accept: 'application/json' },
-			});
-			toastHandler("success", `Disable${disable ? '' : 'd'} Account Successfully!}`)
-
-			return window.setTimeout(() => {
-				window.location.reload();
-			}, 1500)
-		} catch (err) {
-			console.log(err);
-		}
-	};
 
 	return (
 		<div className='p-4'>
@@ -76,13 +53,6 @@ function AnnouncementTable({ tableHeaders, results, search, currentPage }) {
 									{val.type.toLowerCase()}
 								</td>
 								<td className='text-center'>
-									{
-										val.isAvailable ?
-											<span className='p-2 rounded bg-red-500 text-white cursor-pointer' onClick={() => { disableAccountBtn(val.announcementId, false) }} >Disabled</span> :
-											<span className='p-2 rounded bg-green-500 text-white cursor-pointer' onClick={() => { disableAccountBtn(val.announcementId, true) }}>Enabled</span>
-									}
-								</td>
-								<td className='text-center'>
 									<div className='flex items-center justify-center gap-2'>
 										<span className='transition-all ease-linear duration-150 rounded p-2 bg-blue-500 hover:bg-blue-700 text-white cursor-pointer flex items-center'
 											onClick={() => {
@@ -100,7 +70,7 @@ function AnnouncementTable({ tableHeaders, results, search, currentPage }) {
 											<p className='pr-2'>Update</p>
 										</span>
 
-										<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center' onClick={() => { deleteAnnouncement(val.announcementId) }}>
+										<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center' onClick={() => { deleteButton(val.announcementId) }}>
 											<AiFillDelete size={25} />
 											<p className='pr-2'>Delete</p>
 										</span>

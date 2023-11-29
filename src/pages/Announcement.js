@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, } from 'react';
 import PageHeader from '../components/PageHeader';
 import { IoAdd } from 'react-icons/io5';
 import Table from '../components/AnnouncementTable';
 import Modal from '../components/AnnouncementModal';
 import Pagination from '../components/Pagination';
-import axios from 'axios';
-import { ANNOUNCEMENT_LINK } from '../ApiLinks';
 import { ToastContainer } from 'react-toastify';
 import { BiSearchAlt } from 'react-icons/bi';
+import { useSelector } from 'react-redux';
 
 function Announcement() {
-  const tableHeaders = ["picture", "title", "description", "type", "status", "action"];
-  const [announcement, setAnnouncement] = useState([]);
+  const tableHeaders = ["picture", "title", "description", "type", "action"];
+  const announcement = useSelector((state)=>state.announcement.payload)
   const [show, setModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -24,19 +23,6 @@ function Announcement() {
   const searchHandle = (e) => {
     setSearch(e.target.value);
   }
-
-  const fetchAllAnnouncement = async () => {
-    try {
-      const response = await axios.get(`${ANNOUNCEMENT_LINK}/`);
-      if (response.data) {
-        setAnnouncement(response.data);
-      }
-    } catch (error) { }
-  }
-
-  useEffect(() => {
-    fetchAllAnnouncement();
-  }, [])
 
   const filteredAnnouncement = announcement.filter(val =>
     (val.title + val.type).toLowerCase().includes(search)

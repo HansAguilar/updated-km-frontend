@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ADMIN_CHANGE_STATUS_SUCCESS, CREATE_ADMIN_SUCCESS, DELETE_ADMIN_SUCCESS, FETCH_ADMIN_FAILED, FETCH_ADMIN_REQUEST, FETCH_ADMIN_SUCCESS, FETCH_LOGIN_ADMIN_FAILED, FETCH_LOGIN_ADMIN_SUCCESS, UPDATE_ADMIN_LOGIN_SUCCESS, UPDATE_ADMIN_SUCCESS } from "../ActionTypes"
+import { ADMIN_CHANGE_STATUS_SUCCESS, CREATE_ADMIN_SUCCESS, DELETE_ADMIN_SUCCESS, FETCH_ADMIN_FAILED, FETCH_ADMIN_REQUEST, FETCH_ADMIN_SUCCESS, FETCH_LOGIN_ADMIN_FAILED, FETCH_LOGIN_ADMIN_SUCCESS, LOGOUT_ADMIN_SUCCESS, UPDATE_ADMIN_LOGIN_SUCCESS, UPDATE_ADMIN_SUCCESS } from "../ActionTypes"
 import { ADMIN_LINK } from "../../ApiLinks";
 import { toastHandler } from "../../ToastHandler";
 
@@ -15,11 +15,12 @@ export const fetchAdmin = () => {
     }
 }
 
-export const fetchLoginAdmin = (token) =>{
+export const fetchLoginAdmin = (token,adminLoginId) =>{
     return async dispatch=>{
         try {
             const response = await axios.get(`${ADMIN_LINK}/getAdmin/${token}`);
             dispatch({ type:FETCH_LOGIN_ADMIN_SUCCESS, payload:response.data });
+            adminLoginId.current = response.data.adminId;
         } catch (error) {
             dispatch({ type:FETCH_LOGIN_ADMIN_FAILED, error:error });
         }
@@ -105,5 +106,13 @@ export const changeAdminStatus = (data) =>{
         } catch (error) {
             toastHandler("error",error.response.data.message);
         }
+    }
+}
+
+export const logoutAdmin = () =>{
+    return async dispatch=>{
+        try {
+            dispatch({ type: LOGOUT_ADMIN_SUCCESS,  });
+        } catch (error) { }
     }
 }

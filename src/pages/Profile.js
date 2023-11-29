@@ -3,6 +3,7 @@ import clinic from "../assets/dental-clinic.jpg"
 import { useDispatch, useSelector } from 'react-redux';
 import { toastHandler } from '../ToastHandler';
 import { updateAdminLogin } from '../redux/action/AdminAction';
+import { ToastContainer } from 'react-toastify';
 
 function Profile() {
   const admin = useSelector((state)=>state.admin.loginAdmin);
@@ -41,17 +42,18 @@ function Profile() {
  const submitButton = () =>{
   // Add ka ng validation dito hans
   if(adminInfo.password!==adminInfo.confirmPassword){
-    toastHandler("error", "Password mismatch");
+    return toastHandler("error", "Password mismatch");
   }
   const data = {
     ...adminInfo,
     profile:profile
   }
-  dispatch(updateAdminLogin(admin.adminId, data))
+  dispatch(updateAdminLogin(admin.adminId, data));
  }
 
   return (
     <div className=' h-screen overflow-hidden relative bg-gray-200'>
+      <ToastContainer />
       <div className='flex justify-between p-4 gap-8'>
         <div className='flex flex-col items-center justify-between w-[28rem] gap-8'>
 

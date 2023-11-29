@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import { Routes, Route } from 'react-router-dom';
 import Home from './Home';
@@ -29,7 +29,7 @@ import { fetchInstallment } from '../redux/action/InstallmentAction';
 import { fetchAnnouncement } from '../redux/action/AnnouncementAction';
 import { fetchHistory } from '../redux/action/HistoryAction';
 import { fetchAllNotification } from '../redux/action/NotificationAction';
-import { fetchMessages } from '../redux/action/MessageAction';
+import { fetchMessages, fetchNewAdminMessage } from '../redux/action/MessageAction';
 import { fetchAppointmentFee } from '../redux/action/AppointmentFeeAction';
 import { fetchSchedule } from '../redux/action/ScheduleAction';
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -67,10 +67,11 @@ function Dashboard() {
   const appointment = useSelector(state => { return state.appointment });
 
   const [loading, isLoading] = useState(true);
+  const adminLoginId = useRef("");
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    dispatch(fetchLoginAdmin(token));
+    dispatch(fetchLoginAdmin(token, adminLoginId));
     dispatch(fetchAdmin());
   }, []);
 
@@ -115,6 +116,14 @@ function Dashboard() {
     socket.on("received_by_admin", (data) => {
       dispatch(fetchIncomingMessage(data.key, data.value));
     })
+
+    socket.on("create_received_by_admin", (data) => {
+      const parseData = JSON.parse(data);
+      if(parseData.admin===adminLoginId.current){
+        dispatch(fetchNewAdminMessage(parseData.key));
+      }
+    })
+    
     return () => { socket.off() }
   }, [socket]);
 

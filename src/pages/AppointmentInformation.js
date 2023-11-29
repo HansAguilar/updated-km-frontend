@@ -11,8 +11,6 @@ function AppointmentInformation() {
     const payment = useSelector((state)=>{ return state.payment.payload.filter(val=>{ return val.appointment.appointmentId === id })});
     const [qrcode, setQrcode] = useState("");
 
-    console.log();
-
     const generateToQrCode = () =>{
         QRCode.toDataURL(`${id}`, {
           width: 400,
