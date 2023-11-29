@@ -123,13 +123,14 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
           for (let i = start; i < end; i++) {
             indicesScheduleToRemain.push(i);
           }
+          console.log(indicesScheduleToRemain);
         }
-        updatedSchedList = updatedSchedList.filter((_, idx) => { return indicesScheduleToRemain.includes(idx) });
+        console.log(indicesScheduleToRemain);
+        updatedSchedList = updatedSchedList.filter((_, idx) => { return !indicesScheduleToRemain.includes(idx) });
       }
       return updatedSchedList;
     });
 
-    setTimeStartList(newTimeList)
     setTimeStartList(prevTimeStartList => {
       let updatedTimeStartList = [...prevTimeStartList];
       const getAppointmentDate = filteredAppointments.filter((value) => {
@@ -178,6 +179,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     const checkIfPatientAlreadyHaveAppointment = filteredAppointments.filter((val) => {return (
         moment(val.appointmentDate, "YYYY-MM-DD").isSame(moment(appointment.date)) &&
         val.patient.patientId === appointment.patientId
+        && (val.status !== "CANCELLED" && val.status !== "DONE")
         // && val.appointmentId !== appointment.appointmentId
       );
     });

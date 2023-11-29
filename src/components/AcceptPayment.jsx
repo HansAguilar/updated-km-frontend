@@ -30,10 +30,23 @@ function UpdatePaymentModal({ info, setAcceptData, setCancelModal }) {
               <input type='text' value={data.method} className=' capitalize bg-zinc-100 w-full py-2 px-3 text-sm rounded-md ' />
             </div> */}
 
-          <div className=' mb-2 '>
-            <p className=' text-xs mb-2 '>Receipt</p>
-            <img src={data.paymentPhoto} className=' w-full h-[500px] ' />
-          </div>
+          {
+            !data.insurance && (
+              <div className=' mb-2 '>
+                <p className=' text-xs mb-2 '>Receipt</p>
+                <img src={data.paymentPhoto} className=' w-full h-[500px] ' />
+              </div>
+            )
+          }
+          {
+            data.insurance && (
+              <div className=' mb-2 '>
+                <p className=' text-xs mb-2 '>Insurance Info </p>
+                <p>Insurance Card: {data.insurance.card}</p>
+                <p>Insurance Number: {data.insurance.cardNumber}</p>
+              </div>
+            )
+          }
 
           <div className="flex justify-end pt-2 gap-2">
             <button className="bg-cyan-500 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded"
@@ -53,14 +66,18 @@ function UpdatePaymentModal({ info, setAcceptData, setCancelModal }) {
             >
               Approved
             </button>
-            <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
-              onClick={() => {
-                setCancelModal(true)
-                setAcceptData({ ...info, isActive: false })
-              }}
-            >
-              Cancel Payment
-            </button>
+            {
+              !data.insurance && (
+                <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => {
+                      setCancelModal(true)
+                      setAcceptData({ ...info, isActive: false })
+                    }}
+                  >
+                    Cancel Payment
+                  </button>
+              )
+            }
             <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => setAcceptData({ ...info, isActive: false })}>
               Close
             </button>

@@ -1,12 +1,13 @@
-import axios from 'axios';
 import React, { useState, useRef } from 'react';
 import { ToastContainer } from 'react-toastify';
-import { ANNOUNCEMENT_LINK } from '../ApiLinks';
 import { toastHandler } from '../ToastHandler';
+import { useDispatch } from 'react-redux';
+import { createAnnouncement } from '../redux/action/AnnouncementAction';
 
 const inputStyle = "p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none";
 
 function AnnouncementModal({ show, setModal }) {
+  const dispatch = useDispatch();
   const [details, setDetails] = useState({
     title: "",
     type: "",
@@ -32,18 +33,20 @@ function AnnouncementModal({ show, setModal }) {
     }
   }
 
-  const insertDetails = async (data) => {
-    try {
-      const response = await axios.post(`${ANNOUNCEMENT_LINK}/`, data, {
-        headers: { Accept: "application/json", }
-      });
-
-      if (response.data) toastHandler("success", "Announcement Successfully Added!");
-      return window.setTimeout(() => {
-        window.location.reload();
-      }, 1500)
-    } 
-    catch (error) { console.log(error.response); }
+  const insertDetails = (data) => {
+    if(!details.title || !details.description || !details.type || !profile){
+      return toastHandler("error", "Fill up empty field!");
+    }
+    dispatch(createAnnouncement(data))
+    toastHandler("success", "Announcement Successfully Added!");
+    setDetails({
+      title: "",
+      type: "",
+      description: ""
+    });
+    setPicture("");
+    profile.current = ""
+    setModal(false);
   }
 
   const submitButton = () => {

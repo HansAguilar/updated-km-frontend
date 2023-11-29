@@ -6,7 +6,6 @@ import { SERVICES_LINK } from '../ApiLinks';
 import { useDispatch } from 'react-redux';
 import { deleteService } from "../redux/action/ServicesAction";
 import { ToastContainer } from 'react-toastify';
-import { toastHandler } from "../ToastHandler";
 
 function ServiceTable({ tableHeaders, results, search, currentPage }) {
 	const dispatch = useDispatch();

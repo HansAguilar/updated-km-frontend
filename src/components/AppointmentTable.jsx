@@ -90,27 +90,9 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 								tableHeaders.map((header, index) => (
 									<>
 										{
-											header === "Status" ?
 												<th className="p-2 uppercase text-slate-100 cursor-pointer" key={index} onClick={() => setStatusValue({ ...statusValue, isClick: true })}>
 													<p className={`${statusValue.isClick ? "hidden" : ""}`}>{header}</p>
-
-													{
-														statusValue.isClick ? <select className='bg-transparent focus:outline-none' value={statusValue.statusCode} onChange={(e) => {
-															setStatusValue({
-																...statusValue,
-																isClick: false,
-																statusCode: e.target.value
-															})
-														}}>
-															<option className='bg-gray-600 text-slate-200' value="">NONE</option>
-															<option className='bg-gray-600 text-slate-200' value="PENDING">PENDING</option>
-															<option className='bg-gray-600 text-slate-200' value="APPROVED">APPROVED</option>
-															<option className='bg-gray-600 text-slate-200' value="DONE">DONE</option>
-														</select>
-															: ""
-													}
 												</th>
-												: <th className='p-2 uppercase text-slate-100' key={8}>{header}</th>
 										}
 									</>
 								))

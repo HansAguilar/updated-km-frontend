@@ -1,14 +1,22 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { updatePayment } from "../redux/action/PaymentAction";
 import { toastHandler } from '../ToastHandler';
 import { ToastContainer } from 'react-toastify';
 
 const inputStyle = "p-2 border focus:border-blue-400 rounded text-sm focus:outline-none";
 
-function UpdatePaymentModal({ show, setModal, setData, data, updateData, setUpdateData, }) {
+function UpdatePaymentModal({ show, setModal, updateData, setUpdateData, }) {
   const dispatch = useDispatch();
-
+  const hmo = useSelector((state)=>state.insurance.payload.filter((val)=>val.patient.patientId===updateData.patientId));
+  const hmoList = hmo.filter((val)=>val.insuranceId!==updateData.insuranceId);
+  
+  const [hmoInfo, setHMOInfo] = useState({
+    hmoName:updateData?.insurance?.card,
+    insuranceId:updateData?.insurance?.insuranceId,
+    id: updateData.id
+  });
+  
   const handleFormChange = (e) => {
     setUpdateData({
       ...updateData,
@@ -16,19 +24,25 @@ function UpdatePaymentModal({ show, setModal, setData, data, updateData, setUpda
     })
   }
 
-  const a = Object.keys(updateData).map(item => {
-    return item;
-  })
-
-  console.log("DATA: " + updateData.id)
+  const handleHMOChange = (e) => {
+    const data = hmo.filter((val)=>val.card===e.target.value);
+    setHMOInfo({...hmoInfo, hmoName:data[0]?.card, insuranceId:data[0]?.insuranceId})
+  }
 
   const btnSubmit = async () => {
     if (!updateData.totalPayment) return toastHandler("error", "Fill up empty field")
 
-    dispatch(updatePayment(updateData));
-    toastHandler("success", "Update payment successfully!")
+    if(updateData.insurance && hmoList.length > 0){
+      const dataResult = { ...hmoInfo, totalPayment:updateData.totalPayment};
+      dispatch(updatePayment(dataResult));
+    }
+    if(!updateData.insurance){
+      dispatch(updatePayment(updateData));
+    }
+    toastHandler("success", "Update payment successfully!");
     setModal(false);
   }
+
   return (
     <div className={` w-full h-screen bg-gray-900 bg-opacity-75 absolute left-0 top-0 z-50 flex justify-center items-center ${show ? '' : 'hidden'}`}>
       <div className="m-auto w-[600px] bg-zinc-100 rounded overflow-auto">
@@ -44,21 +58,36 @@ function UpdatePaymentModal({ show, setModal, setData, data, updateData, setUpda
         <form action="post" className='grid gap-3 p-4' >
 
           <div className='flex flex-col gap-1 w-full relative'>
-            <label htmlFor='payment' className='font-medium text-slate-600'>Payment Method</label>
-            <select name="method" id='payment' value={updateData.method} onChange={(e) => handleFormChange(e)} className={inputStyle}>
-              <option value="" disabled >Select payment method...</option>
-              <optgroup label='Online Payment' className=' font-semibold '>
-                <option value="e-payment/gcash">GCash</option>
-                <option value="e-payment/paymaya">Paymaya</option>
-              </optgroup>
-              <option value="cash">Cash</option>
-              {/* {
-                        insuranceList.length > 0 ? (
-                          <option value="hmo">Health Insurance</option>
-                        )
-                        :""
-                      } */}
-            </select>
+              {
+                !updateData.insurance && (
+                  <>
+                    <label htmlFor='payment' className='font-medium text-slate-600'>Payment Method</label>
+                    <select name="method" id='payment' value={updateData.method} onChange={(e) => handleFormChange(e)} className={inputStyle}>
+                      <option value="" disabled >Select payment method...</option>
+                      <optgroup label='Online Payment' className=' font-semibold '>
+                        <option value="e-payment/gcash">GCash</option>
+                        <option value="e-payment/paymaya">Paymaya</option>
+                      </optgroup>
+                      <option value="cash">Cash</option>
+                    </select>
+                  </>
+                )
+              }
+              {
+                updateData.insurance && (
+                  <>
+                    <label htmlFor='payment' className='font-medium text-slate-600'>Payment Method</label>
+                    <select name="method" id='payment' value={hmoInfo.hmoName} onChange={(e) => handleHMOChange(e)} className={inputStyle}>
+                      <option value="" disabled >Select payment method...</option>
+                      {
+                        hmoList.length > 0 && hmoList.map((val)=>(
+                          <option value={val.card}>{val.card}</option>
+                        ))
+                      }
+                    </select>
+                  </>
+                )
+              }
           </div>
 
           <div className='flex flex-col gap-1 w-full relative'>

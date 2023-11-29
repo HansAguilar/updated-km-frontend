@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SidebarIcon from './SidebarIcon';
 import { NavLink } from 'react-router-dom';
 import { AiFillHome, AiFillMessage, AiFillSetting, AiFillSchedule } from 'react-icons/ai';
@@ -10,9 +10,14 @@ import { CgProfile } from 'react-icons/cg';
 import { GiHealthNormal } from "react-icons/gi";
 import { FaPowerOff } from 'react-icons/fa';
 import logo from '../assets/small-logo.jpg';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutAdmin } from '../redux/action/AdminAction';
 
 function Sidebar({ toggleBar, children }) {
 	const params = useLocation();
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const loginAdmin = useSelector((state)=>state.admin.loginAdmin);
 	const [hover, setHover] = useState({
 		active: false,
 		value: ""
@@ -34,12 +39,12 @@ function Sidebar({ toggleBar, children }) {
 					name: 'Patient Account',
 					icon: <SidebarIcon Icon={FaUserAlt} />
 				},
-				{
+				loginAdmin.role === "ADMIN" &&{
 					path: '/admin/dashboard/dentist',
 					name: 'Dentist Account',
 					icon: <SidebarIcon Icon={FaUserMd} />
 				},
-				{
+				loginAdmin.role === "ADMIN" &&{
 					path: '/admin/dashboard/admin',
 					name: 'Admin Account',
 					icon: <SidebarIcon Icon={FaUserCog} />
@@ -64,7 +69,7 @@ function Sidebar({ toggleBar, children }) {
 				},
 			]
 		},
-		{
+		loginAdmin.role === "ADMIN" &&{
 			path: '/admin/dashboard/services',
 			name: 'Services',
 			icon: <SidebarIcon Icon={MdMedicalServices} />
@@ -74,16 +79,16 @@ function Sidebar({ toggleBar, children }) {
 			name: 'Treatment',
 			icon: <SidebarIcon Icon={GiHealthNormal} />
 		},
-		{
+		loginAdmin.role !== "ADMIN" &&{
 			path: '/admin/dashboard/messages',
 			name: 'Messages',
 			icon: <SidebarIcon Icon={AiFillMessage} />
 		},
-		{
-			path: '/admin/dashboard/schedule',
-			name: 'Schedule',
-			icon: <SidebarIcon Icon={AiFillSchedule} />
-		},
+		// {
+		// 	path: '/admin/dashboard/schedule',
+		// 	name: 'Schedule',
+		// 	icon: <SidebarIcon Icon={AiFillSchedule} />
+		// },
 		{
 			path: '/admin/dashboard/payment',
 			name: 'Payment',
@@ -105,7 +110,7 @@ function Sidebar({ toggleBar, children }) {
 					name: 'Profile',
 					icon: <SidebarIcon Icon={CgProfile} />
 				},
-				{
+				loginAdmin.role === "ADMIN" &&{
 					path: '/admin/dashboard/appointmentFee',
 					name: 'Appointment Fee',
 					icon: <SidebarIcon Icon={CgProfile} />
@@ -145,6 +150,13 @@ function Sidebar({ toggleBar, children }) {
 				setHover({ ...hover, active: false, value: "" });
 		}
 	}
+
+	const logoutHandler = () =>{
+		dispatch(logoutAdmin());
+		localStorage.removeItem("token")
+		navigate("/");
+	};
+
 	return (
 		<>
 			<div className={`sticky h-screen bg-blue-400 flex flex-col text-white text-center overflow-auto`}>
@@ -157,50 +169,57 @@ function Sidebar({ toggleBar, children }) {
 
 				</div>
 				<div className={` ${toggleBar ? 'w-20' : 'w-72'} p-1 relative`}>
-					{
-						menuItem.map((map, index) => (
-							<>
-								<div key={index}>
-									<NavLink to={map.path}  className={`w-full px-5 py-4 flex items-center text-white gap-2 text-center hover:bg-blue-600 ${toggleBar ? 'justify-center flex-col' : ''}`} onClick={() => hover.active ? removeHover(map.value) : handleHover(map.value)}>
-										<p>{map.icon}</p>
-										<div className={`flex flex-grow items-center justify-between ${toggleBar ? ' text-xs ' : ''}`}>
-											<span>{map.name}</span>
-											<div className={`${toggleBar ? 'hidden' : 'visible'}`}>
-												{
-													map.sublinks && (
-														map.value === hover.value ? (<MdKeyboardArrowDown size={24}/>)
-															: (<MdKeyboardArrowUp size={24} />)
-													)
-												}
-											</div>
-										</div>
-									</NavLink>
+				{menuItem.map((map, index) => (
+				// Use the index as the key prop for each mapped element
+				<div key={index}>
+					{map && (
+					<NavLink
+						to={map.path}
+						className={`w-full px-5 py-4 flex items-center text-white gap-2 text-center hover:bg-blue-600 ${toggleBar ? 'justify-center flex-col' : ''}`}
+						onClick={() => (hover.active ? removeHover(map.value) : handleHover(map.value))}
+					>
+						<p>{map.icon}</p>
+						<div className={`flex flex-grow items-center justify-between ${toggleBar ? ' text-xs ' : ''}`}>
+						<span>{map.name}</span>
+						<div className={`${toggleBar ? 'hidden' : 'visible'}`}>
+							{map.sublinks && (
+							map.value === hover.value ? (<MdKeyboardArrowDown size={24}/>)
+							: (<MdKeyboardArrowUp size={24} />)
+							)}
+						</div>
+						</div>
+					</NavLink>
+					)}
+					{map.value === hover.value && map.sublinks && (
+					<div className={` ${hover ? 'visible' : 'hidden'} w-full flex flex-col rounded-bl-md rounded-br-md overflow-hidden bg-blue-500`}>
+						{map.sublinks.map((val, keys) => (
+						// Use the index as the key prop for each mapped sublink
+						<div key={keys}>
+							{val && (
+							<NavLink
+								to={val.path}
+								className={`px-4 py-3 flex gap-x-2 hover:bg-blue-700 ${toggleBar ? 'flex-col justify-center items-center text-center ' : ''} `}
+								onClick={() => removeHover(map.value)}
+							>
+								<div>{val.icon}</div>
+								<div className={toggleBar ? ' text-xs ' : ''}>
+								{toggleBar && map.value !== 'ACCOUNTS' ? val.name.split(' ')[1] : toggleBar && map.value === 'ACCOUNTS' ? val.name.split(' ')[0] : val.name}
 								</div>
-								{
-									map.value === hover.value && map.sublinks && (
-										<div className={` ${hover ? "visible" : "hidden"} w-full flex flex-col rounded-bl-md rounded-br-md overflow-hidden bg-blue-500`}>
-											{
-												map.sublinks.map((val, keys) => (
-													<div key={keys}>
-														<NavLink to={val.path} className={`px-4 py-3 flex gap-x-2 hover:bg-blue-700 ${toggleBar ? "flex-col justify-center items-center text-center " : ""} `} onClick={() => removeHover(map.value)}>
-															<div>{val.icon}</div>
-															<div className={toggleBar ? ' text-xs ' : ''}>{toggleBar && map.value !== "ACCOUNTS" ? val.name.split(" ")[1] : toggleBar && map.value === "ACCOUNTS" ? val.name.split(" ")[0] : val.name}</div>
-														</NavLink>
-													</div>
-												))
-											}
-										</div>
-									)
-								}
-							</>
-						))
-
-					}
+							</NavLink>
+							)}
+						</div>
+						))}
+					</div>
+					)}
 				</div>
-				<NavLink to='/' className='flex items-center gap-2 text-white bg-slate-500 hover:bg-red-500 px-6 py-4'>
+				))}
+				</div>
+				<div className='flex items-center gap-2 text-white bg-slate-500 hover:bg-red-500 px-6 py-4'
+				onClick={logoutHandler}
+				>
 					<SidebarIcon Icon={FaPowerOff} />
 					<div className={`capitalize tracking-wide ${toggleBar ? 'hidden' : ''}`}>Logout</div>
-				</NavLink>
+				</div>
 			</div>
 			<main>{children}</main>
 		</>

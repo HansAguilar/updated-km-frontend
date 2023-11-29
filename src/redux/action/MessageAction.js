@@ -70,3 +70,15 @@ export const fetchIncomingMessage = (roomKey, data)=>{
         }
     }
 }
+
+export const fetchNewAdminMessage = (roomKey) =>{
+    return async dispatch=>{
+        try {
+            const response = await axios.get(`${MESSAGE_LINK}/fetch_room/${roomKey}`);
+            dispatch({
+                type:CREATE_MESSAGE_SUCCESS,
+                payload:response.data
+            })
+        } catch (error) {}
+    }
+}
