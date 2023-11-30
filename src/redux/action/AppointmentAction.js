@@ -177,3 +177,16 @@ export const acceptAppointment = (id) => {
         }
     }
 }
+export const acceptTreatmentAppointment = (id) => {
+    return async dispatch=>{
+        try {
+            const response = await axios.put(`${APPOINTMENT_LINK}/status/accept/treatment/${id}`);
+            // dispatch({
+            //     type: DONE_APPOINTMENT_SUCCESS,
+            //     payload: response.data
+            // })
+        } catch (error) {
+            
+        }
+    }
+}

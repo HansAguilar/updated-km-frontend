@@ -123,7 +123,6 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
           for (let i = start; i < end; i++) {
             indicesScheduleToRemain.push(i);
           }
-          console.log(indicesScheduleToRemain);
         }
         console.log(indicesScheduleToRemain);
         updatedSchedList = updatedSchedList.filter((_, idx) => { return !indicesScheduleToRemain.includes(idx) });
