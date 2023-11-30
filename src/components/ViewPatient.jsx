@@ -5,35 +5,24 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IoArrowBackSharp } from "react-icons/io5";
 import { TEETH_LINK } from '../ApiLinks';
 import axios from 'axios';
+import PDFPatientRecord from "../components/PDFPatientRecord";
 
 function ViewPatient(props) {
 	const [headerNavigation, setHeaderNavigation] = useState("overview");
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const patient = useSelector((state) => { return state.patient.payload.find((val) => { return val.patientId === id }); });
-	const appointment = useSelector((state) => {
-		return state.appointment.payload
-			.filter((val) => {
-				return (val.patient.patientId === id);
-			})
-			.map((val) => {
-				return {
-					date: val.appointmentDate,
-					time: `${moment(val.timeStart, "HH:mm").format("LT")} - ${moment(val.timeEnd, "HH:mm").format("LT")}`,
-					dentist: `Dr. ${val.dentist.fullname}`,
-					status: val.status,
-					patient: `${val.patient.firstname} ${val.patient.lastname}`,
-					cancellation: val.reasonOfCancellation
-				};
-			});
-	});
+	const payment = useSelector((state)=>state.payment.payload.filter((val)=>val.patient.patientId===id));
+	const appointment = useSelector((state) =>state.appointment.payload.filter((val) =>val.patient.patientId === id)); 
 
+	// TREATMENT
+	const headerTreatment = ["Date", "Tooth No.","Dentist", "Procedure", "Amount Charged", "Amount Paid", "Balance","status"];
 	const history = appointment.filter(val => val.status === "DONE" || val.status === "CANCELLED")
 		.map(val => {
 			return {
 				date: moment(val.appointmentDate).format("L"),
-				dentist: val.dentist,
-				description: val.status === "DONE" ? `Appointment for ${val.patient} was successful` : `${val.cancellation}`,
+				dentist: `Dr. ${val.dentist.fullname}`,
+				description: val.status === "DONE" ? `Appointment was successful` : `${val.cancellation}`,
 				status: val.status
 			}
 		});
@@ -47,13 +36,39 @@ function ViewPatient(props) {
 		}
 	});
 	const [teethHistory, setHistory] = useState([]);
-	const teethHeader = ["Appointment Start", "Appointment End", "Services", "Status"]
+	const teethHeader = ["Appointment Start", "Appointment End", "Services", "Status"];
+	const [treatmentRenderData, setTreatmentRenderData] = useState([]);
 
+	const fetchData = ()=>{
+		const result = payment
+		.filter((val)=>val.appointment.status==="TREATMENT" || val.appointment.status==="TREATMENT_DONE")
+		.map((paymentData)=>{
+			const teethResult = teethList?.filter((val)=>val.appointment.appointmentId===paymentData.appointment.appointmentId).map((val)=>val.teethNumber);
+			let procedure="";
+			for(let x = 0; x < paymentData.appointment.dentalServices.length; x++){
+				procedure = procedure.concat(paymentData.appointment.dentalServices[x].name+ ", ");
+			}
+			let teethPrinter="";
+			for(let x = 0; x < teethResult.length; x++){
+				teethPrinter = teethPrinter.concat(teethResult[x]+ " ");
+			}
+			return {
+				date:paymentData.appointment.appointmentDate,
+				procedure: procedure,
+				teeth: teethPrinter,
+				dentist: `Dr. ${paymentData.appointment.dentist.fullname}`,
+				amountCharged: paymentData.amountCharge,
+				amountPaid: paymentData.totalPayment,
+				balance:paymentData.balance,
+				status:paymentData.appointment.status
+			};
+		})
+		setTreatmentRenderData(result);
+	}
 	const selectTeethButton = (idx) => {
 		const filteredSelectedTeeth = teethList.filter((val) => val.teethNumber === idx);
 		setHistory(filteredSelectedTeeth);
 	}
-
 	useEffect(() => {
 		const fetchTeeth = async () => {
 			try {
@@ -65,8 +80,10 @@ function ViewPatient(props) {
 		}
 		fetchTeeth();
 	}, []);
-
-
+	
+	useEffect(() => {
+		fetchData();
+	}, [teethList]);
 	const OverviewPage = () => {
 		return (
 			<section className='w-full h-full bg-white flex flex-col gap-4'>
@@ -200,8 +217,7 @@ function ViewPatient(props) {
 	}
 
 	const TreatementPage = () => {
-		const headerTreatment = ["Date", "Time", "Dentist", "Status"];
-
+		
 		return (
 			<section section className='bg-white h-full flex flex-col flex-grow ' >
 
@@ -220,22 +236,19 @@ function ViewPatient(props) {
 						appointment.length > 0 ?
 							<tbody>
 								{
-									appointment
-										.filter((val) => {
-											return (
-												(val.status === "TREATMENT")
-											);
-										})
+									treatmentRenderData
 										.map((val, idx) => (
 
 
 											<tr key={idx} className='font-medium border text-slate-900 even:bg-slate-100'>
 												<td>{moment(val.date).format("MMMM DD YYYY")}</td>
-												<td>{val.time}</td>
+												<td>{val.teeth}</td>
 												<td>{val.dentist}</td>
-												<td className='flex gap-2 justify-center p-2'>
-													<span className={`${val.status === "CANCELLED" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"} py-1 px-3 rounded-full max-w-max mx-auto capitalize`}>• {val.status.toLowerCase()}</span>
-												</td>
+												<td>{val.procedure}</td>
+												<td>Php. {val.amountCharged.toLocaleString()}</td>
+												<td>Php. {val.amountPaid.toLocaleString()}</td>
+												<td>Php. {val.balance.toLocaleString()}</td>
+												<td>{val.status === "TREATMENT_DONE" ? "DONE" : "PENDING"}</td>
 											</tr>
 										))
 								}
@@ -254,6 +267,7 @@ function ViewPatient(props) {
 		)
 	}
 
+	console.log(treatmentRenderData);
 
 	{/*//~ OVERVIEW */ }
 	return teethList && (
@@ -286,6 +300,7 @@ function ViewPatient(props) {
 						<div className='flex flex-col gap-2 items-center'>
 							<h3 className='text-3xl font-semibold text-cyan-900'>{patient.firstname.charAt(0).toUpperCase() + patient.firstname.substring(1)} {patient.lastname.charAt(0).toUpperCase() + patient.lastname.substring(1)}</h3>
 						</div>
+						<PDFPatientRecord patient={patient} tableHeaderList={headerTreatment} data={treatmentRenderData} type="patient" />
 					</div>
 					{/*//~ IMAGE AND NAME */}
 

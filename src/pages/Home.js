@@ -11,7 +11,7 @@ function Home() {
   const patient = useSelector((state) => { return state.patient; });
   const appointment = useSelector((state) => { return state.appointment; });
   const payment = useSelector((state) => { return state.payment; });
-  const installment = useSelector((state) => { return state.installment; });
+  const treatment = useSelector((state) => { return state.appointment.payload.filter(val=>val.status==="TREATMENT"); });
 
   return (
     <div className='h-screen bg-gray-200 '>
@@ -43,7 +43,7 @@ function Home() {
           fromBG={'from-green-400'}
           toBG={'to-green-600'}
           iconColor={'text-white'}
-          number={payment.payload.filter(val => { return val.status === "CHECKING" }).length}
+          number={payment.payload.filter(val => { return val.status === "PENDING" }).length}
           title={'pending payments'}
           textColor={"text-white"}
           Icon={MdPayments}
@@ -53,8 +53,8 @@ function Home() {
           fromBG={'from-orange-400'}
           toBG={'to-orange-600'}
           iconColor={'text-white'}
-          number={installment.payload.filter(val => { return val.status === "CHECKING" }).length}
-          title={'pending installment'}
+          number={treatment.length}
+          title={'treatment'}
           textColor={"text-white"}
           Icon={MdOutlinePendingActions}
         />
