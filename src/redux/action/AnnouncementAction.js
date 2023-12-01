@@ -14,11 +14,12 @@ export const fetchAnnouncement = () =>{
     }
 }
 
-export const createAnnouncement = (data) =>{
+export const createAnnouncement = (data,clearText) =>{
     return async dispatch=>{
         try {
             const response = await axios.post(`${ANNOUNCEMENT_LINK}/`,data);
             dispatch({ type:CREATE_ANNOUNCEMENT_SUCCESS, payload:response.data });
+            clearText()
         } catch (error) { }
     }
 }

@@ -55,7 +55,7 @@ export const createAdmin = (data,setModal,setAdminInfo,setProfile) =>{
     }
 }
 
-export const updateAdmin = (id,data) =>{
+export const updateAdmin = (id,data,toastHandler,setModal) =>{
     return async dispatch=>{
         try {
             const response = await axios.put(`${ADMIN_LINK}/update/${id}`,data);
@@ -63,6 +63,7 @@ export const updateAdmin = (id,data) =>{
                 type: UPDATE_ADMIN_SUCCESS,
                 payload: response.data
             });
+            setModal(false);
         } catch (error) {
             toastHandler("error",error.response.data.message);
         }

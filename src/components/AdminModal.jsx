@@ -115,7 +115,6 @@ function AdminModal({ show, setModal, type }) {
     let data = {};
 
     if (!adminInfo.firstname || !adminInfo.lastname || !adminInfo.birthday || !adminInfo.address || !adminInfo.gender || !adminInfo.contactNumber || !adminInfo.email || !adminInfo.username || !profile) {
-      console.log(adminInfo);
       return toastHandler("error", "Fill up empty field!");
     }
 
@@ -140,7 +139,6 @@ function AdminModal({ show, setModal, type }) {
       data = { ...adminInfo, profile };
       submitData(data);
     }
-    clearText();
   }
 
   return (
