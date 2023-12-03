@@ -3,7 +3,7 @@ import * as io from "socket.io-client";
 import { SOCKET_LINK } from "../ApiLinks";
 import { useDispatch, useSelector } from "react-redux";
 import { BiMessageEdit, BiSearchAlt } from "react-icons/bi";
-import { createNewMessage,sendMessage } from "../redux/action/MessageAction";
+import { createNewMessage, sendMessage } from "../redux/action/MessageAction";
 import MessageBox from "../components/MessageBox";
 import { AiOutlineClose } from "react-icons/ai";
 import { useEffect } from "react";
@@ -15,7 +15,7 @@ function Messages({ admin }) {
   const [modal, setModal] = useState(false);
   const newMessage = useSelector((state) => { return state.messages.payload; });
   const [roomKey, setRoomKey] = useState("");
-  const selectMessageRoom = (key) =>{
+  const selectMessageRoom = (key) => {
     setRoomKey(key);
   }
   const [messages, setMessage] = useState(null);
@@ -41,20 +41,20 @@ function Messages({ admin }) {
     };
 
     const sendMessageButton = () => {
-      if(!messageDetails.messageContent) return;
+      if (!messageDetails.messageContent) return;
       const key = `${messageDetails.adminId}-${messageDetails.receiverId}`;
-      const filteredMessages = messages.filter((val)=>val.roomId===key);
-      
-      if(filteredMessages.length > 0){
+      const filteredMessages = messages.filter((val) => val.roomId === key);
+
+      if (filteredMessages.length > 0) {
         dispatch(sendMessage(key, messageDetails));
-      }else{
+      } else {
         dispatch(createNewMessage(key, messageDetails));
       }
       setModal(false)
     }
 
     return (
-      <div className={`w-full h-screen bg-gray-900 bg-opacity-75 absolute left-0 top-0 z-10 flex flex-grow justify-center items-center `}>
+      <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center `}>
         <div className="relative m-auto w-[500px] h-[500px] bg-zinc-100 rounded p-4">
           <div className="bg-red-400 absolute top-3 right-3 rounded-full p-2 cursor-pointer hover:bg-red-600" onClick={() => setModal(false)}>
             <AiOutlineClose className='text-white' size={24} />
@@ -122,10 +122,10 @@ function Messages({ admin }) {
     )
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("new message");
     setMessage(newMessage);
-  },[newMessage])
+  }, [newMessage])
 
   return (
     <div className='w-full h-screen overflow-hidden relative flex flex-row bg-gray-200 gap-4 p-4'>

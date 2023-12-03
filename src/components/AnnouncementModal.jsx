@@ -37,9 +37,13 @@ function AnnouncementModal({ show, setModal }) {
     if(!details.title || !details.description || !details.type || !profile){
       return toastHandler("error", "Fill up empty field!");
     }
+
     dispatch(createAnnouncement(data,clearData))
     toastHandler("success", "Announcement Successfully Added!");
     
+    setPicture("");
+    profile.current = "";
+    return;
   }
 
   const clearData = () =>{
@@ -52,6 +56,7 @@ function AnnouncementModal({ show, setModal }) {
     profile.current = ""
     setModal(false);
   }
+
   const submitButton = () => {
     if (!details.title || !details.type || !details.description || !picture ) return toastHandler("error", "Fill up empty field!");
     const data = { ...details, picture }
@@ -103,7 +108,7 @@ function AnnouncementModal({ show, setModal }) {
         </form>
 
         <div className='flex gap-2 p-4 justify-end mt-auto'>
-          <button className='py-2 px-4 font-medium bg-red-500 text-white rounded hover:bg-red-700' onClick={clearData}>Cancel</button>
+          <button className='py-2 px-4 font-medium bg-gray-300 text-gray-700 rounded hover:bg-gray-400' onClick={clearData}>Cancel</button>
           <button className='py-2 px-4 font-medium bg-blue-500 text-white rounded hover:bg-blue-700' onClick={submitButton}>Confirm</button>
         </div>
       </div>

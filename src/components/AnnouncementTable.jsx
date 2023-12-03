@@ -17,20 +17,21 @@ function AnnouncementTable({ tableHeaders, results, search, currentPage }) {
 		name: ""
 	});
 
-	const deleteButton = (id) => {
-		dispatch(deleteAnnouncement(id))
-		toastHandler("success", "Successfully deleted!");
-	}
-
 	const confirmDeletion = (patientID, patientName) => {
-		// if (window.confirm(`Are you sure do you want to delete ${patientName}?`)) return dispatch(deleteAnnouncement(patientID));
 		setShowModal(prev => ({ showIt: !prev.showIt, id: patientID, name: patientName }));
 	}
+
+	function handleDelete() {
+		dispatch(deleteAnnouncement(showModal.id))
+		toastHandler("success", "Successfully deleted!");
+		setShowModal(prev => ({ showIt: !prev.showIt }));
+	}
+
 	return (
 		<div className='p-4'>
 			<ToastContainer limit={1} autoClose={1500} />
 			<Update show={update} setModal={setUpdate} details={details} setDetails={setDetails} />
-			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} />)}
+			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} onConfirm={handleDelete} />)}
 
 			<table className='min-w-full table-fixed'>
 				{/*//~ HEAD */}

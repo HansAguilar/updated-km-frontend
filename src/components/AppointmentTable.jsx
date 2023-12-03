@@ -13,6 +13,7 @@ import { sendNotification } from "../redux/action/NotificationAction";
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import { AiFillCheckSquare } from "react-icons/ai"
+import ConfirmDeletionModal from './ConfirmDeletionModal';
 
 
 function AppointmentTable({ tableHeaders, results, search, currentPage, type }) {
@@ -24,24 +25,39 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 		isShow: false,
 		appointment: ""
 	});
+
 	const [statusValue, setStatusValue] = useState({
 		isClick: false,
 		statusCode: ""
 	});
+
 	const [appointmentId, setAppointmentId] = useState(null)
 	const [status1, setStatus1] = useState({
 		selectedId: null,
 		remarks: "PENDING",
 		isSelected: false
 	});
+
+	const [showModal, setShowModal] = useState({
+		showIt: false,
+		id: null,
+		name: ""
+	});
+
 	const [status, setStatus] = useState({
 		id: "",
 		status: "",
 		description: ""
 	})
 
-	const deleteAppointmentButton = async (id) => {
-		dispatch(deleteAppointment(id, toastHandler))
+	const confirmDeletion = (patientID, patientName) => {
+		// if (window.confirm(`Are you sure do you want to delete ${patientName}?`)) return dispatch(deletePatient(patientID));
+		setShowModal(prev => ({ showIt: !prev.showIt, id: patientID, name: patientName }));
+	}
+
+	function handleDelete() {
+		dispatch(deleteAppointment(showModal.id, toastHandler))
+		setShowModal(prev => ({ showIt: !prev.showIt }));
 	}
 
 	const updateButton = (id) => {
@@ -78,6 +94,8 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 			{update && (<UpdateAppointmentModal show={update} setModal={setUpdate} initialAppointment={appointmentId} />)}
 			<CancelModal show={cancelModal} setShow={setCancelModal} status={status1} setStatus={setStatus1} />
 			<ViewAppointment view={view} setView={setView} />
+			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} onConfirm={handleDelete} />)}
+
 			<div className='p-4'>
 				<ToastContainer limit={1} autoClose={1500} />
 
@@ -194,7 +212,7 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 													)
 												}
 
-												<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 cursor-pointer flex items-center' onClick={() => deleteAppointmentButton(result.appointmentId)}>
+												<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 cursor-pointer flex items-center' onClick={() => confirmDeletion(result.appointmentId, `${result.patient.firstname} ${result.patient.lastname}`)()}>
 													<AiFillDelete size={25} />
 													<p className='pr-2'>Delete</p>
 												</span>

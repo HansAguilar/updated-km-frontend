@@ -55,11 +55,16 @@ function ServiceTable({ tableHeaders, results, search, currentPage }) {
 		setUpdateModal(true);
 	}
 
+	function handleDelete() {
+		dispatch(deleteService(showModal.id))
+		setShowModal(prev => ({ showIt: !prev.showIt }));
+	}
+
 	return (
 		<>
 			<UpdateDentistModal show={update} setModal={setUpdateModal} setData={setData} data={data} />
 			<ToastContainer limit={1} autoClose={1500} />
-			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} />)}
+			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} onConfirm={handleDelete} />)}
 
 			<div className='p-4'>
 				<table className='min-w-full table-fixed'>

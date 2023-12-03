@@ -159,16 +159,16 @@ function Sidebar({ toggleBar, children }) {
 
 	return (
 		<>
-			<div className={`sticky h-screen bg-blue-400 flex flex-col text-white text-center overflow-auto`}>
-				<div className={` ${toggleBar ? 'w-20' : 'w-72'} flex justify-center bg-blue-500 p-3 border-gray-300 transition-all duration-300 ease-in-out delay-100`} >
+			<div className={`${toggleBar ? "w-28" : "w-72"} sticky h-screen bg-blue-400 flex flex-col text-white text-center overflow-auto duration-300 ease-in-out delay-100`}>
+				<div className={`lex justify-center bg-blue-500 p-3 border-gray-300 transition-all duration-300 ease-in-out delay-100`} >
 					<div className={`  mt-4 flex flex-col justify-center items-center `}>
-						<img src={logo} alt="Dental logo" className={` ${toggleBar ? "w-16 h-14" : "w-16 h-16"} rounded-full transition-all duration-300 ease-in-out delay-100`} />
+						<img src={logo} alt="Dental logo" className={` h-16 w-16 rounded-full transition-all duration-300 ease-in-out delay-100`} />
 						<h1 className={`text-md pt-4 mb-1 uppercase font-bold ${toggleBar ? 'hidden' : ''} transition-all duration-300 ease-in-out delay-100`}>K.M. Geronimo Dental Clinic</h1>
 						<p className={`text-sm ${toggleBar ? 'hidden' : ''}`}>Admin</p>
 					</div>
 
 				</div>
-				<div className={` ${toggleBar ? 'w-20' : 'w-72'} p-1 relative transition-all duration-300 ease-in-out delay-100`}>
+				<div className={`  p-1 relative transition-all duration-300 ease-in-out delay-100`}>
 					{menuItem.map((map, index) => (
 						// Use the index as the key prop for each mapped element
 						<div key={index}>
@@ -214,7 +214,7 @@ function Sidebar({ toggleBar, children }) {
 						</div>
 					))}
 				</div>
-				<div className='flex items-center gap-2 text-white bg-slate-500 hover:bg-red-500 px-6 py-4'
+				<div className={`${toggleBar ? "justify-center" : ""} flex items-center gap-2 text-white bg-slate-500 hover:bg-red-500 px-6 py-4`}
 					onClick={logoutHandler}
 				>
 					<SidebarIcon Icon={FaPowerOff} />

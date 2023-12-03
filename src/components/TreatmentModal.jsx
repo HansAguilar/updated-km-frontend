@@ -248,7 +248,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
   const minDate = new Date().toISOString().split('T')[0];
 
   return (
-    <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 absolute -top-10 z-10 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
+    <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 fixed z-50 inset-0 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
       <ToastContainer limit={1} autoClose={1500} />
       <div className="m-auto w-[900px] min-h-max bg-zinc-100 rounded overflow-auto">
 
@@ -513,8 +513,8 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
 
         {/*//~ BUTTONS */}
         <div className='flex gap-2 p-4 justify-end mt-auto'>
+          <button className="px-10 py-2 bg-gray-400 text-white rounded hover:bg-gray-400" onClick={btnClose}>Cancel</button>
           <button className="px-10 py-2 bg-blue-400 text-white rounded hover:bg-blue-500" onClick={nextButton}>Next</button>
-          <button className="px-10 py-2 bg-red-400 text-white rounded hover:bg-red-500" onClick={btnClose}>Cancel</button>
         </div>
         {/*//~ BUTTONS */}
       </div>

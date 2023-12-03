@@ -87,7 +87,7 @@ function CovidServiceModal({ show, setModal, setAddModal, data, setAppointment,c
     },
   ]
   return (
-    <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 absolute -top-10 z-10 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
+    <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
       <div className="m-auto w-[900px] h-[700px] bg-white rounded overflow-auto">
         <ToastContainer limit={1} autoClose={1500} />
 

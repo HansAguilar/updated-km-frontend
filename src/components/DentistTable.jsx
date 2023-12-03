@@ -51,11 +51,16 @@ function DentistTable({ tableHeaders, results, search, currentPage }) {
 		setShowModal(prev => ({ showIt: !prev.showIt, id: patientID, name: patientName }));
 	}
 
+	function handleDelete() {
+		dispatch(deleteDentist(showModal.id))
+		setShowModal(prev => ({ showIt: !prev.showIt }));
+	}
+
 	return (
 		<>
 			<UpdateDentistModal show={update} setModal={setUpdateModal} setData={setData} data={data} />
 			<ToastContainer limit={1} autoClose={1500} />
-			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} />)}
+			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} onConfirm={handleDelete} />)}
 
 			<div className='p-4'>
 
@@ -135,7 +140,9 @@ function DentistTable({ tableHeaders, results, search, currentPage }) {
 														<AiFillEdit size={25} />
 														<p className='pr-2'>Update</p>
 													</span>
-													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'>
+													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center' onClick={
+														confirmDeletion(result.dentistId, `Dr. ${result.fullname}`)
+													}>
 														<AiFillDelete size={25} />
 														<p className='pr-2'>Delete</p>
 													</span>
@@ -204,7 +211,7 @@ function DentistTable({ tableHeaders, results, search, currentPage }) {
 														<p className='pr-2'>Update</p>
 													</span>
 													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'
-														onClick={() => confirmDeletion(result.patientID, `${result.firstname} ${result.lastname}`)}>
+														onClick={() => confirmDeletion(result.dentistId, `Dr. ${result.fullname}`)}>
 														<AiFillDelete size={25} />
 														<p className='pr-2'>Delete</p>
 													</span>

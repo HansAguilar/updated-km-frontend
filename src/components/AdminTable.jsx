@@ -48,19 +48,25 @@ function AdminTable({ tableHeaders, results, search, currentPage }) {
 	const [showModal, setShowModal] = useState({
 		showIt: false,
 		id: null,
-		name: ""
+		name: "",
 	});
 
+
 	const confirmDeletion = (patientID, patientName) => {
-		// if (window.confirm(`Are you sure do you want to delete ${patientName}?`)) return dispatch(deleteAdmin(result.adminId));
 		setShowModal(prev => ({ showIt: !prev.showIt, id: patientID, name: patientName }));
+	}
+
+	function handleDelete() {
+		console.log('Deleted!');
+		dispatch(deleteAdmin(showModal.id));
+		setShowModal(prev => ({ showIt: !prev.showIt }));
 	}
 
 	return (
 		<>
 			<ToastContainer limit={1} autoClose={1500} />
 			<UpdateAdminModal show={updateModel} setModal={setUpdateModal} setAdminInfo={setAdminInfo} adminInfo={adminInfo} type="admin" />
-			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} />)}
+			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} onConfirm={handleDelete} />)}
 
 			<div className='p-4'>
 
@@ -137,9 +143,7 @@ function AdminTable({ tableHeaders, results, search, currentPage }) {
 														<p className='pr-2'>Update</p>
 													</span>
 													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'
-														onClick={() => dispatch(
-															deleteAdmin(result.adminId)
-														)}>
+														onClick={() => confirmDeletion(result.adminId, `${result.firstname} ${result.lastname}`)}>
 														<AiFillDelete size={25} />
 														<p className='pr-2'>Delete</p>
 													</span>
@@ -204,7 +208,7 @@ function AdminTable({ tableHeaders, results, search, currentPage }) {
 														<p className='pr-2'>Update</p>
 													</span>
 													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'
-														onClick={() => confirmDeletion(result.patientID, `${result.firstname} ${result.lastname}`)}>
+														onClick={() => confirmDeletion(result.adminId, `${result.firstname} ${result.lastname}`)}>
 														<AiFillDelete size={25} />
 														<p className='pr-2'>Delete</p>
 													</span>

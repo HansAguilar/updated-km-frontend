@@ -55,15 +55,19 @@ function Table({ tableHeaders, results, search, currentPage }) {
 	};
 
 	const confirmDeletion = (patientID, patientName) => {
-		// if (window.confirm(`Are you sure do you want to delete ${patientName}?`)) return dispatch(deletePatient(patientID));
 		setShowModal(prev => ({ showIt: !prev.showIt, id: patientID, name: patientName }));
+	}
+
+	function handleDelete() {
+		dispatch(deletePatient(showModal.id))
+		setShowModal(prev => ({ showIt: !prev.showIt }));
 	}
 
 	return (
 		<div className='p-4 '>
 			<Modal show={updateModel} setModal={setUpdateModal} setAdminInfo={setPatientInfo} adminInfo={patient} type="patient" />
 			<ToastContainer limit={1} autoClose={1500} />
-			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} />)}
+			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} onConfirm={handleDelete} />)}
 
 			<table className='min-w-full table-fixed'>
 				{/*//~ HEAD */}
@@ -205,7 +209,7 @@ function Table({ tableHeaders, results, search, currentPage }) {
 													<AiFillEdit size={25} />
 													<p className='pr-2'>Update</p>
 												</span>
-												<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center' onClick={() => confirmDeletion(result.patientID, `${result.firstname} ${result.lastname}`)}>
+												<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center' onClick={() => confirmDeletion(result.patientId, `${result.firstname} ${result.lastname}`)}>
 													<AiFillDelete size={25} />
 													<p className='pr-2'>Delete</p>
 												</span>
