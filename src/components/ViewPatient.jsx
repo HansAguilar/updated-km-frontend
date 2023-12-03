@@ -295,7 +295,7 @@ function ViewPatient(props) {
 				<div className='w-1/4 shadow rounded p-5 bg-white flex flex-col justify-center items-center gap-4'>
 
 					{/*//~ IMAGE AND NAME */}
-					<div className='flex flex-col gap-2'>
+					<div className='flex flex-col gap-2 items-center'>
 						<img src={patient.profile} className='w-44 h-44 rounded-full aspect-auto mx-auto' alt='patient profile' />
 						<div className='flex flex-col gap-2 items-center'>
 							<h3 className='text-3xl font-semibold text-cyan-900'>{patient.firstname.charAt(0).toUpperCase() + patient.firstname.substring(1)} {patient.lastname.charAt(0).toUpperCase() + patient.lastname.substring(1)}</h3>

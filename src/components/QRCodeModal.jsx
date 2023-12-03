@@ -37,7 +37,7 @@ export default function QRCodeModal({ setToggleQR }) {
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-gray-900 bg-opacity-75 absolute z-10 flex flex-grow justify-center items-center">
+    <div className="w-full min-h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center">
       <ToastContainer limit={1} autoClose={1500} />
 
       <div className=' w-auto h-auto p-10 bg-white flex flex-col justify-center items-center gap-2 shadow-md rounded-md relative'>

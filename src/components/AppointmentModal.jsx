@@ -8,7 +8,7 @@ import { BiSearchAlt } from 'react-icons/bi';
 
 const inputStyle = "p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none";
 
-function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppointment,clearData }) {
+function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppointment, clearData }) {
   const patient = useSelector((state) => { return state.patient; });
   const dentist = useSelector((state) => { return state.dentist; });
   const service = useSelector((state) => { return state.service; });
@@ -77,7 +77,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     });
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const newTimeList = [
       { timeValue: "09:00 Am", timeStart: "09:00:00" },
       { timeValue: "09:30 Am", timeStart: "09:30:00" },
@@ -107,7 +107,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     );
     if (filteredTime.length > 0) {
       setTimeStartList(filteredTime);
-    }else{
+    } else {
       setTimeStartList([...newTimeList]);
     }
 
@@ -154,7 +154,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
       }
       return updatedTimeStartList;
     })
-  },[appointment.date]);
+  }, [appointment.date]);
 
   // INSURANCE
   // useEffect(()=>{
@@ -175,16 +175,17 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     selectedDate.setHours(0, 0, 0, 0);
     if (selectedDate < current) return toastHandler("error", "You can't select previous date");
 
-    const checkIfPatientAlreadyHaveAppointment = filteredAppointments.filter((val) => {return (
+    const checkIfPatientAlreadyHaveAppointment = filteredAppointments.filter((val) => {
+      return (
         moment(val.appointmentDate, "YYYY-MM-DD").isSame(moment(appointment.date)) &&
         val.patient.patientId === appointment.patientId
         && (val.status !== "CANCELLED" && val.status !== "DONE")
         // && val.appointmentId !== appointment.appointmentId
       );
     });
-    
+
     if (checkIfPatientAlreadyHaveAppointment.length > 0) {
-      return toastHandler("error","You already have an existing appointment on this date!");
+      return toastHandler("error", "You already have an existing appointment on this date!");
     }
     const end = calculateTotalTime();
     const data = { timeEnd: end, }
@@ -196,7 +197,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     while (start.isBefore(moment(end, "HH:mm:ss").add(30, 'minutes'))) {
       const startTime = start.format('HH:mm:ss');
       const matchingTime = timeStartList.find(time => time.timeStart === startTime);
-      
+
       if (startTime === "12:30:00" || startTime === "16:30:00") {
         toastHandler("error", `Kindly select ${totalTimeDuration.format('HH:mm:ss') === "01:00:00"
           ? '30 minutes'
@@ -269,7 +270,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
   const minDate = currentDate.toISOString().split('T')[0];
 
   return (
-    <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 absolute -top-10 z-10 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
+    <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
       <div className="m-auto w-[900px] min-h-max bg-zinc-100 rounded overflow-auto">
         <ToastContainer limit={1} autoClose={1500} />
 
@@ -484,7 +485,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
                     <option value="e-payment/paymaya">Paymaya</option>
                   </optgroup>
                   <option value="cash">Cash</option>
-                  { availableHMO && availableHMO.length > 0 ? (<option value="hmo">Health Insurance</option>) : ""}
+                  {availableHMO && availableHMO.length > 0 ? (<option value="hmo">Health Insurance</option>) : ""}
                 </select>
                 {/*//~ PAYMENT METHOD */}
               </div>
@@ -559,8 +560,8 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
 
         {/*//~ BUTTONS */}
         <div className='flex gap-2 p-4 justify-end mt-auto'>
-          <button className="py-2 px-4 font-medium bg-red-500 text-white rounded hover:bg-red-700" onClick={btnClose}>Cancel</button>
-          <button className="py-2 px-4 font-medium bg-blue-500 text-white rounded hover:bg-blue-700" onClick={nextButton}>Next</button>
+          <button className="py-2 px-4 font-medium bg-gray-300 text-gray-700 rounded hover:bg-gray-400" onClick={btnClose}>Cancel</button>
+          <button className="py-2 px-6 font-medium bg-blue-500 text-white rounded hover:bg-blue-700" onClick={nextButton}>Next</button>
         </div>
         {/*//~ BUTTONS */}
 

@@ -36,7 +36,7 @@ function Header({ toggleBar, setToggleBar,setNotificationToggleModal, notificati
   }
 
   return (
-    <div className=' w-full h-auto sticky top-0 z-50  bg-transparent ' >
+    <div className=' w-full h-auto sticky top-0 z-10  bg-transparent ' >
       <div className=' bg-zinc-100 p-4 shadow-sm flex justify-between items-center '>
         <GiHamburgerMenu onClick={toggleMenuEvent} size={30} className=' text-blue-500 cursor-pointer ' />
 

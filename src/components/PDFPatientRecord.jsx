@@ -19,7 +19,7 @@ function PDFButton({ patient, data, type,tableHeaderList }) {
     <PDFDownloadLink
       document={processPDF[type].docs}
       fileName={processPDF[type].fileName}>
-      <FileIcons Icon={AiFillFilePdf} title={"PDF"} />
+      <FileIcons Icon={AiFillFilePdf} title={"Download PDF"} />
     </PDFDownloadLink>
   )
 }

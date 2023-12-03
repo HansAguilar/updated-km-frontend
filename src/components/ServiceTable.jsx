@@ -6,6 +6,7 @@ import { SERVICES_LINK } from '../ApiLinks';
 import { useDispatch } from 'react-redux';
 import { deleteService } from "../redux/action/ServicesAction";
 import { ToastContainer } from 'react-toastify';
+import ConfirmDeletionModal from './ConfirmDeletionModal';
 
 function ServiceTable({ tableHeaders, results, search, currentPage }) {
 	const dispatch = useDispatch();
@@ -18,7 +19,11 @@ function ServiceTable({ tableHeaders, results, search, currentPage }) {
 		duration: "00:30:00",
 		price: 0
 	});
-
+	const [showModal, setShowModal] = useState({
+		showIt: false,
+		id: null,
+		name: ""
+	});
 	const disableAccountBtn = async (id, disable) => {
 		try {
 			const newDisableInformation = { id: id, verified: disable };
@@ -32,8 +37,9 @@ function ServiceTable({ tableHeaders, results, search, currentPage }) {
 		}
 	};
 
-	const deleteButton = async (id) => {
-		dispatch(deleteService(id));
+	const confirmDeletion = (patientID, patientName) => {
+		// if (window.confirm(`Are you sure do you want to delete ${patientName}?`)) return ddispatch(deleteService(id));;
+		setShowModal(prev => ({ showIt: !prev.showIt, id: patientID, name: patientName }));
 	}
 
 	const updateBtn = (serviceId, name, type, description, duration, price) => {
@@ -53,6 +59,7 @@ function ServiceTable({ tableHeaders, results, search, currentPage }) {
 		<>
 			<UpdateDentistModal show={update} setModal={setUpdateModal} setData={setData} data={data} />
 			<ToastContainer limit={1} autoClose={1500} />
+			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} />)}
 
 			<div className='p-4'>
 				<table className='min-w-full table-fixed'>
@@ -119,7 +126,8 @@ function ServiceTable({ tableHeaders, results, search, currentPage }) {
 														<p className='pr-2'>Update</p>
 													</span>
 
-													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center' onClick={() => deleteButton(result.serviceId)}>
+													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'
+														onClick={() => confirmDeletion(result.serviceId, `${result.name}`)}>
 														<AiFillDelete size={25} />
 														<p className='pr-2'>Delete</p>
 													</span>
@@ -157,7 +165,8 @@ function ServiceTable({ tableHeaders, results, search, currentPage }) {
 														<p className='pr-2'>Update</p>
 													</span>
 
-													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center' onClick={() => deleteButton(result.serviceId)}>
+													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'
+														onClick={() => confirmDeletion(result.serviceId, `${result.name}`)}>
 														<AiFillDelete size={25} />
 														<p className='pr-2'>Delete</p>
 													</span>
