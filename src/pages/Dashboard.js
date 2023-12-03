@@ -119,6 +119,7 @@ function Dashboard() {
 
     socket.on("create_received_by_admin", (data) => {
       const parseData = JSON.parse(data);
+      console.log(parseData);
       if(parseData.admin===adminLoginId.current){
         dispatch(fetchNewAdminMessage(parseData.key));
       }
