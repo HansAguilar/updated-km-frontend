@@ -52,7 +52,6 @@ function UpdateAdminModal({ show, setModal, setAdminInfo, adminInfo, type }) {
         !adminInfo.contactNumber ||
         !adminInfo.email
       ) {
-        console.log(adminInfo);
         return toastHandler("error", "Fill up empty field!");
       }
       if (adminInfo.password !== adminInfo.confirmPassword) {
@@ -79,11 +78,11 @@ function UpdateAdminModal({ show, setModal, setAdminInfo, adminInfo, type }) {
       };
 
       if (type === "patient") {
-        console.log("patient");
         dispatch(updatePatient(adminInfo.userId, data, toastHandler, setModal));
       } else {
         dispatch(updateAdmin(adminInfo.userId, data,toastHandler,setModal));
       }
+      
     } catch (err) {
       console.log(err);
     }

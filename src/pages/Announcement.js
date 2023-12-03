@@ -28,7 +28,6 @@ function Announcement() {
     (val.title + val.type).toLowerCase().includes(search)
   );
 
-  console.log(announcement);
   return (
     <div className=' h-screen overflow-hidden relative bg-gray-200 '>
       <Modal show={show} setModal={setModal} />
