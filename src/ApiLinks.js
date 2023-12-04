@@ -35,4 +35,4 @@ export const HMO_LINK = `${BACKEND_PORT}/api/v1/insurance`;
 // const PORT = `192.168.254.100`;
 // export const SOCKET_LINK = `http://${PORT}:8081/`;
 
-export const SOCKET_LINK = "https://socket-kmgeronimo-0bfe0b875638.herokuapp.com/";
+export const SOCKET_LINK = "https://socket-kmgeronimo-0bfe0b875638.herokuapp.com";
