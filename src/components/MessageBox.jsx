@@ -15,6 +15,7 @@ function MessageBox({ roomKey }) {
     messageContent: "",
     type: "ADMIN"
   })
+
   const submitMessage = () => {
     if (!feedback.messageContent) return
     dispatch(sendMessage(roomKey, feedback));
@@ -39,17 +40,16 @@ function MessageBox({ roomKey }) {
       <div className="w-full h-[550px] min-h-[550px] overflow-y-auto flex flex-col items-baseline p-4 gap-3 ">
         {messageHistory[0].messageEntityList.map((val, idx) => (
           <div
-            className={`w-full h-auto flex flex-col gap-3 ${val.type === "CLIENT"
+            className={`w-full h-auto flex flex-col ${val.type === "CLIENT"
               ? "justify-start items-start"
               : "justify-end items-end"
               }`}
             key={idx} // Add a unique key to each element in the loop
             ref={(el) => {
-              if (idx === messageHistory.length - 1) {
                 el?.scrollIntoView({ behavior: "smooth" }); // Scroll to the last element
-              }
             }}
           >
+            <p className="text-xs">{moment(val.createdDateAndTime).format("LLLL")}</p>
             <div
               className={` h-auto min-w-auto max-w-[400px] flex flex-col whitespace-wrap ${val.type === "CLIENT"
                 ? "bg-blue-400 text-white rounded-tl-xl rounded-tr-xl rounded-bl-xl"
@@ -58,7 +58,6 @@ function MessageBox({ roomKey }) {
             >
               <p className="whitespace-normal">{val.messageContent}</p>
             </div>
-            <p className="text-xs">{moment(val.createdDateAndTime).format("LLLL")}</p>
           </div>
         ))}
       </div>
