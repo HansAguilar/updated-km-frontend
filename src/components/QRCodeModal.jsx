@@ -45,8 +45,8 @@ export default function QRCodeModal({ setToggleQR }) {
           <AiOutlineClose className='text-white' size={24} />
         </div>
         <h1 className='text-2xl uppercase font-bold'>Hold To Scan</h1>
-        <h3 classname=" text-zinc-600 text-sm " >Scan patient QR code with this QR code Scanner </h3>
-        <div id='reader' className=' h-96 w-96 '>
+        <h3 classname=" text-zinc-600 text-base " >Scan patient QR code with this QR code Scanner </h3>
+        <div id='reader' className=' h-[26rem] w-[26rem] '>
 
         </div>
       </div>
