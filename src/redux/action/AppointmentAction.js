@@ -10,7 +10,7 @@ const socket = io.connect(SOCKET_LINK);
 export const fetchAppointment = () =>{
     return async dispatch=>{
         try {
-            dispatch({ type:FETCH_APPOINTMENT_REQUEST });
+            // dispatch({ type:FETCH_APPOINTMENT_REQUEST });
             const response = await axios.get(`${APPOINTMENT_LINK}/`);
             dispatch({ type:FETCH_APPOINTMENT_SUCCESS, payload:response.data });
         } catch (error) {

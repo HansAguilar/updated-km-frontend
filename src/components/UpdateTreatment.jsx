@@ -9,7 +9,7 @@ import { BiSearchAlt } from 'react-icons/bi';
 
 const inputStyle = "p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none";
 
-function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
+function UpdateTreatmentModal({ show, setModal, initialAppointment }) {
   let [timeStartList, setTimeStartList] = useState(
     [
       { timeValue: "09:00 Am", timeStart: "09:00:00" },
@@ -190,9 +190,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
     //   return alert("You can't select previous date")
     // }
     const end = calculateTotalTime();
-    const data = {
-      timeEnd: end,
-    }
+    console.log(end);
 
     const timeTotal = calculateTotalServiceTime();
     const totalTimeDuration = moment('00:00:00', 'HH:mm:ss');
@@ -201,7 +199,6 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
     while (start.isBefore(moment(end, "HH:mm:ss").add(30, 'minutes'))) {
       const startTime = start.format('HH:mm:ss');
       const matchingTime = timeStartList.find(time => time.timeStart === startTime);
-      console.log("start time", startTime);
       if (startTime === "12:30:00" || startTime === "16:30:00") {
         toastHandler("error", `Kindly select ${totalTimeDuration.format('HH:mm:ss') === "01:00:00"
           ? '30 minutes'
@@ -435,4 +432,4 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
   )
 }
 
-export default UpdateAppointmentModal
+export default React.memo(UpdateTreatmentModal)

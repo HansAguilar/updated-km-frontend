@@ -7,7 +7,7 @@ const socket = io.connect(SOCKET_LINK);
 export const fetchAllNotification = () =>{
     return async dispatch=>{
         try {
-            dispatch({type:FETCH_NOTIFICATION_REQUEST});
+            // dispatch({type:FETCH_NOTIFICATION_REQUEST});
             const response = await axios.get(`${NOTIFICATION_LINK}/`);
             dispatch({
                 type:FETCH_NOTIFICATION_SUCCESS,

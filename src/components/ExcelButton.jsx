@@ -14,7 +14,6 @@ function ExcelButton({ users, title }) {
   }
 
   const filteredPatients = users.map((user) => {
-    console.log(user);
     const filteredData = {};
     fields.forEach(v => {
 

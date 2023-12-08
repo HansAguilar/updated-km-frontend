@@ -43,8 +43,6 @@ function AppointmentInformation() {
     }
     return newTime;
    }
-
-   console.log(details)
   return (
     <>
         {

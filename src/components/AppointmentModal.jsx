@@ -12,7 +12,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
   const patient = useSelector((state) => { return state.patient; });
   const dentist = useSelector((state) => { return state.dentist; });
   const service = useSelector((state) => { return state.service; });
-  const schedule = useSelector((state) => { return state.schedule.payload; });
+  // const schedule = useSelector((state) => { return state.schedule.payload; });
   const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => val.status !== "DONE" || val.status !== "CANCELLED") });
   const [availableHMO, setAvailableHMO] = useState(null);
   const [active, setActive] = useState("");
@@ -111,24 +111,24 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
       setTimeStartList([...newTimeList]);
     }
 
-    setTimeStartList((prev) => {
-      let updatedSchedList = [...prev];
-      const filteredSchedule = schedule.filter((val) => moment(appointment.date, "YYYY-MM-DD").isSame(moment(val.dateSchedule).format("YYYY-MM-DD")) && val.dentist.dentistId === appointment.dentistId);
-      if (filteredSchedule.length > 0) {
-        const indicesScheduleToRemain = [];
-        for (let x = 0; x < filteredSchedule.length; x++) {
-          let start = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeStart);
-          let end = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeEnd);
+    // setTimeStartList((prev) => {
+    //   let updatedSchedList = [...prev];
+    //   const filteredSchedule = schedule.filter((val) => moment(appointment.date, "YYYY-MM-DD").isSame(moment(val.dateSchedule).format("YYYY-MM-DD")) && val.dentist.dentistId === appointment.dentistId);
+    //   if (filteredSchedule.length > 0) {
+    //     const indicesScheduleToRemain = [];
+    //     for (let x = 0; x < filteredSchedule.length; x++) {
+    //       let start = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeStart);
+    //       let end = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeEnd);
 
-          for (let i = start; i < end; i++) {
-            indicesScheduleToRemain.push(i);
-          }
-        }
-        console.log(indicesScheduleToRemain);
-        updatedSchedList = updatedSchedList.filter((_, idx) => { return !indicesScheduleToRemain.includes(idx) });
-      }
-      return updatedSchedList;
-    });
+    //       for (let i = start; i < end; i++) {
+    //         indicesScheduleToRemain.push(i);
+    //       }
+    //     }
+    //     console.log(indicesScheduleToRemain);
+    //     updatedSchedList = updatedSchedList.filter((_, idx) => { return !indicesScheduleToRemain.includes(idx) });
+    //   }
+    //   return updatedSchedList;
+    // });
 
     setTimeStartList(prevTimeStartList => {
       let updatedTimeStartList = [...prevTimeStartList];

@@ -6,7 +6,7 @@ import { toastHandler } from "../../ToastHandler";
 export const fetchDentist = () =>{
     return async dispatch => {
         try {
-            dispatch({ type:FETCH_DENTIST_REQUEST });
+            // dispatch({ type:FETCH_DENTIST_REQUEST });
             const response = await axios.get(`${DENTIST_LINK}/`);
             dispatch({ type:FETCH_DENTIST_SUCCESS, payload:response.data });
         } catch (error) {

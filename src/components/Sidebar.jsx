@@ -153,7 +153,8 @@ function Sidebar({ toggleBar, children }) {
 
 	const logoutHandler = () =>{
 		dispatch(logoutAdmin());
-		localStorage.removeItem("token")
+		localStorage.removeItem("token");
+		localStorage.removeItem("adminId")
 		navigate("/");
 	};
 
