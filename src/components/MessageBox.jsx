@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from "moment/moment";
 import { AiOutlineSend } from "react-icons/ai";
@@ -20,6 +20,13 @@ function MessageBox({ roomKey }) {
     dispatch(sendMessage(roomKey, feedback));
     setFeedback({ ...feedback, messageContent: "" })
   }
+
+  useEffect(() => {
+    const messageContainer = document.getElementById('messageContainer');
+    if (messageContainer) {
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+  }, [messageHistory]);
 
   return (
     <>
@@ -83,4 +90,4 @@ function MessageBox({ roomKey }) {
   );
 }
 
-export default MessageBox;
+export default React.memo(MessageBox);
