@@ -12,14 +12,14 @@ function PDFButton({ patient, data, type,tableHeaderList }) {
   const formattedDate = currentDate.toLocaleDateString('en-US', options).replace(/ /g, '-');
 
   const processPDF = {
-    "patient": { docs: <PatientFile patient={patient} tableHeaderList={tableHeaderList} data={data} />, fileName: `KmGeronimoDentalClinic-${formattedDate}-Dentist` },
+    "patient": { docs: <PatientFile patient={patient} tableHeaderList={tableHeaderList} data={data} />, fileName: `PatientRecord-KmDental-${formattedDate}` },
   }
 
   return (
     <PDFDownloadLink
       document={processPDF[type].docs}
       fileName={processPDF[type].fileName}>
-      <FileIcons Icon={AiFillFilePdf} title={"PDF"} />
+      <FileIcons Icon={AiFillFilePdf} title={"Download PDF"} />
     </PDFDownloadLink>
   )
 }

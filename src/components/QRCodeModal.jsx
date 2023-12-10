@@ -37,7 +37,7 @@ export default function QRCodeModal({ setToggleQR }) {
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-gray-900 bg-opacity-75 absolute z-10 flex flex-grow justify-center items-center">
+    <div className="w-full min-h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center">
       <ToastContainer limit={1} autoClose={1500} />
 
       <div className=' w-auto h-auto p-10 bg-white flex flex-col justify-center items-center gap-2 shadow-md rounded-md relative'>
@@ -45,8 +45,8 @@ export default function QRCodeModal({ setToggleQR }) {
           <AiOutlineClose className='text-white' size={24} />
         </div>
         <h1 className='text-2xl uppercase font-bold'>Hold To Scan</h1>
-        <h3 classname=" text-zinc-600 text-sm " >Scan patient QR code with this QR code Scanner </h3>
-        <div id='reader' className=' h-96 w-96 '>
+        <h3 classname=" text-zinc-600 text-base " >Scan patient QR code with this QR code Scanner </h3>
+        <div id='reader' className=' h-[26rem] w-[26rem] '>
 
         </div>
       </div>

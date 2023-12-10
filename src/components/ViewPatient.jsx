@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoArrowBackSharp } from "react-icons/io5";
@@ -16,7 +16,7 @@ function ViewPatient(props) {
 	const appointment = useSelector((state) =>state.appointment.payload.filter((val) =>val.patient.patientId === id)); 
 
 	// TREATMENT
-	const headerTreatment = ["Date", "Tooth No.","Dentist", "Procedure", "Amount Charged", "Amount Paid", "Balance","status"];
+	const headerTreatment = useMemo(()=>["Date", "Tooth No.","Dentist", "Procedure", "Amount Charged", "Amount Paid", "Balance","status"],[]);
 	const history = appointment.filter(val => val.status === "DONE" || val.status === "CANCELLED")
 		.map(val => {
 			return {
@@ -36,12 +36,12 @@ function ViewPatient(props) {
 		}
 	});
 	const [teethHistory, setHistory] = useState([]);
-	const teethHeader = ["Appointment Start", "Appointment End", "Services", "Status"];
+	const teethHeader = useMemo(()=>["Appointment Start", "Appointment End", "Services", "Status"],[]);
 	const [treatmentRenderData, setTreatmentRenderData] = useState([]);
 
-	const fetchData = ()=>{
+	const fetchData = useCallback(()=>{
 		const result = payment
-		.filter((val)=>val.appointment.status==="TREATMENT" || val.appointment.status==="TREATMENT_DONE")
+		.filter((val)=>(val.appointment.status==="TREATMENT" || val.appointment.status==="TREATMENT_DONE"))
 		.map((paymentData)=>{
 			const teethResult = teethList?.filter((val)=>val.appointment.appointmentId===paymentData.appointment.appointmentId).map((val)=>val.teethNumber);
 			let procedure="";
@@ -64,7 +64,8 @@ function ViewPatient(props) {
 			};
 		})
 		setTreatmentRenderData(result);
-	}
+	})
+	
 	const selectTeethButton = (idx) => {
 		const filteredSelectedTeeth = teethList.filter((val) => val.teethNumber === idx);
 		setHistory(filteredSelectedTeeth);
@@ -84,6 +85,7 @@ function ViewPatient(props) {
 	useEffect(() => {
 		fetchData();
 	}, [teethList]);
+	
 	const OverviewPage = () => {
 		return (
 			<section className='w-full h-full bg-white flex flex-col gap-4'>
@@ -295,7 +297,7 @@ function ViewPatient(props) {
 				<div className='w-1/4 shadow rounded p-5 bg-white flex flex-col justify-center items-center gap-4'>
 
 					{/*//~ IMAGE AND NAME */}
-					<div className='flex flex-col gap-2'>
+					<div className='flex flex-col gap-2 items-center'>
 						<img src={patient.profile} className='w-44 h-44 rounded-full aspect-auto mx-auto' alt='patient profile' />
 						<div className='flex flex-col gap-2 items-center'>
 							<h3 className='text-3xl font-semibold text-cyan-900'>{patient.firstname.charAt(0).toUpperCase() + patient.firstname.substring(1)} {patient.lastname.charAt(0).toUpperCase() + patient.lastname.substring(1)}</h3>

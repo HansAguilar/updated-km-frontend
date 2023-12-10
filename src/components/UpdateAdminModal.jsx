@@ -89,7 +89,7 @@ function UpdateAdminModal({ show, setModal, setAdminInfo, adminInfo, type }) {
   };
 
   return (
-    <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 absolute left-0 -top-10 z-10 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
+    <div className={`w-screen min-h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
       <div className="m-auto w-[900px] h-[700px] bg-zinc-100 rounded overflow-auto">
         <ToastContainer limit={1} autoClose={1500} />
 
@@ -185,7 +185,7 @@ function UpdateAdminModal({ show, setModal, setAdminInfo, adminInfo, type }) {
         </form>
 
         <div className='flex gap-2 p-4 justify-end'>
-          <button className='py-2 px-4 font-medium bg-red-500 text-white rounded hover:bg-red-700' onClick={() => setModal(false)}>Cancel</button>
+          <button className='py-2 px-4 font-medium bg-gray-300 text-gray-700 rounded hover:bg-gray-400' onClick={() => setModal(false)}>Cancel</button>
           <button className='py-2 px-4 font-medium bg-blue-500 text-white rounded hover:bg-blue-700' onClick={btnSubmit}>Save Changes</button>
         </div>
       </div>

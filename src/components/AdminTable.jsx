@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { deleteAdmin, changeAdminStatus } from "../redux/action/AdminAction";
 import { toastHandler } from '../ToastHandler';
 import { ToastContainer } from 'react-toastify';
+import ConfirmDeletionModal from './ConfirmDeletionModal';
 
 function AdminTable({ tableHeaders, results, search, currentPage }) {
 	const dispatch = useDispatch();
@@ -44,10 +45,29 @@ function AdminTable({ tableHeaders, results, search, currentPage }) {
 		setUpdateModal(true);
 	}
 
+	const [showModal, setShowModal] = useState({
+		showIt: false,
+		id: null,
+		name: "",
+	});
+
+
+	const confirmDeletion = (patientID, patientName) => {
+		setShowModal(prev => ({ showIt: !prev.showIt, id: patientID, name: patientName }));
+	}
+
+	function handleDelete() {
+		console.log('Deleted!');
+		dispatch(deleteAdmin(showModal.id));
+		setShowModal(prev => ({ showIt: !prev.showIt }));
+	}
+
 	return (
 		<>
 			<ToastContainer limit={1} autoClose={1500} />
 			<UpdateAdminModal show={updateModel} setModal={setUpdateModal} setAdminInfo={setAdminInfo} adminInfo={adminInfo} type="admin" />
+			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} onConfirm={handleDelete} />)}
+
 			<div className='p-4'>
 
 				<table className='min-w-full'>
@@ -70,7 +90,7 @@ function AdminTable({ tableHeaders, results, search, currentPage }) {
 							search.length > 0 ?
 								results
 									.filter((val) => { return val.role === "STAFF"; })
-									.map((result,idx) => (
+									.map((result, idx) => (
 										<tr className='font-medium border text-cyan-900 even:bg-slate-100' key={idx}>
 											<td className='p-2 text-center flex justify-center '>
 												<img src={result.profile} className='m-auto w-14 h-14 rounded-full object-fill aspect-auto border border-gray-400' alt="User" />
@@ -123,9 +143,7 @@ function AdminTable({ tableHeaders, results, search, currentPage }) {
 														<p className='pr-2'>Update</p>
 													</span>
 													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'
-														onClick={() => dispatch(
-															deleteAdmin(result.adminId)
-														)}>
+														onClick={() => confirmDeletion(result.adminId, `${result.firstname} ${result.lastname}`)}>
 														<AiFillDelete size={25} />
 														<p className='pr-2'>Delete</p>
 													</span>
@@ -137,7 +155,7 @@ function AdminTable({ tableHeaders, results, search, currentPage }) {
 									//       firstItem         LastItem
 									.slice((currentPage * 8) - 8, currentPage * 8)
 									.filter((val) => { return val.role === "STAFF"; })
-									.map((result,idx) => (
+									.map((result, idx) => (
 										<tr className='font-medium border text-cyan-900 even:bg-slate-100' key={idx}>
 											<td className='p-2 text-center'>
 												<img src={result.profile} className='m-auto w-14 h-14 rounded-full object-fill aspect-auto border border-gray-400' alt="User" />
@@ -190,9 +208,7 @@ function AdminTable({ tableHeaders, results, search, currentPage }) {
 														<p className='pr-2'>Update</p>
 													</span>
 													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'
-														onClick={() => dispatch(
-															deleteAdmin(result.adminId)
-														)}>
+														onClick={() => confirmDeletion(result.adminId, `${result.firstname} ${result.lastname}`)}>
 														<AiFillDelete size={25} />
 														<p className='pr-2'>Delete</p>
 													</span>

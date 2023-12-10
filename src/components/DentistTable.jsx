@@ -4,6 +4,7 @@ import UpdateDentistModal from './UpdateDentistModal';
 import { ToastContainer } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { disableDentist, deleteDentist } from '../redux/action/DentistAction';
+import ConfirmDeletionModal from './ConfirmDeletionModal';
 
 function DentistTable({ tableHeaders, results, search, currentPage }) {
 	const dispatch = useDispatch();
@@ -19,7 +20,11 @@ function DentistTable({ tableHeaders, results, search, currentPage }) {
 		specialty: "",
 		profile: ""
 	});
-
+	const [showModal, setShowModal] = useState({
+		showIt: false,
+		id: null,
+		name: ""
+	});
 	const disableAccountBtn = async (id, disable) => {
 		const newDisableInformation = { id: id, verified: disable };
 		dispatch(disableDentist(newDisableInformation));
@@ -40,10 +45,23 @@ function DentistTable({ tableHeaders, results, search, currentPage }) {
 		})
 		setUpdateModal(true);
 	}
+
+	const confirmDeletion = (patientID, patientName) => {
+		// if (window.confirm(`Are you sure do you want to delete ${patientName}?`)) return dispatch(deletePatient(patientID));
+		setShowModal(prev => ({ showIt: !prev.showIt, id: patientID, name: patientName }));
+	}
+
+	function handleDelete() {
+		dispatch(deleteDentist(showModal.id))
+		setShowModal(prev => ({ showIt: !prev.showIt }));
+	}
+
 	return (
 		<>
 			<UpdateDentistModal show={update} setModal={setUpdateModal} setData={setData} data={data} />
 			<ToastContainer limit={1} autoClose={1500} />
+			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} onConfirm={handleDelete} />)}
+
 			<div className='p-4'>
 
 				<table className='min-w-full'>
@@ -122,7 +140,9 @@ function DentistTable({ tableHeaders, results, search, currentPage }) {
 														<AiFillEdit size={25} />
 														<p className='pr-2'>Update</p>
 													</span>
-													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'>
+													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center' onClick={
+														confirmDeletion(result.dentistId, `Dr. ${result.fullname}`)
+													}>
 														<AiFillDelete size={25} />
 														<p className='pr-2'>Delete</p>
 													</span>
@@ -190,7 +210,8 @@ function DentistTable({ tableHeaders, results, search, currentPage }) {
 														<AiFillEdit size={25} />
 														<p className='pr-2'>Update</p>
 													</span>
-													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'>
+													<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'
+														onClick={() => confirmDeletion(result.dentistId, `Dr. ${result.fullname}`)}>
 														<AiFillDelete size={25} />
 														<p className='pr-2'>Delete</p>
 													</span>

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React from 'react';
 import { APPOINTMENT_LINK } from '../ApiLinks';
 import { ToastContainer, toast } from 'react-toastify';
@@ -22,7 +21,7 @@ function CancelModal({ show, setShow, status, setStatus }) {
     setShow(false);
   }
   return (
-    <div className={`w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-10 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
+    <div className={`w-full h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
         <ToastContainer limit={1} autoClose={1500} />
       <div className="m-auto w-[600px] bg-zinc-100 rounded overflow-auto">
 

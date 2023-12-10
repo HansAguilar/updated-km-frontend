@@ -39,6 +39,7 @@ import { fetchIncomingMessage } from "../redux/action/MessageAction";
 import NotificationModal from '../components/NotificationModal';
 import AppointmentFee from './AppointmentFee';
 import { fetchInsurance } from '../redux/action/InsuranceAction';
+import { fetchSchedule } from '../redux/action/ScheduleAction';
 
 const socket = io.connect(SOCKET_LINK);
 function Dashboard() {
@@ -57,6 +58,7 @@ function Dashboard() {
   const appointment = useSelector(state => state?.appointment );
   const notification = useSelector((state)=>state?.notification)
   const appointmentFee = useSelector((state)=>state?.fee)
+  const schedule= useSelector((state)=>state?.schedule)
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -73,6 +75,7 @@ function Dashboard() {
       dispatch(fetchAllNotification());
       dispatch(fetchAppointmentFee());
       dispatch(fetchInsurance())
+      dispatch(fetchSchedule());
     }
   }, [admin.loginAdmin]);
 
@@ -114,10 +117,8 @@ function Dashboard() {
   return(
     <>
       {
-        (!admin.loginAdmin || !patient?.payload  || !payment?.payload || !service?.payload ||!dentist?.payload ||!appointment?.payload || !notification?.payload || !appointmentFee?.payload) && <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></section>
-      }
-      {
-         (admin.loginAdmin && patient?.payload  && payment?.payload && service?.payload && dentist?.payload && appointment?.payload && notification?.payload && appointmentFee?.payload) && (
+        (!admin.loginAdmin || !schedule.payload || !patient?.payload  || !payment?.payload || !service?.payload ||!dentist?.payload ||!appointment?.payload || !notification?.payload || !appointmentFee?.payload) ? <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></section>
+         :(
           <div className='w-full h-screen flex z-10 relative '>
             <Sidebar toggleBar={toggleBar} />
             <div className=' relative flex flex-grow flex-col bg-slate-200'>

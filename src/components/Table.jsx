@@ -7,9 +7,15 @@ import { deletePatient, disablePatient } from "../redux/action/PatientAction"
 import { toastHandler } from "../ToastHandler";
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import ConfirmDeletionModal from './ConfirmDeletionModal';
 
 function Table({ tableHeaders, results, search, currentPage }) {
 	const dispatch = useDispatch();
+	const [showModal, setShowModal] = useState({
+		showIt: false,
+		id: null,
+		name: ""
+	});
 	const navigate = useNavigate();
 	const [updateModel, setUpdateModal] = useState(false);
 	const [patient, setPatientInfo] = useState({
@@ -24,6 +30,7 @@ function Table({ tableHeaders, results, search, currentPage }) {
 		contactNumber: "",
 		profile: ""
 	});
+
 	const update = (patientId, firstname, middlename, lastname, address, birthday, email, gender, contactNumber, profile) => {
 		setPatientInfo({
 			...patient,
@@ -47,10 +54,20 @@ function Table({ tableHeaders, results, search, currentPage }) {
 		toastHandler("success", `Disable${disable ? '' : 'd'} Account Successfully!`);
 	};
 
+	const confirmDeletion = (patientID, patientName) => {
+		setShowModal(prev => ({ showIt: !prev.showIt, id: patientID, name: patientName }));
+	}
+
+	function handleDelete() {
+		dispatch(deletePatient(showModal.id))
+		setShowModal(prev => ({ showIt: !prev.showIt }));
+	}
+
 	return (
 		<div className='p-4 '>
 			<Modal show={updateModel} setModal={setUpdateModal} setAdminInfo={setPatientInfo} adminInfo={patient} type="patient" />
 			<ToastContainer limit={1} autoClose={1500} />
+			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} onConfirm={handleDelete} />)}
 
 			<table className='min-w-full table-fixed'>
 				{/*//~ HEAD */}
@@ -192,7 +209,7 @@ function Table({ tableHeaders, results, search, currentPage }) {
 													<AiFillEdit size={25} />
 													<p className='pr-2'>Update</p>
 												</span>
-												<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center' onClick={() => dispatch(deletePatient(result.patientId))}>
+												<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center' onClick={() => confirmDeletion(result.patientId, `${result.firstname} ${result.lastname}`)}>
 													<AiFillDelete size={25} />
 													<p className='pr-2'>Delete</p>
 												</span>

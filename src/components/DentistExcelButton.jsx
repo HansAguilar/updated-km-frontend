@@ -2,6 +2,7 @@ import React from 'react'
 import FileIcons from './FileIcons';
 import { RiFileExcel2Fill } from 'react-icons/ri';
 import { utils, writeFile } from 'xlsx';
+import ExcelJS from 'exceljs';
 
 function ExcelButton({ users, title }) {
   const fields = ["fullname", "address", "gender", "email", "contactNumber", "birthday", "specialty"];
@@ -17,6 +18,7 @@ function ExcelButton({ users, title }) {
   // const header = fields.map((val)=>{
   //   return val.charAt(0).toUpperCase()+val.slice(1);
   // })
+
   const printExcel = () => {
     const wb = utils.book_new();
     let ws = utils.json_to_sheet(filteredUsers, {

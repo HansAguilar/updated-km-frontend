@@ -70,6 +70,7 @@ export default function QRScanPage() {
     dispatch(acceptAppointment(id));
     window.location.reload(navigate("/admin/dashboard/"));
   }
+  
   return appointmentDetails && (
     <div className='h-screen w-full m-auto flex gap-2 items-center justify-center overflow-hidden relative flex-col'>
       <ToastContainer limit={1} autoClose={1500} />

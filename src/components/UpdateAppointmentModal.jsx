@@ -32,7 +32,8 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
   const dispatch = useDispatch();
   const dentist = useSelector((state) => { return state.dentist; });
   const service = useSelector((state) => { return state.service; });
-  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => val.status === "PENDING" || val.status === "APPROVED" || val.status === "TREATMENT") })
+  const schedule = useSelector((state)=>state.schedule.payload);
+  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => (val.status !== "DONE" && val.status !== "CANCELLED"&& val.status !== "TREATMENT_DONE")) });
 
   const serviceIds = initialAppointment?.dentalServices.map((val) => val.serviceId);
 
@@ -85,25 +86,23 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
       setTimeStartList(filteredTime);
     }
 
-    // setTimeStartList((prev) => {
-    //   let updatedSchedList = [...prev];
-    //   const filteredSchedule = schedule.filter((val) => moment(appointment.date, "YYYY-MM-DD").isSame(moment(val.dateSchedule).format("YYYY-MM-DD")) && val.dentist.dentistId === appointment.dentistId);
-    //   if (filteredSchedule.length > 0) {
-    //     const indicesScheduleToRemain = [];
-    //     for (let x = 0; x < filteredSchedule.length; x++) {
-    //       let start = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeStart);
-    //       let end = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeEnd);
+    setTimeStartList((prev) => {
+      let updatedSchedList = [...prev];
+      const filteredSchedule = schedule.filter((val) => (moment(appointment.date, "YYYY-MM-DD").isSame(moment(val.dateSchedule).format("YYYY-MM-DD")) && val.dentist.dentistId === appointment.dentistId));
+      if (filteredSchedule.length > 0) {
+        const indicesScheduleToRemain = [];
+        for (let x = 0; x < filteredSchedule.length; x++) {
+          let start = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeStart);
+          let end = updatedSchedList.findIndex((val) => val.timeStart === filteredSchedule[x].timeEnd);
 
-    //       for (let i = start; i < end; i++) {
-    //         indicesScheduleToRemain.push(i);
-    //       }
-    //     }
-    //     console.log(indicesScheduleToRemain);
-    //     updatedSchedList = updatedSchedList.filter((_, idx) => { return indicesScheduleToRemain.includes(idx) });
-    //   }
-
-    //   return updatedSchedList;
-    // });
+          for (let i = start; i < end; i++) {
+            indicesScheduleToRemain.push(i);
+          }
+        }
+        updatedSchedList = updatedSchedList.filter((_, idx) => { return !indicesScheduleToRemain.includes(idx) });
+      }
+      return updatedSchedList;
+    });
 
     //REMOVE ALL THE OTHER PATIENT APPOINTMENT
     setTimeStartList(prevTimeStartList => {
@@ -125,7 +124,6 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
             indexesToRemove.push(begin);
           }
         }
-
         updatedTimeStartList = updatedTimeStartList.filter((_, index) => {
           return !indexesToRemove.includes(index);
         })
@@ -133,7 +131,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
 
       return updatedTimeStartList;
     })
-  }, [timeStartRef.current,appointment.date])
+  }, [timeStartRef.current,appointment.date, appointment.dentistId])
 
   const handleOnChange = (e) => {
     if (e.target.name === "dentist") {
@@ -249,7 +247,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
       total += durationInMillis;
     }
 
-    const convertTotalTime = moment.duration(total);
+    const convertTotalTime = moment.duration("00:30:00");
     return moment.utc(convertTotalTime.asMilliseconds()).format('HH:mm:ss');
   }
   const calculateTotalTime = () => {
@@ -261,7 +259,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
   const btnClose = () => setModal(false);
 
   return initialAppointment && (
-    <div className={`w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-10 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
+    <div className={`w-full h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
       <div className="m-auto w-[900px] min-h-max bg-zinc-100 rounded overflow-auto ">
         <ToastContainer limit={1} autoClose={1500} />
 

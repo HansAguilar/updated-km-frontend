@@ -125,10 +125,10 @@ function TreatmentTable({ tableHeaders, results, search, currentPage, type }) {
 													<p className='pr-2'>Update</p>
 												</span>
 
-												<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 cursor-pointer flex items-center' onClick={() => deleteAppointmentButton(result.appointmentId)}>
+												{/* <span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 cursor-pointer flex items-center' onClick={() => deleteAppointmentButton(result.appointmentId)}>
 													<AiFillDelete size={25} />
 													<p className='pr-2'>Delete</p>
-												</span>
+												</span> */}
 
 												<span className='transition-all ease-linear duration-150 rounded p-2 bg-gray-500 hover:bg-gray-700 cursor-pointer flex items-center' onClick={() => { navigate(`/admin/dashboard/appointment/details/${result.appointmentId}`) }}>
 													<AiOutlineFolderView size={25} />

@@ -44,20 +44,20 @@ function Messages({ admin }) {
     };
 
     const sendMessageButton = () => {
-      if(!messageDetails.messageContent) return;
+      if (!messageDetails.messageContent) return;
       const key = `${messageDetails.adminId}-${messageDetails.receiverId}`;
       const filteredMessages = newMessage.filter((val)=>val.roomId===key);
       
       if(filteredMessages.length > 0){
         dispatch(sendMessage(key, messageDetails));
-      }else{
+      } else {
         dispatch(createNewMessage(key, messageDetails));
       }
       setModal(false)
     }
 
     return (
-      <div className={`w-full h-screen bg-gray-900 bg-opacity-75 absolute left-0 top-0 z-10 flex flex-grow justify-center items-center `}>
+      <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center `}>
         <div className="relative m-auto w-[500px] h-[500px] bg-zinc-100 rounded p-4">
           <div className="bg-red-400 absolute top-3 right-3 rounded-full p-2 cursor-pointer hover:bg-red-600" onClick={() => setModal(false)}>
             <AiOutlineClose className='text-white' size={24} />
@@ -124,7 +124,6 @@ function Messages({ admin }) {
       </div>
     )
   }
-
   
   return newMessage && (
     <div className='w-full h-screen overflow-hidden relative flex flex-row bg-gray-200 gap-4 p-4'>

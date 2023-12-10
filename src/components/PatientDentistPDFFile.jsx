@@ -5,9 +5,7 @@ import moment from 'moment';
 
 const styles = StyleSheet.create({
   body: {
-    paddingTop: 25,
-    paddingBottom: 55,
-    paddingHorizontal: 25,
+    padding: 50
   },
   title: {
     fontSize: 24,
@@ -29,7 +27,7 @@ const styles = StyleSheet.create({
     color: "grey",
   },
   tableHeader: {
-    marginTop:10,
+    marginTop: 10,
     flexDirection: "row",
     backgroundColor: '#d9d9d9',
     borderBottomWidth: 1,
@@ -66,6 +64,9 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: "#CCCCCC",
+    paddingBottom: 8
   },
   logo: {
     height: 100, // Adjust the height as needed
@@ -73,8 +74,8 @@ const styles = StyleSheet.create({
 });
 
 
-function DentistPDFFile({ patient, data,tableHeaderList }) {
-    console.log(data);
+function DentistPDFFile({ patient, data, tableHeaderList }) {
+  console.log(data);
   return (
     <Document >
       <Page style={styles.body} >
@@ -82,63 +83,96 @@ function DentistPDFFile({ patient, data,tableHeaderList }) {
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={kmlogo} />
         </View>
-        <View style={{ marginVertical: 4 }}>
+        {/* <View style={{ marginVertical: 4 }}>
           <Text style={{ color: "#2b2b2b", fontSize: 12 }}>Patient Record</Text>
-        </View>
+        </View> */}
 
-        <View style={{width: "100%",height:"auto",display:'flex',paddingVertical:10, flexDirection:'row'}}>
-            <Image style={{width: 80, height: 80}} source={{uri: patient.profile}} onError={(e) => console.error("Error loading image", e)} />
-            <View>
-                <Text style={{ color: "#2b2b2b", fontSize: 12, textTransform:'capitalize' }}>Full Name: {patient.firstname} {patient.middlename ? `${patient.middlename}`: ' '} {patient.lastname}</Text>
-                <Text style={{ color: "#2b2b2b", fontSize: 12, textTransform:'capitalize' }}>Birthday: {patient.email}</Text>
-                <Text style={{ color: "#2b2b2b", fontSize: 12, textTransform:'capitalize' }}>Gender: {patient.gender}</Text>
-                <Text style={{ color: "#2b2b2b", fontSize: 12, textTransform:'capitalize' }}>Birthday: {moment(patient.birthday).format("MMMM DD, YYYY")}</Text>
-                <Text style={{ color: "#2b2b2b", fontSize: 12, textTransform:'capitalize' }}>Contact Number: {patient.contactNumber}</Text>
-                <Text style={{ color: "#2b2b2b", fontSize: 12, textTransform:'capitalize' }}>Address: {patient.address}</Text>
+        <View style={{ width: "100%", display: 'flex', marginVertical: 20, flexDirection: 'column', gap: 20, position: "relative" }}>
+
+
+          {/* <Image style={{ width: 80, height: 80 }} source={{ uri: patient.profile }} onError={(e) => console.error("Error loading image", e)} /> */}
+          <View style={{ flexDirection: "row", alignItems: "center", width: "100%", flex: 1 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+              <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Full Name: </Text>
+              <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{patient.firstname} {patient.middlename ? `${patient.middlename}` : ' '} {patient.lastname}</Text>
             </View>
+            <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+              <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Birthday: </Text>
+              <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{moment(patient.birthday).format("MMMM DD, YYYY")}</Text>
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center", flex: 1, justifyContent: "flex-end" }}>
+              <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Gender: </Text>
+              <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{patient.gender}</Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row", alignItems: "center", width: "100%" }}>
+            <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+              <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Email: </Text>
+              <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{patient.email}</Text>
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center", flex: 1, justifyContent: "flex-end" }}>
+              <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Contact Number: </Text>
+              <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{patient.contactNumber}</Text>
+            </View>
+          </View>
+
+          <View style={{ width: "100%" }}>
+            <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+              <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Address: </Text>
+              <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{patient.address}</Text>
+            </View>
+          </View>
         </View>
 
-         <View style={styles.tableHeader}>
-            {
-                tableHeaderList.map((val, idx)=>(
-                    <View key={idx} style={{ ...styles.cell, }}>
-                        <Text style={{ ...styles.tableHeaderText }}>{val}</Text>
-                    </View>
-                ))
-            }
+        <View style={styles.tableHeader}>
+          {
+            tableHeaderList.map((val, idx) => (
+              val === "Dentist" || val === "status" ?
+                null
+                :
+                <View key={idx} style={{ ...styles.cell, }}>
+                  <Text style={{ ...styles.tableHeaderText }}>{val}</Text>
+                </View>
+            ))
+          }
         </View>
 
 
         {data.map((val, idx) => (
-            
-          <View style={styles.tableBodyEven} key={idx}>
-            <View style={{ ...styles.cell, }}>
-              <Text style={styles.tableBodyText}>{`${moment(val.date).format("MMM DD, YYYY")}`}</Text>
+          <>
+            <View style={styles.tableBodyEven} key={idx}>
+              <View style={{ ...styles.cell, }}>
+                <Text style={styles.tableBodyText}>{`${moment(val.date).format("MMM DD, YYYY")}`}</Text>
+              </View>
+              <View style={{ ...styles.cell, }}>
+                <Text style={{ ...styles.tableBodyText, maxWidth: 60 }}>{val.teeth}</Text>
+              </View>
+              {/* <View style={{ ...styles.cell, }}>
+                <Text style={{ ...styles.tableBodyText, maxWidth: 60 }}>{val.dentist}</Text>
+              </View> */}
+              <View style={{ ...styles.cell, }}>
+                <Text style={styles.tableBodyText}>{val.procedure}</Text>
+              </View>
+              <View style={{ ...styles.cell, }}>
+                <Text style={styles.tableBodyText}>Php. {val.amountCharged.toLocaleString()}</Text>
+              </View>
+              <View style={{ ...styles.cell, }}>
+                <Text style={styles.tableBodyText}>Php. {val.amountPaid.toLocaleString()}</Text>
+              </View>
+              <View style={{ ...styles.cell, }}>
+                <Text style={styles.tableBodyText}>Php. {val.balance.toLocaleString()}</Text>
+              </View>
+              {/* <View style={{ ...styles.cell, }}>
+                <Text style={styles.tableBodyText}>{val.status === "TREATMENT_DONE" ? "Done" : "Pending"}</Text>
+              </View> */}
             </View>
-            <View style={{ ...styles.cell, }}>
-              <Text style={{...styles.tableBodyText, maxWidth:60}}>{val.teeth}</Text>
-            </View>
-            <View style={{ ...styles.cell, }}>
-              <Text style={styles.tableBodyText}>{val.dentist}</Text>
-            </View>
-            <View style={{ ...styles.cell, }}>
-              <Text style={styles.tableBodyText}>{val.procedure}</Text>
-            </View>
-            <View style={{ ...styles.cell, }}>
-              <Text style={styles.tableBodyText}>Php. {val.amountCharged.toLocaleString()}</Text>
-            </View>
-            <View style={{ ...styles.cell, }}>
-              <Text style={styles.tableBodyText}>Php. {val.amountPaid.toLocaleString()}</Text>
-            </View>
-            <View style={{ ...styles.cell, }}>
-              <Text style={styles.tableBodyText}>Php. {val.balance.toLocaleString()}</Text>
-            </View>
-            <View style={{ ...styles.cell, }}>
-              <Text style={styles.tableBodyText}>{val.status === "TREATMENT_DONE" ? "Done":"Pending"}</Text>
-            </View>
-          </View>
-        ))}
+            {/* <View style={{ position: "absolute", bottom: 0 }}>
+              <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{val.dentist}</Text>
+            </View> */}
+          </>
 
+        ))}
 
         {/*Page Number*/}
         <Text

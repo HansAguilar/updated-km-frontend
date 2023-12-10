@@ -5,21 +5,33 @@ import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
 import { toastHandler } from '../ToastHandler';
 import { useDispatch } from 'react-redux';
 import { deleteAnnouncement } from '../redux/action/AnnouncementAction';
+import ConfirmDeletionModal from './ConfirmDeletionModal';
 
 function AnnouncementTable({ tableHeaders, results, search, currentPage }) {
 	const [details, setDetails] = useState(null);
 	const [update, setUpdate] = useState(false);
 	const dispatch = useDispatch();
+	const [showModal, setShowModal] = useState({
+		showIt: false,
+		id: null,
+		name: ""
+	});
 
-	const deleteButton = (id) => {
-		dispatch(deleteAnnouncement(id))
+	const confirmDeletion = (patientID, patientName) => {
+		setShowModal(prev => ({ showIt: !prev.showIt, id: patientID, name: patientName }));
+	}
+
+	function handleDelete() {
+		dispatch(deleteAnnouncement(showModal.id))
 		toastHandler("success", "Successfully deleted!");
+		setShowModal(prev => ({ showIt: !prev.showIt }));
 	}
 
 	return (
 		<div className='p-4'>
 			<ToastContainer limit={1} autoClose={1500} />
 			<Update show={update} setModal={setUpdate} details={details} setDetails={setDetails} />
+			{showModal.showIt && (<ConfirmDeletionModal setShowModal={setShowModal} showModal={showModal} onConfirm={handleDelete} />)}
 
 			<table className='min-w-full table-fixed'>
 				{/*//~ HEAD */}
@@ -70,7 +82,8 @@ function AnnouncementTable({ tableHeaders, results, search, currentPage }) {
 											<p className='pr-2'>Update</p>
 										</span>
 
-										<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center' onClick={() => { deleteButton(val.announcementId) }}>
+										<span className='transition-all ease-linear duration-150 rounded p-2 bg-red-500 hover:bg-red-700 text-white cursor-pointer flex items-center'
+											onClick={() => confirmDeletion(val.announcementId, `${val.title} `)}>
 											<AiFillDelete size={25} />
 											<p className='pr-2'>Delete</p>
 										</span>
