@@ -1,8 +1,6 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { IoAdd } from 'react-icons/io5';
-import { AiFillPrinter } from 'react-icons/ai';
-import FileIcons from '../components/FileIcons';
 import DentistModal from '../components/DentistModal';
 import Pagination from '../components/Pagination';
 import DentistTable from '../components/DentistTable';
@@ -17,25 +15,25 @@ function Dentist() {
   const [search, setSearch] = useState("");
   const dentistList = useSelector((state) => state?.dentist?.payload)
   const [currentPage, setCurrentPage] = useState(1);
-  const tableHeaders = useMemo(()=>["profile", "fullname", "address", "gender", "contact number", "email", "specialty", "status", "action"],[]);
-  
-  const pageNumber = useMemo(()=>{
+  const tableHeaders = useMemo(() => ["profile", "fullname", "address", "gender", "contact number", "email", "specialty", "status", "action"], []);
+
+  const pageNumber = useMemo(() => {
     const page = [];
     for (let x = 1; x <= Math.ceil(dentistList?.length / 8); x++) {
       page.push(x);
     }
     return page;
-  },[dentistList]);
+  }, [dentistList]);
 
-  
+
   const searchHandle = (e) => {
     setSearch(e.target.value);
   }
-  const filteredDentist = useMemo(()=>{
+  const filteredDentist = useMemo(() => {
     return dentistList?.filter(dentist =>
       (dentist.fullname + dentist.address + dentist.specialty).toLowerCase().includes(search)
     );
-  },[dentistList]);
+  }, [dentistList]);
 
 
   return (

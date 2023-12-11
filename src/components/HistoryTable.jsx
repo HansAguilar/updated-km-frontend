@@ -1,11 +1,9 @@
 import React from 'react';
 
-
 function HistoryTable({ tableHeaders, results, search, currentPage }) {
-	console.log(results);
 	return (
 		<div className='p-5'>
-			<table className='min-w-full'>
+			<table className='min-w-full table-fixed'>
 
 				{/*//~ HEAD */}
 				<thead className='bg-slate-700'>
@@ -25,8 +23,8 @@ function HistoryTable({ tableHeaders, results, search, currentPage }) {
 							results
 								//       firstItem         LastItem
 								.slice((currentPage * 8) - 8, currentPage * 8)
-								.map((result) => (
-									<tr className={`font-medium border`} key={result.historyId}>
+								.map((result, index) => (
+									<tr className="font-medium border text-cyan-900 even:bg-slate-100" key={index}>
 										<td className='text-center p-5 '>
 											{result.name}
 										</td>
@@ -44,8 +42,8 @@ function HistoryTable({ tableHeaders, results, search, currentPage }) {
 							: results
 								//       firstItem         LastItem
 								.slice((currentPage * 8) - 8, currentPage * 8)
-								.map((result) => (
-									<tr className={`font-medium border`} key={result.historyId}>
+								.map((result, index) => (
+									<tr className="font-medium border text-cyan-900 even:bg-slate-100" key={index}>
 										<td className='text-center p-5'>
 											{result.name}
 										</td>

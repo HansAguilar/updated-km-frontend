@@ -90,7 +90,7 @@ function UpdateAnnouncement({ show, setModal, details, setDetails }) {
                                     });
                                     setModal(false);
                                 }}>Cancel</button>
-                                <button className='py-2 px-4 font-medium bg-blue-500 text-white rounded hover:bg-blue-700' onClick={submitButton}>Confirm</button>
+                                <button className='py-2 px-4 font-medium bg-blue-500 text-white rounded hover:bg-blue-700' onClick={submitButton}>Save Changes</button>
                             </div>
                         </div>
                     </div >

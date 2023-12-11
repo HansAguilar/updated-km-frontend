@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FETCH_INSURANCE_FAILED, FETCH_INSURANCE_REQUEST, FETCH_INSURANCE_SUCCESS } from "../ActionTypes"
+import { FETCH_INSURANCE_FAILED, FETCH_INSURANCE_SUCCESS } from "../ActionTypes"
 import { HMO_LINK } from "../../ApiLinks";
 
 export const fetchInsurance = () =>{

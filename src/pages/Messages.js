@@ -3,7 +3,7 @@ import * as io from "socket.io-client";
 import { SOCKET_LINK } from "../ApiLinks";
 import { useDispatch, useSelector } from "react-redux";
 import { BiMessageEdit, BiSearchAlt } from "react-icons/bi";
-import { createNewMessage,fetchMessages,sendMessage } from "../redux/action/MessageAction";
+import { createNewMessage, fetchMessages, sendMessage } from "../redux/action/MessageAction";
 import MessageBox from "../components/MessageBox";
 import { AiOutlineClose } from "react-icons/ai";
 import { useEffect } from "react";
@@ -15,14 +15,14 @@ function Messages({ admin }) {
   const newMessage = useSelector((state) => { return state?.messages?.payload; });
   const [roomKey, setRoomKey] = useState("");
 
-  const selectMessageRoom = (key) =>{
+  const selectMessageRoom = (key) => {
     setRoomKey(key);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     const adminId = localStorage.getItem("adminId");
     dispatch(fetchMessages(adminId))
-  },[])
+  }, [])
 
   const MessageModal = () => {
     const admin = useSelector((state) => { return state.admin.loginAdmin; })
@@ -47,9 +47,9 @@ function Messages({ admin }) {
     const sendMessageButton = () => {
       if (!messageDetails.messageContent) return;
       const key = `${messageDetails.adminId}-${messageDetails.receiverId}`;
-      const filteredMessages = newMessage.filter((val)=>val.roomId===key);
-      
-      if(filteredMessages.length > 0){
+      const filteredMessages = newMessage.filter((val) => val.roomId === key);
+
+      if (filteredMessages.length > 0) {
         dispatch(sendMessage(key, messageDetails));
       } else {
         dispatch(createNewMessage(key, messageDetails));
@@ -125,7 +125,7 @@ function Messages({ admin }) {
       </div>
     )
   }
-  
+
   return (
     <>
       {
@@ -134,9 +134,9 @@ function Messages({ admin }) {
             <LoadingSpinner loading={true} />
           </div>
         )
-        : (
-          <>
-                 <div className='w-full h-screen overflow-hidden relative flex flex-row bg-gray-200 gap-4 p-4'>
+          : (
+            <>
+              <div className='w-full h-screen overflow-hidden relative flex flex-row bg-gray-200 gap-4 p-4'>
                 {modal && <MessageModal />}
 
                 <div className="bg-white rounded w-1/4 h-full p-5 flex flex-col gap-3 shadow-md">
@@ -166,8 +166,8 @@ function Messages({ admin }) {
                           <div className=" w-full h-auto ">
                             <h1 className=" text-md font-bold text-slate-700 ">{val.receiverId.firstname} {val.receiverId.lastname}</h1>
                             {
-                              val.messageEntityList && val.messageEntityList.slice(-1).map((v) => (
-                                <p className={`text-sm max-w-[250px] truncate ${(v.type === "CLIENT" && v.status === "UNREAD") ? 'font-bold ' : ''}`}>
+                              val.messageEntityList && val.messageEntityList.slice(-1).map((v, index) => (
+                                <p key={index} className={`text-sm max-w-[250px] truncate ${(v.type === "CLIENT" && v.status === "UNREAD") ? 'font-bold ' : ''}`}>
                                   {v.messageContent}
                                 </p>
                               ))
@@ -190,11 +190,11 @@ function Messages({ admin }) {
                   )}
                 </div>
               </div>
-          </>
-        )
+            </>
+          )
       }
     </>
-    
+
   )
 }
 

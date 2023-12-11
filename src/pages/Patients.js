@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { IoAdd } from 'react-icons/io5';
-import { AiFillPrinter } from 'react-icons/ai';
 import { BiSearchAlt } from 'react-icons/bi';
-import FileIcons from '../components/FileIcons';
 import Table from '../components/Table';
 import Modal from '../components/AdminModal';
 import Pagination from '../components/Pagination';

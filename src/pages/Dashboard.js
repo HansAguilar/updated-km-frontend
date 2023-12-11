@@ -22,7 +22,7 @@ import Schedule from "./Schedule";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPatient } from '../redux/action/PatientAction';
 import { fetchDentist } from '../redux/action/DentistAction';
-import { fetchAppointment, deleteByPatientAppointment,fetchPatientAppointment, updateAppointment,patientChanges,insertAppointment } from '../redux/action/AppointmentAction';
+import { fetchAppointment, deleteByPatientAppointment, fetchPatientAppointment, patientChanges } from '../redux/action/AppointmentAction';
 import { fetchLoginAdmin } from '../redux/action/AdminAction';
 import { fetchServices } from '../redux/action/ServicesAction';
 import { fetchAllNotification } from '../redux/action/NotificationAction';
@@ -34,7 +34,7 @@ import QRScanPage from './QRScanPage';
 import QRCodeModal from '../components/QRCodeModal';
 import * as io from "socket.io-client";
 import { SOCKET_LINK } from '../ApiLinks';
-import { fetchPayments, fetchPatientPayments,fetchPaymentDetails, fetchAdminPayment } from "../redux/action/PaymentAction";
+import { fetchPatientPayments, fetchPaymentDetails } from "../redux/action/PaymentAction";
 import { fetchIncomingMessage } from "../redux/action/MessageAction";
 import NotificationModal from '../components/NotificationModal';
 import AppointmentFee from './AppointmentFee';
@@ -47,18 +47,18 @@ function Dashboard() {
   const [isToggleQR, setToggleQR] = useState(false);
   const [toggleBar, setToggleBar] = useState(false);
   const [notificationToggle, setNotificationToggle] = useState({
-    data:null,
-    isShow:false
+    data: null,
+    isShow: false
   });
-  const patient = useSelector(state => state?.patient );
-  const payment = useSelector(state => state?.payment );
-  const service = useSelector(state => state?.service );
-  const dentist = useSelector(state => state?.dentist );
-  const admin = useSelector(state => state?.admin );
-  const appointment = useSelector(state => state?.appointment );
-  const notification = useSelector((state)=>state?.notification)
-  const appointmentFee = useSelector((state)=>state?.fee)
-  const schedule= useSelector((state)=>state?.schedule)
+  const patient = useSelector(state => state?.patient);
+  const payment = useSelector(state => state?.payment);
+  const service = useSelector(state => state?.service);
+  const dentist = useSelector(state => state?.dentist);
+  const admin = useSelector(state => state?.admin);
+  const appointment = useSelector(state => state?.appointment);
+  const notification = useSelector((state) => state?.notification)
+  const appointmentFee = useSelector((state) => state?.fee)
+  const schedule = useSelector((state) => state?.schedule)
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -104,108 +104,108 @@ function Dashboard() {
     socket.on("create_received_by_admin", (data) => {
       const parseData = JSON.parse(data);
       const adminLoginId = localStorage.getItem("adminId")
-      if(parseData.admin===adminLoginId){
+      if (parseData.admin === adminLoginId) {
         dispatch(fetchNewAdminMessage(parseData.key));
       }
     })
-    
+
     return () => { socket.off() }
   }, [socket]);
 
   // if 
-  return(
+  return (
     <>
       {
-        (!admin.loginAdmin || !schedule?.payload || !patient?.payload || !service?.payload ||!dentist?.payload ||!appointment?.payload || !notification?.payload || !appointmentFee?.payload) ? <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></section>
-         :(
-          <div className='w-full h-screen flex z-10 relative '>
-            <Sidebar toggleBar={toggleBar} />
-            <div className=' relative flex flex-grow flex-col bg-slate-200'>
-      
-              {isToggleQR && (<QRCodeModal setToggleQR={setToggleQR} />)}
-              {notificationToggle.isShow && (<NotificationModal notificationToggle={notificationToggle} setNotificationToggle={setNotificationToggle} />)}
-      
-              <Header toggleBar={toggleBar} setToggleBar={setToggleBar} setNotificationToggleModal={setNotificationToggle} notificationToggle={notificationToggle} />
-              <Routes>
-                <Route element={
-                  <Home />}
-                  path='/' />
-      
-                <Route element={
-                  <Admin />
-                } path='/admin' />
-      
-                <Route path='/appointment'>
-                  <Route element={<Appointments />} path='/appointment/' />
-                  <Route element={<AppointmentCalendar />} path='/appointment/calendar' />
-                  <Route path='/appointment/details/:id' element={<AppointmentInformation />} />
+        (!admin.loginAdmin || !schedule?.payload || !patient?.payload || !service?.payload || !dentist?.payload || !appointment?.payload || !notification?.payload || !appointmentFee?.payload) ? <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></section>
+          : (
+            <div className='w-full h-screen flex z-10 relative '>
+              <Sidebar toggleBar={toggleBar} />
+              <div className=' relative flex flex-grow flex-col bg-slate-200'>
+
+                {isToggleQR && (<QRCodeModal setToggleQR={setToggleQR} />)}
+                {notificationToggle.isShow && (<NotificationModal notificationToggle={notificationToggle} setNotificationToggle={setNotificationToggle} />)}
+
+                <Header toggleBar={toggleBar} setToggleBar={setToggleBar} setNotificationToggleModal={setNotificationToggle} notificationToggle={notificationToggle} />
+                <Routes>
+                  <Route element={
+                    <Home />}
+                    path='/' />
+
+                  <Route element={
+                    <Admin />
+                  } path='/admin' />
+
+                  <Route path='/appointment'>
+                    <Route element={<Appointments />} path='/appointment/' />
+                    <Route element={<AppointmentCalendar />} path='/appointment/calendar' />
+                    <Route path='/appointment/details/:id' element={<AppointmentInformation />} />
+                    <Route path='*' element={<PageNotFound />} />
+                  </Route>
+
+                  <Route element={
+                    <Messages />
+                  } path='/messages' />
+
+                  <Route element={
+                    <Dentist />
+                  } path='/dentist' />
+
+                  <Route
+                    path='/patient' >
+                    <Route element={<Patients />} path='/patient/' />
+                    <Route element={<ViewPatient />} path='/patient/:id' />
+                  </Route>
+
+                  <Route element={
+                    <Profile />
+                  } path='/profile' />
+
+                  <Route element={
+                    <History />
+                  } path='/history' />
+
+                  <Route element={
+                    <Treatment />
+                  } path='/treatment' />
+
+                  <Route element={
+                    <Services />
+                  } path='/services' />
+
+                  <Route element={
+                    <Schedule />
+                  } path='/schedule' />
+
+                  <Route element={
+                    <Payment />
+                  } path='/payment' />
+
+                  <Route element={
+                    <Announcement />
+                  } path='/announcement' />
+
+                  <Route element={
+                    <AppointmentFee />
+                  } path='/appointmentFee' />
+
+                  <Route element={<QRScanPage />}
+                    path='/scan/:id' />
+
+
                   <Route path='*' element={<PageNotFound />} />
-                </Route>
-      
-                <Route element={
-                  <Messages />
-                } path='/messages' />
-      
-                <Route element={
-                  <Dentist />
-                } path='/dentist' />
-      
-                <Route
-                  path='/patient' >
-                  <Route element={<Patients />} path='/patient/' />
-                  <Route element={<ViewPatient />} path='/patient/:id' />
-                </Route>
-      
-                <Route element={
-                  <Profile />
-                } path='/profile' />
-      
-                <Route element={
-                  <History />
-                } path='/history' />
-      
-                <Route element={
-                  <Treatment />
-                } path='/treatment' />
-      
-                <Route element={
-                  <Services />
-                } path='/services' />
-      
-                <Route element={
-                  <Schedule />
-                } path='/schedule' />
-      
-                <Route element={
-                  <Payment />
-                } path='/payment' />
-      
-                <Route element={
-                  <Announcement />
-                } path='/announcement' />
-      
-                <Route element={
-                  <AppointmentFee />
-                } path='/appointmentFee' />  
-      
-                <Route element={<QRScanPage />}
-                  path='/scan/:id' />
-      
-      
-                <Route path='*' element={<PageNotFound />} />
-              </Routes>
-      
-      
-              {/*//~ FLOATING QR */}
-              <div className=' flex justify-center items-center flex-col bg-blue-500 absolute p-3 right-10 bottom-8 rounded cursor-pointer shadow-md hover:bg-blue-700 ' onClick={() => setToggleQR(true)} >
-                <AiOutlineScan size={40} className=' text-white ' />
-                <h3 className=' font-bold text-white '>QR Code</h3>
+                </Routes>
+
+
+                {/*//~ FLOATING QR */}
+                <div className=' flex justify-center items-center flex-col bg-blue-500 absolute p-3 right-10 bottom-8 rounded cursor-pointer shadow-md hover:bg-blue-700 ' onClick={() => setToggleQR(true)} >
+                  <AiOutlineScan size={40} className=' text-white ' />
+                  <h3 className=' font-bold text-white '>QR Code</h3>
+                </div>
+                {/*//~ FLOATING QR */}
+
               </div>
-              {/*//~ FLOATING QR */}
-      
             </div>
-          </div>
-         )
+          )
       }
     </>
   )

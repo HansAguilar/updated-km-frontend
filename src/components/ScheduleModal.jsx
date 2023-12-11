@@ -70,7 +70,7 @@ function ScheduleModal({ setModal }) {
   const minDate = tomorrow.toISOString().split('T')[0];
 
   return (
-    <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 absolute -top-10 z-10 flex flex-grow justify-center items-center`}>
+    <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center`}>
       <div className="m-auto w-[700px] min-h-[500px] bg-zinc-100 rounded overflow-auto flex flex-col">
         <ToastContainer limit={1} autoClose={1500} />
 
