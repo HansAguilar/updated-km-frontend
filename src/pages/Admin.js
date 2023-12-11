@@ -69,7 +69,7 @@ function Admin() {
                   <div className=' inline-flex gap-2  '>
                     <ExcelButton users={adminList} title="admin" />
                     <PDFButton data={adminList} type="admin"/>
-                    <FileIcons Icon={AiFillPrinter} title={"Print"} />
+                    {/* <FileIcons Icon={AiFillPrinter} title={"Print"} /> */}
                   </div>
                   {/*//~ FILES */}
 

@@ -66,7 +66,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: "#CCCCCC",
-    paddingBottom: 8
+    paddingBottom: 8,
+    gap: 6
   },
   logo: {
     height: 100, // Adjust the height as needed
@@ -75,54 +76,56 @@ const styles = StyleSheet.create({
 
 
 function DentistPDFFile({ patient, data, tableHeaderList }) {
-  console.log(data);
   return (
     <Document >
       <Page style={styles.body} >
 
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={kmlogo} />
+          <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12 }}>47 General Luna St., cor Garcia St., Brgy. San Agustin, Malabon City</Text>
+          <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12 }}>Phone No.: 0912 060 0101</Text>
+          <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12 }}>Email: KMGeronimoDental@gmail.com</Text>
         </View>
-        {/* <View style={{ marginVertical: 4 }}>
-          <Text style={{ color: "#2b2b2b", fontSize: 12 }}>Patient Record</Text>
-        </View> */}
 
         <View style={{ width: "100%", display: 'flex', marginVertical: 20, flexDirection: 'column', gap: 20, position: "relative" }}>
 
-
           {/* <Image style={{ width: 80, height: 80 }} source={{ uri: patient.profile }} onError={(e) => console.error("Error loading image", e)} /> */}
-          <View style={{ flexDirection: "row", alignItems: "center", width: "100%", flex: 1 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", width: "100%", flex: 1, justifyContent: "space-between" }}>
             <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
               <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Full Name: </Text>
               <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{patient.firstname} {patient.middlename ? `${patient.middlename}` : ' '} {patient.lastname}</Text>
             </View>
+
             <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
               <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Birthday: </Text>
               <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{moment(patient.birthday).format("MMMM DD, YYYY")}</Text>
             </View>
-            <View style={{ flexDirection: "row", alignItems: "center", flex: 1, justifyContent: "flex-end" }}>
+          </View>
+
+          <View style={{ flexDirection: "row", alignItems: "center", width: "100%", flex: 1, justifyContent: "space-between" }}>
+            <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
               <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Gender: </Text>
               <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{patient.gender}</Text>
             </View>
-          </View>
 
-          <View style={{ flexDirection: "row", alignItems: "center", width: "100%" }}>
             <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
               <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Email: </Text>
-              <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{patient.email}</Text>
+              <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{patient.email.trim()}</Text>
             </View>
-            <View style={{ flexDirection: "row", alignItems: "center", flex: 1, justifyContent: "flex-end" }}>
+          </View>
+
+          <View style={{ flexDirection: "row", alignItems: "center", width: "100%", flex: 1, justifyContent: "space-between" }}>
+            <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
               <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Contact Number: </Text>
               <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{patient.contactNumber}</Text>
             </View>
-          </View>
 
-          <View style={{ width: "100%" }}>
             <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
               <Text style={{ color: "#2b2b2b", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>Address: </Text>
               <Text style={{ color: "#2b2b2b", textDecoration: "underline", fontWeight: "demibold", fontSize: 12, textTransform: 'capitalize' }}>{patient.address}</Text>
             </View>
           </View>
+          
         </View>
 
         <View style={styles.tableHeader}>
@@ -185,4 +188,4 @@ function DentistPDFFile({ patient, data, tableHeaderList }) {
   )
 }
 
-export default DentistPDFFile;
+export default React.memo(DentistPDFFile);

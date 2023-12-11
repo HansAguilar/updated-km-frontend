@@ -179,7 +179,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
       return (
         moment(val.appointmentDate, "YYYY-MM-DD").isSame(moment(appointment.date)) &&
         val.patient.patientId === appointment.patientId
-        && (val.status !== "CANCELLED" && val.status !== "DONE")
+        && (val.status !== "CANCELLED" || val.status !== "DONE" || val.status !== "TREATMENT_DONE" )
         // && val.appointmentId !== appointment.appointmentId
       );
     });

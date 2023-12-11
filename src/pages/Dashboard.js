@@ -66,15 +66,14 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if (admin?.loginAdmin?.adminId) {
+    if (admin?.loginAdmin) {
       dispatch(fetchPatient());
-      dispatch(fetchPayments());
       dispatch(fetchServices());
       dispatch(fetchDentist());
       dispatch(fetchAppointment());
       dispatch(fetchAllNotification());
       dispatch(fetchAppointmentFee());
-      dispatch(fetchInsurance())
+      dispatch(fetchInsurance());
       dispatch(fetchSchedule());
     }
   }, [admin.loginAdmin]);
@@ -117,7 +116,7 @@ function Dashboard() {
   return(
     <>
       {
-        (!admin.loginAdmin || !schedule.payload || !patient?.payload  || !payment?.payload || !service?.payload ||!dentist?.payload ||!appointment?.payload || !notification?.payload || !appointmentFee?.payload) ? <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></section>
+        (!admin.loginAdmin || !schedule?.payload || !patient?.payload || !service?.payload ||!dentist?.payload ||!appointment?.payload || !notification?.payload || !appointmentFee?.payload) ? <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></section>
          :(
           <div className='w-full h-screen flex z-10 relative '>
             <Sidebar toggleBar={toggleBar} />

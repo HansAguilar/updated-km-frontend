@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { IoAdd } from 'react-icons/io5';
 import { AiFillPrinter } from 'react-icons/ai';
@@ -15,20 +15,28 @@ import { ToastContainer } from 'react-toastify';
 function Dentist() {
   const [show, setModal] = useState(false);
   const [search, setSearch] = useState("");
-  const dentistList = useSelector((state) => state.dentist.payload)
+  const dentistList = useSelector((state) => state?.dentist?.payload)
   const [currentPage, setCurrentPage] = useState(1);
-  const tableHeaders = ["profile", "fullname", "address", "gender", "contact number", "email", "specialty", "status", "action"];
-  const pageNumber = [];
+  const tableHeaders = useMemo(()=>["profile", "fullname", "address", "gender", "contact number", "email", "specialty", "status", "action"],[]);
+  
+  const pageNumber = useMemo(()=>{
+    const page = [];
+    for (let x = 1; x <= Math.ceil(dentistList?.length / 8); x++) {
+      page.push(x);
+    }
+    return page;
+  },[dentistList]);
 
-  for (let x = 1; x <= Math.ceil(dentistList?.length / 8); x++) {
-    pageNumber.push(x);
-  }
+  
   const searchHandle = (e) => {
     setSearch(e.target.value);
   }
-  const filteredDentist = dentistList?.filter(dentist =>
-    (dentist.fullname + dentist.address + dentist.specialty).toLowerCase().includes(search)
-  );
+  const filteredDentist = useMemo(()=>{
+    return dentistList?.filter(dentist =>
+      (dentist.fullname + dentist.address + dentist.specialty).toLowerCase().includes(search)
+    );
+  },[dentistList]);
+
 
   return (
     <div className=' h-screen overflow-hidden relative bg-gray-200 '>
@@ -53,7 +61,7 @@ function Dentist() {
             <div className=' inline-flex gap-2  '>
               <DentistExcelButton users={dentistList} title={"Dentist"} />
               <PDFButton data={dentistList} type="dentist" />
-              <FileIcons Icon={AiFillPrinter} title={"Print"} />
+              {/* <FileIcons Icon={AiFillPrinter} title={"Print"} /> */}
             </div>
             {/*//~ FILES */}
 
@@ -81,4 +89,4 @@ function Dentist() {
   )
 }
 
-export default Dentist
+export default React.memo(Dentist);

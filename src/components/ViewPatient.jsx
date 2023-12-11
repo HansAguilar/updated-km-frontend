@@ -1,19 +1,21 @@
 import moment from 'moment';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoArrowBackSharp } from "react-icons/io5";
 import { TEETH_LINK } from '../ApiLinks';
 import axios from 'axios';
 import PDFPatientRecord from "../components/PDFPatientRecord";
+import { fetchPayments } from '../redux/action/PaymentAction';
 
 function ViewPatient(props) {
+	const dispatch = useDispatch();
 	const [headerNavigation, setHeaderNavigation] = useState("overview");
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const patient = useSelector((state) => { return state.patient.payload.find((val) => { return val.patientId === id }); });
-	const payment = useSelector((state)=>state.payment.payload.filter((val)=>val.patient.patientId===id));
-	const appointment = useSelector((state) =>state.appointment.payload.filter((val) =>val.patient.patientId === id)); 
+	const payment = useSelector((state) => state?.payment?.payload?.filter((val) => val.patient.patientId === id));
+	const appointment = useSelector((state) => state.appointment.payload.filter((val) => val.patient.patientId === id));
 
 	// TREATMENT
 	const headerTreatment = useMemo(()=>["Date", "Tooth No.","Dentist", "Procedure", "Amount Charged", "Amount Paid", "Balance","status"],[]);
@@ -41,8 +43,8 @@ function ViewPatient(props) {
 
 	const fetchData = useCallback(()=>{
 		const result = payment
-		.filter((val)=>(val.appointment.status==="TREATMENT" || val.appointment.status==="TREATMENT_DONE"))
-		.map((paymentData)=>{
+		?.filter((val)=>(val.appointment.status==="TREATMENT" || val.appointment.status==="TREATMENT_DONE"))
+		?.map((paymentData)=>{
 			const teethResult = teethList?.filter((val)=>val.appointment.appointmentId===paymentData.appointment.appointmentId).map((val)=>val.teethNumber);
 			let procedure="";
 			for(let x = 0; x < paymentData.appointment.dentalServices.length; x++){
@@ -81,10 +83,16 @@ function ViewPatient(props) {
 		}
 		fetchTeeth();
 	}, []);
-	
+
 	useEffect(() => {
-		fetchData();
+		if(!payment){
+			dispatch(fetchPayments());
+		}
 	}, [teethList]);
+
+	useEffect(()=>{ 
+		fetchData();
+	},[payment])
 	
 	const OverviewPage = () => {
 		return (
@@ -219,7 +227,7 @@ function ViewPatient(props) {
 	}
 
 	const TreatementPage = () => {
-		
+
 		return (
 			<section section className='bg-white h-full flex flex-col flex-grow ' >
 
@@ -269,10 +277,9 @@ function ViewPatient(props) {
 		)
 	}
 
-	console.log(treatmentRenderData);
 
 	{/*//~ OVERVIEW */ }
-	return teethList && (
+	return teethList && treatmentRenderData && (
 		<section className='w-full'>
 
 			{/*//~ HEADER */}
@@ -356,4 +363,4 @@ function ViewPatient(props) {
 	);
 }
 
-export default ViewPatient;
+export default React.memo(ViewPatient);
