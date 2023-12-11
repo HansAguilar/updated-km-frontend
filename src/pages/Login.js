@@ -18,6 +18,7 @@ function Login() {
   useEffect(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("adminInfo");
+    localStorage.removeItem("adminId");
   }, []);
 
   const handleOnChange = (e) => { setAccount({ ...account, [e.target.name]: e.target.value }); }

@@ -42,9 +42,7 @@ function AppointmentInformation() {
       newTime = timeSplit[0].concat(" ").concat("Am");
     }
     return newTime;
-  }
-
-  console.log(details)
+   }
   return (
     <>
       {

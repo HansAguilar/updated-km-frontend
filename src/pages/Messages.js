@@ -3,22 +3,26 @@ import * as io from "socket.io-client";
 import { SOCKET_LINK } from "../ApiLinks";
 import { useDispatch, useSelector } from "react-redux";
 import { BiMessageEdit, BiSearchAlt } from "react-icons/bi";
-import { createNewMessage, sendMessage } from "../redux/action/MessageAction";
+import { createNewMessage,fetchMessages,sendMessage } from "../redux/action/MessageAction";
 import MessageBox from "../components/MessageBox";
 import { AiOutlineClose } from "react-icons/ai";
 import { useEffect } from "react";
+import LoadingSpinner from "../components/LoadingSpinner";
 
-const socket = io.connect(SOCKET_LINK);
 function Messages({ admin }) {
   const dispatch = useDispatch();
-
   const [modal, setModal] = useState(false);
-  const newMessage = useSelector((state) => { return state.messages.payload; });
+  const newMessage = useSelector((state) => { return state?.messages?.payload; });
   const [roomKey, setRoomKey] = useState("");
-  const selectMessageRoom = (key) => {
+
+  const selectMessageRoom = (key) =>{
     setRoomKey(key);
   }
-  const [messages, setMessage] = useState(null);
+
+  useEffect(()=>{
+    const adminId = localStorage.getItem("adminId");
+    dispatch(fetchMessages(adminId))
+  },[])
 
   const MessageModal = () => {
     const admin = useSelector((state) => { return state.admin.loginAdmin; })
@@ -43,9 +47,9 @@ function Messages({ admin }) {
     const sendMessageButton = () => {
       if (!messageDetails.messageContent) return;
       const key = `${messageDetails.adminId}-${messageDetails.receiverId}`;
-      const filteredMessages = messages.filter((val) => val.roomId === key);
-
-      if (filteredMessages.length > 0) {
+      const filteredMessages = newMessage.filter((val)=>val.roomId===key);
+      
+      if(filteredMessages.length > 0){
         dispatch(sendMessage(key, messageDetails));
       } else {
         dispatch(createNewMessage(key, messageDetails));
@@ -121,68 +125,77 @@ function Messages({ admin }) {
       </div>
     )
   }
-
-  useEffect(() => {
-    console.log("new message");
-    setMessage(newMessage);
-  }, [newMessage])
-
+  
   return (
-    <div className='w-full h-screen overflow-hidden relative flex flex-row bg-gray-200 gap-4 p-4'>
-      {modal && <MessageModal />}
-
-      <div className="bg-white rounded w-1/4 h-full p-5 flex flex-col gap-3 shadow-md">
-
-        {/*//~ HEADER */}
-        <div className=" w-full flex flex-col gap-5 ">
-          <div className=" flex justify-between items-center ">
-            <h1 className=" text-xl font-bold text-slate-800">Recent Messages</h1>
-            <div onClick={() => setModal(true)} className=" p-2 cursor-pointer rounded-lg bg-blue-500 hover:bg-blue-700 "><BiMessageEdit size={25} color="#fff" /></div>
+    <>
+      {
+        !newMessage ? (
+          <div className=" w-full h-screen flex justify-center items-center ">
+            <LoadingSpinner loading={true} />
           </div>
+        )
+        : (
+          <>
+                 <div className='w-full h-screen overflow-hidden relative flex flex-row bg-gray-200 gap-4 p-4'>
+                {modal && <MessageModal />}
 
-          <div className="relative">
-            <BiSearchAlt className="absolute left-2 top-2 text-slate-400" size={24} />
-            <input type="text" name="search" placeholder="Search Patient..." className="w-full indent-8 p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none" />
-          </div>
-        </div>
-        {/*//~ HEADER */}
+                <div className="bg-white rounded w-1/4 h-full p-5 flex flex-col gap-3 shadow-md">
 
-        {/* LIST OF MESSAGE */}
-        <div className=" w-full max-h-[680px] overflow-x-auto flex flex-col gap-2 mb-10 divide-y-2 ">
-          {
-            messages && messages.map((val, idx) => (
-              <div key={idx} className=" w-full p-3 bg-white cursor-pointer rounded-md flex justify-center items-center gap-3 hover:bg-gray-200 " onClick={() => selectMessageRoom(val.roomId)} >
+                  {/*//~ HEADER */}
+                  <div className=" w-full flex flex-col gap-5 ">
+                    <div className=" flex justify-between items-center ">
+                      <h1 className=" text-xl font-bold text-slate-800">Recent Messages</h1>
+                      <div onClick={() => setModal(true)} className=" p-2 cursor-pointer rounded-lg bg-blue-500 hover:bg-blue-700 "><BiMessageEdit size={25} color="#fff" /></div>
+                    </div>
 
-                <img src={val.receiverId.profile} alt="Patient Profile" className=" rounded w-14 h-14 aspect-auto " />
-                {/* MESSAGE CONTENT */}
-                <div className=" w-full h-auto ">
-                  <h1 className=" text-md font-bold text-slate-700 ">{val.receiverId.firstname} {val.receiverId.lastname}</h1>
-                  {
-                    val.messageEntityList && val.messageEntityList.slice(-1).map((v) => (
-                      <p className={`text-sm max-w-[250px] truncate ${(v.type === "CLIENT" && v.status === "UNREAD") ? 'font-bold ' : ''}`}>
-                        {v.messageContent}
-                      </p>
-                    ))
-                  }
+                    <div className="relative">
+                      <BiSearchAlt className="absolute left-2 top-2 text-slate-400" size={24} />
+                      <input type="text" name="search" placeholder="Search Patient..." className="w-full indent-8 p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none" />
+                    </div>
+                  </div>
+                  {/*//~ HEADER */}
+
+                  {/* LIST OF MESSAGE */}
+                  <div className=" w-full max-h-[680px] overflow-x-auto flex flex-col gap-2 mb-10 divide-y-2 ">
+                    {
+                      newMessage && newMessage.map((val, idx) => (
+                        <div key={idx} className=" w-full p-3 bg-white cursor-pointer rounded-md flex justify-center items-center gap-3 hover:bg-gray-200 " onClick={() => selectMessageRoom(val.roomId)} >
+
+                          <img src={val.receiverId.profile} alt="Patient Profile" className=" rounded w-14 h-14 aspect-auto " />
+                          {/* MESSAGE CONTENT */}
+                          <div className=" w-full h-auto ">
+                            <h1 className=" text-md font-bold text-slate-700 ">{val.receiverId.firstname} {val.receiverId.lastname}</h1>
+                            {
+                              val.messageEntityList && val.messageEntityList.slice(-1).map((v) => (
+                                <p className={`text-sm max-w-[250px] truncate ${(v.type === "CLIENT" && v.status === "UNREAD") ? 'font-bold ' : ''}`}>
+                                  {v.messageContent}
+                                </p>
+                              ))
+                            }
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </div>
+
+
+                {/* MESSSAGE ROOM */}
+                <div className="bg-white rounded flex flex-grow flex-col shadow-md">
+
+                  {roomKey ? (
+                    <MessageBox roomKey={roomKey} />
+                  ) : (
+                    <div></div>
+                  )}
                 </div>
               </div>
-            ))
-          }
-        </div>
-      </div>
-
-
-      {/* MESSSAGE ROOM */}
-      <div className="bg-white rounded flex flex-grow flex-col shadow-md">
-
-        {roomKey ? (
-          <MessageBox roomKey={roomKey} />
-        ) : (
-          <div></div>
-        )}
-      </div>
-    </div>
+          </>
+        )
+      }
+    </>
+    
   )
 }
 
-export default Messages
+export default React.memo(Messages)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { IoAdd } from 'react-icons/io5';
 import { AiOutlineHistory } from 'react-icons/ai';
@@ -23,12 +23,18 @@ function Appointments() {
   const [show, setModal] = useState(false);
   const [covidShow, setCovidModal] = useState(false);
   const [search, setSearch] = useState("");
-  const appointmentHistory = useSelector((state) => { return state.appointment.payload })
+  // const appointmentHistory = useSelector((state) => { return state.appointment.payload })
   const appointmentList = useSelector((state) => { return state.appointment.payload.filter((val) => val.status === "PENDING" || val.status === "APPROVED") })
   const fee = useSelector((state) => { return state.fee.payload; });
   const [currentPage, setCurrentPage] = useState(1);
-  const tableHeaders = ["Patient Name", "Date Submitted", "Appointment Date", "Start Time", "End Time", "Status", "ATC", "Action"];
-  const pageNumber = [];
+  const tableHeaders = useMemo(()=>["Patient Name", "Date Submitted", "Appointment Date", "Start Time", "End Time", "Status", "ATC", "Action"],[]);
+  const pageNumber = useMemo(()=>{
+    const page = [];
+    for (let x = 1; x <= Math.ceil(appointmentList.length / 8); x++) {
+      page.push(x);
+    }
+    return page;
+  },[appointmentList]);
 
   const [appointment, setAppointment] = useState({
     patient: '',
@@ -48,19 +54,15 @@ function Appointments() {
     insuranceId: "",
   });
 
-  const history = appointmentHistory.filter(val => val.status === "DONE" || val.status === "CANCELLED")
-    .map(val => {
-      return {
-        date: moment(val.appointmentDate).format("L"),
-        name: `${`${val.patient.firstname} ${val.patient.lastname}`}`,
-        description: val.status === "DONE" ? `Appointment for  was successful` : `Appointment for ${val.patient} has been cancelled`,
-        status: val.status
-      }
-    });
-
-  for (let x = 1; x <= Math.ceil(appointmentList.length / 8); x++) {
-    pageNumber.push(x);
-  }
+  // const history = appointmentHistory.filter(val => val.status === "DONE" || val.status === "CANCELLED")
+  //   .map(val => {
+  //     return {
+  //       date: moment(val.appointmentDate).format("L"),
+  //       name: `${`${val.patient.firstname} ${val.patient.lastname}`}`,
+  //       description: val.status === "DONE" ? `Appointment for  was successful` : `Appointment for ${val.patient} has been cancelled`,
+  //       status: val.status
+  //     }
+  //   });
 
   const searchHandle = (e) => {
     setSearch(e.target.value);
@@ -70,14 +72,16 @@ function Appointments() {
     (val.patient.firstname + val.patient.middlename + val.patient.lastname).toLowerCase().includes(search)
   );
 
-  const filteredAppointments = appointmentList.map((appointment) => {
-    return {
-      date: appointment.appointmentDate,
-      timeStart: appointment.timeStart,
-      timeEnd: appointment.timeEnd,
-      status: appointment.status
-    };
-  });
+  const filteredAppointments = useMemo(()=>{
+    return appointmentList.map((appointment) => {
+      return {
+        date: appointment.appointmentDate,
+        timeStart: appointment.timeStart,
+        timeEnd: appointment.timeEnd,
+        status: appointment.status
+      };
+    });
+  },[appointmentList])
 
   const clearData = () =>{
     setAppointment({
@@ -150,4 +154,4 @@ function Appointments() {
   )
 }
 
-export default Appointments
+export default React.memo(Appointments)

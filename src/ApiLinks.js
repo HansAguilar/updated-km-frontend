@@ -16,6 +16,8 @@
 // export const TEETH_LINK = `${BACKEND_PORT}/api/v1/teeth`;
 // export const HMO_LINK = `${BACKEND_PORT}/api/v1/insurance`;
 
+// export const SOCKET_LINK = "https://socket-kmgeronimo-0bfe0b875638.herokuapp.com";
+
 export const DENTIST_LINK = "http://localhost:8080/api/v1/dentist";
 export const PATIENT_LINK = "http://localhost:8080/api/v1/patient";
 export const ADMIN_LINK = "http://localhost:8080/api/v1/admin";
@@ -32,7 +34,6 @@ export const SCHEDULE_LINK = "http://localhost:8080/api/v1/schedule";
 export const TEETH_LINK = "http://localhost:8080/api/v1/teeth";
 export const HMO_LINK = "http://localhost:8080/api/v1/insurance";
 
-const PORT = `192.168.1.5`;
+const PORT = `localhost`;
 export const SOCKET_LINK = `http://${PORT}:8081/`;
 
-// export const SOCKET_LINK = "https://socket-kmgeronimo-0bfe0b875638.herokuapp.com";

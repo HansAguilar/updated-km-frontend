@@ -1,22 +1,24 @@
 import moment from 'moment';
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoArrowBackSharp } from "react-icons/io5";
 import { TEETH_LINK } from '../ApiLinks';
 import axios from 'axios';
 import PDFPatientRecord from "../components/PDFPatientRecord";
+import { fetchPayments } from '../redux/action/PaymentAction';
 
 function ViewPatient(props) {
+	const dispatch = useDispatch();
 	const [headerNavigation, setHeaderNavigation] = useState("overview");
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const patient = useSelector((state) => { return state.patient.payload.find((val) => { return val.patientId === id }); });
-	const payment = useSelector((state) => state.payment.payload.filter((val) => val.patient.patientId === id));
+	const payment = useSelector((state) => state?.payment?.payload?.filter((val) => val.patient.patientId === id));
 	const appointment = useSelector((state) => state.appointment.payload.filter((val) => val.patient.patientId === id));
 
 	// TREATMENT
-	const headerTreatment = ["Date", "Tooth No.", "Dentist", "Procedure", "Total", "Amount Paid", "Balance", "status"];
+	const headerTreatment = useMemo(()=>["Date", "Tooth No.","Dentist", "Procedure", "Amount Charged", "Amount Paid", "Balance","status"],[]);
 	const history = appointment.filter(val => val.status === "DONE" || val.status === "CANCELLED")
 		.map(val => {
 			return {
@@ -36,35 +38,36 @@ function ViewPatient(props) {
 		}
 	});
 	const [teethHistory, setHistory] = useState([]);
-	const teethHeader = ["Appointment Start", "Appointment End", "Services", "Status"];
+	const teethHeader = useMemo(()=>["Appointment Start", "Appointment End", "Services", "Status"],[]);
 	const [treatmentRenderData, setTreatmentRenderData] = useState([]);
 
-	const fetchData = () => {
+	const fetchData = useCallback(()=>{
 		const result = payment
-			.filter((val) => val.appointment.status === "TREATMENT" || val.appointment.status === "TREATMENT_DONE")
-			.map((paymentData) => {
-				const teethResult = teethList?.filter((val) => val.appointment.appointmentId === paymentData.appointment.appointmentId).map((val) => val.teethNumber);
-				let procedure = "";
-				for (let x = 0; x < paymentData.appointment.dentalServices.length; x++) {
-					procedure = procedure.concat(paymentData.appointment.dentalServices[x].name + ", ");
-				}
-				let teethPrinter = "";
-				for (let x = 0; x < teethResult.length; x++) {
-					teethPrinter = teethPrinter.concat(teethResult[x] + " ");
-				}
-				return {
-					date: paymentData.appointment.appointmentDate,
-					procedure: procedure,
-					teeth: teethPrinter,
-					dentist: `Dr. ${paymentData.appointment.dentist.fullname}`,
-					amountCharged: paymentData.amountCharge,
-					amountPaid: paymentData.totalPayment,
-					balance: paymentData.balance,
-					status: paymentData.appointment.status
-				};
-			})
+		?.filter((val)=>(val.appointment.status==="TREATMENT" || val.appointment.status==="TREATMENT_DONE"))
+		?.map((paymentData)=>{
+			const teethResult = teethList?.filter((val)=>val.appointment.appointmentId===paymentData.appointment.appointmentId).map((val)=>val.teethNumber);
+			let procedure="";
+			for(let x = 0; x < paymentData.appointment.dentalServices.length; x++){
+				procedure = procedure.concat(paymentData.appointment.dentalServices[x].name+ ", ");
+			}
+			let teethPrinter="";
+			for(let x = 0; x < teethResult.length; x++){
+				teethPrinter = teethPrinter.concat(teethResult[x]+ " ");
+			}
+			return {
+				date:paymentData.appointment.appointmentDate,
+				procedure: procedure,
+				teeth: teethPrinter,
+				dentist: `Dr. ${paymentData.appointment.dentist.fullname}`,
+				amountCharged: paymentData.amountCharge,
+				amountPaid: paymentData.totalPayment,
+				balance:paymentData.balance,
+				status:paymentData.appointment.status
+			};
+		})
 		setTreatmentRenderData(result);
-	}
+	})
+	
 	const selectTeethButton = (idx) => {
 		const filteredSelectedTeeth = teethList.filter((val) => val.teethNumber === idx);
 		setHistory(filteredSelectedTeeth);
@@ -82,8 +85,15 @@ function ViewPatient(props) {
 	}, []);
 
 	useEffect(() => {
-		fetchData();
+		if(!payment){
+			dispatch(fetchPayments());
+		}
 	}, [teethList]);
+
+	useEffect(()=>{ 
+		fetchData();
+	},[payment])
+	
 	const OverviewPage = () => {
 		return (
 			<section className='w-full h-full bg-white flex flex-col gap-4'>
@@ -267,10 +277,9 @@ function ViewPatient(props) {
 		)
 	}
 
-	console.log(treatmentRenderData);
 
 	{/*//~ OVERVIEW */ }
-	return teethList && (
+	return teethList && treatmentRenderData && (
 		<section className='w-full'>
 
 			{/*//~ HEADER */}
@@ -354,4 +363,4 @@ function ViewPatient(props) {
 	);
 }
 
-export default ViewPatient;
+export default React.memo(ViewPatient);

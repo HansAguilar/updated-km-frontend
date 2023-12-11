@@ -90,13 +90,17 @@ function PaymentTable({ tableHeaders, results, search, currentPage, setUpdateMod
 											</td>
 											<td className='text-center p-4'>
 												<div className='flex items-center justify-center gap-2'>
-													<span className='transition-all ease-linear duration-150 rounded p-2 bg-blue-500 hover:bg-blue-700 text-white cursor-pointer flex items-center' onClick={() => {
-														setUpdateData({ ...updateData, id: result.paymentId, method: result.method ? result.method : "", totalPayment: result.totalPayment, insurance:result?.insurance,patientId:result.patient.patientId })
-														setUpdateModal(true);
-													}}>
-														<AiFillEdit size={25} />
-														<p className='pr-2'>Update</p>
-													</span>
+													{
+														(result.status !== "CHECKING") && (
+															<span className='transition-all ease-linear duration-150 rounded p-2 bg-blue-500 hover:bg-blue-700 text-white cursor-pointer flex items-center' onClick={() => {
+																setUpdateData({ ...updateData, id: result.paymentId, method: result.method ? result.method : "", totalPayment: result.totalPayment, insurance:result?.insurance,patientId:result.patient.patientId })
+																setUpdateModal(true);
+															}}>
+																<AiFillEdit size={25} />
+																<p className='pr-2'>Update</p>
+															</span>
+														)
+													}
 													{
 														((result.status === "CHECKING") || (result.insurance && result.status === "PENDING")) && <span className='transition-all ease-linear duration-150 rounded p-2 bg-emerald-500 hover:bg-emerald-600 text-white cursor-pointer flex items-center' onClick={() => {
 															setAcceptData({...acceptData, isActive:true, data:result})

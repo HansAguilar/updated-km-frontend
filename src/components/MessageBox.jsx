@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from "moment/moment";
 import { AiOutlineSend } from "react-icons/ai";
@@ -21,6 +21,13 @@ function MessageBox({ roomKey }) {
     dispatch(sendMessage(roomKey, feedback));
     setFeedback({ ...feedback, messageContent: "" })
   }
+
+  useEffect(() => {
+    const messageContainer = document.getElementById('messageContainer');
+    if (messageContainer) {
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+  }, [messageHistory]);
 
   return (
     <>
@@ -49,7 +56,7 @@ function MessageBox({ roomKey }) {
                 el?.scrollIntoView({ behavior: "smooth" }); // Scroll to the last element
             }}
           >
-            <p className="text-xs">{moment(val.createdDateAndTime).format("LLLL")}</p>
+            <p className="text-xs">{moment(val.createdDateAndTime).format("LL")}</p>
             <div
               className={` h-auto min-w-auto max-w-[400px] flex flex-col whitespace-wrap ${val.type === "CLIENT"
                 ? "bg-blue-400 text-white rounded-tl-xl rounded-tr-xl rounded-bl-xl"
@@ -82,4 +89,4 @@ function MessageBox({ roomKey }) {
   );
 }
 
-export default MessageBox;
+export default React.memo(MessageBox);

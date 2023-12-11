@@ -84,11 +84,11 @@ function Sidebar({ toggleBar, children }) {
 			name: 'Messages',
 			icon: <SidebarIcon Icon={AiFillMessage} />
 		},
-		// {
-		// 	path: '/admin/dashboard/schedule',
-		// 	name: 'Schedule',
-		// 	icon: <SidebarIcon Icon={AiFillSchedule} />
-		// },
+		{
+			path: '/admin/dashboard/schedule',
+			name: 'Schedule',
+			icon: <SidebarIcon Icon={AiFillSchedule} />
+		},
 		{
 			path: '/admin/dashboard/payment',
 			name: 'Payment',
@@ -153,7 +153,8 @@ function Sidebar({ toggleBar, children }) {
 
 	const logoutHandler = () => {
 		dispatch(logoutAdmin());
-		localStorage.removeItem("token")
+		localStorage.removeItem("token");
+		localStorage.removeItem("adminId")
 		navigate("/");
 	};
 

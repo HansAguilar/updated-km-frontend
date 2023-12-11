@@ -76,7 +76,6 @@ const styles = StyleSheet.create({
 
 
 function DentistPDFFile({ patient, data, tableHeaderList }) {
-  console.log(data);
   return (
     <Document >
       <Page style={styles.body} >
@@ -189,4 +188,4 @@ function DentistPDFFile({ patient, data, tableHeaderList }) {
   )
 }
 
-export default DentistPDFFile;
+export default React.memo(DentistPDFFile);

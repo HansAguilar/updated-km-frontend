@@ -7,7 +7,6 @@ const socket = io.connect(SOCKET_LINK);
 export const fetchMessages = (adminId) =>{
     return async dispatch =>{
         try {
-            dispatch({type:FETCH_MESSAGE_REQUEST});
             const response = await axios.get(`${MESSAGE_LINK}/admin_login/${adminId}`);
             dispatch({
                 type: FETCH_MESSAGE_SUCCESS,

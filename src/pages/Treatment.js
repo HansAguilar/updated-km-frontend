@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { ToastContainer } from "react-toastify";
-import Table from '../components/AppointmentTable';
+import Table from '../components/TreatmentTable';
 import Modal from '../components/TreatmentModal';
 import CovidTestModal from '../components/CovidServiceModal';
 import Pagination from '../components/Pagination';
@@ -12,10 +12,9 @@ function Appointments() {
   const [show, setModal] = useState(false);
   const [covidShow, setCovidModal] = useState(false);
   const [search, setSearch] = useState("");
-  const appointmentList = useSelector((state) => { return state.appointment.payload.filter((val) => val.status === "TREATMENT"); })
+  const appointmentList = useSelector((state) => { return state.appointment.payload.filter((val) => val.status === "TREATMENT" || val.status === "TREATMENT_PROCESSING"); })
   const [currentPage, setCurrentPage] = useState(1);
-  const tableHeaders = ["Patient Name", "Dentist Name", "Treatment Date", "Treatment Start", "Treatment End", "Treatment Duration",  "Status", "Action"];
-  const pageNumber = [];
+  const tableHeaders = useMemo(()=>["Patient Name", "Dentist Name", "Appointment Submitted", "Appointment Date", "Treatment Time Start", "Treatment Time End", "Status", "Action"],[]);
 
   const [appointment, setAppointment] = useState({
     patient: '',
@@ -33,25 +32,32 @@ function Appointments() {
     insuranceId: "",
   });
 
-  for (let x = 1; x <= Math.ceil(appointmentList.length / 8); x++) {
-    pageNumber.push(x);
-  }
+  const pageNumber = useMemo(()=>{
+    const page = [];
+    for (let x = 1; x <= Math.ceil(appointmentList.length / 8); x++) {
+      page.push(x);
+    }
+    return page;
+  })
+
   const searchHandle = (e) => {
     setSearch(e.target.value);
   }
 
-  const filteredServices = appointmentList.filter(val =>
-    (val.patient.firstname + val.patient.middlename + val.patient.lastname).toLowerCase().includes(search)
-  );
+  const filteredServices = useCallback(()=>{
+    return appointmentList.filter(val =>(val.patient.firstname + val.patient.middlename + val.patient.lastname).toLowerCase().includes(search));
+  },[search])
 
-  const filteredAppointments = appointmentList.map((appointment) => {
-    return {
-      date: appointment.appointmentDate,
-      timeStart: appointment.timeStart,
-      timeEnd: appointment.timeEnd,
-      status: appointment.status
-    };
-  });
+  const filteredAppointments = useCallback(()=>{
+    return appointmentList.map((appointment) => {
+      return {
+        date: appointment.appointmentDate,
+        timeStart: appointment.timeStart,
+        timeEnd: appointment.timeEnd,
+        status: appointment.status
+      };
+    });
+  })
 
   return (
     <div className=' h-screen overflow-hidden relative bg-gray-200 '>
@@ -96,4 +102,4 @@ function Appointments() {
   )
 }
 
-export default Appointments
+export default React.memo(Appointments)

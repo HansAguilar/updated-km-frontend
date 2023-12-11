@@ -10,7 +10,7 @@ import { ToastContainer } from 'react-toastify';
 function Home() {
   const patient = useSelector((state) => { return state.patient; });
   const appointment = useSelector((state) => { return state.appointment; });
-  const payment = useSelector((state) => { return state.payment; });
+  const services = useSelector((state) => { return state.service; });
   const treatment = useSelector((state) => { return state.appointment.payload.filter(val=>val.status==="TREATMENT"); });
 
   return (
@@ -40,16 +40,6 @@ function Home() {
         />
 
         <CardInformation
-          fromBG={'from-green-400'}
-          toBG={'to-green-600'}
-          iconColor={'text-white'}
-          number={payment.payload.filter(val => { return val.status === "PENDING" }).length}
-          title={'pending payments'}
-          textColor={"text-white"}
-          Icon={MdPayments}
-        />
-
-        <CardInformation
           fromBG={'from-orange-400'}
           toBG={'to-orange-600'}
           iconColor={'text-white'}
@@ -58,6 +48,17 @@ function Home() {
           textColor={"text-white"}
           Icon={MdOutlinePendingActions}
         />
+
+      <CardInformation
+          fromBG={'from-green-400'}
+          toBG={'to-green-600'}
+          iconColor={'text-white'}
+          number={services.payload.length}
+          title={'Available Services'}
+          textColor={"text-white"}
+          Icon={MdPayments}
+        />
+
       </div>
     </div>
   )

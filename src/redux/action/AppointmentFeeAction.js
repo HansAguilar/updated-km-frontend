@@ -5,7 +5,7 @@ import { FEE_LINK } from "../../ApiLinks";
 export const fetchAppointmentFee = () =>{
     return async dispatch=>{
         try {
-            dispatch({type: FETCH_FEE_REQUEST});
+            // dispatch({type: FETCH_FEE_REQUEST});
             const response = await axios.get(`${FEE_LINK}/`);
             dispatch({
                 type: FETCH_FEE_SUCCESS,

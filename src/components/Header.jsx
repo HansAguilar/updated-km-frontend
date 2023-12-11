@@ -40,8 +40,6 @@ function Header({ toggleBar, setToggleBar, setNotificationToggleModal, notificat
     setNotificationToggle(false);
   }
 
-  console.log(notification);
-
   return (
     <div className=' w-full h-auto sticky top-0 z-10  bg-transparent ' >
       <div className=' bg-zinc-100 p-4 shadow-sm flex justify-between items-center '>

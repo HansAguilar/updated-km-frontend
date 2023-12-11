@@ -13,7 +13,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
   const dentist = useSelector((state) => { return state.dentist; });
   const service = useSelector((state) => { return state.service; });
   const schedule = useSelector((state) => { return state.schedule.payload; });
-  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => val.status !== "DONE" || val.status !== "CANCELLED") });
+  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => (val.status !== "DONE" && val.status !== "CANCELLED"&& val.status !== "TREATMENT_DONE")) });
   const [availableHMO, setAvailableHMO] = useState(null);
   const [active, setActive] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -113,7 +113,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
 
     setTimeStartList((prev) => {
       let updatedSchedList = [...prev];
-      const filteredSchedule = schedule.filter((val) => moment(appointment.date, "YYYY-MM-DD").isSame(moment(val.dateSchedule).format("YYYY-MM-DD")) && val.dentist.dentistId === appointment.dentistId);
+      const filteredSchedule = schedule.filter((val) => (moment(appointment.date, "YYYY-MM-DD").isSame(moment(val.dateSchedule).format("YYYY-MM-DD")) && val.dentist.dentistId === appointment.dentistId));
       if (filteredSchedule.length > 0) {
         const indicesScheduleToRemain = [];
         for (let x = 0; x < filteredSchedule.length; x++) {
@@ -154,7 +154,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
       }
       return updatedTimeStartList;
     })
-  }, [appointment.date]);
+  }, [appointment.date,appointment.dentistId]);
 
   // INSURANCE
   // useEffect(()=>{
@@ -179,7 +179,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
       return (
         moment(val.appointmentDate, "YYYY-MM-DD").isSame(moment(appointment.date)) &&
         val.patient.patientId === appointment.patientId
-        && (val.status !== "CANCELLED" && val.status !== "DONE")
+        && (val.status !== "CANCELLED" || val.status !== "DONE" || val.status !== "TREATMENT_DONE" )
         // && val.appointmentId !== appointment.appointmentId
       );
     });

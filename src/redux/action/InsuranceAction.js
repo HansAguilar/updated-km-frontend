@@ -5,7 +5,6 @@ import { HMO_LINK } from "../../ApiLinks";
 export const fetchInsurance = () =>{
     return async dispatch=>{
         try {
-            dispatch({type: FETCH_INSURANCE_REQUEST});
             const response = await axios.get(`${HMO_LINK}/`);
             dispatch({
                 type: FETCH_INSURANCE_SUCCESS,

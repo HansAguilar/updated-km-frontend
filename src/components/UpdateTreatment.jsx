@@ -9,7 +9,7 @@ import { BiSearchAlt } from 'react-icons/bi';
 
 const inputStyle = "p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none";
 
-function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
+function UpdateTreatmentModal({ show, setModal, initialAppointment }) {
   let [timeStartList, setTimeStartList] = useState(
     [
       { timeValue: "09:00 Am", timeStart: "09:00:00" },
@@ -30,10 +30,10 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
   );
   const [minDate, setMinDate] = useState(new Date().toISOString().split('T')[0]);
   const dispatch = useDispatch();
+  const schedule = useSelector((state)=>state.schedule.payload);
   const dentist = useSelector((state) => { return state.dentist; });
   const service = useSelector((state) => { return state.service; });
-  const schedule = useSelector((state)=>state.schedule.payload);
-  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => (val.status !== "DONE" && val.status !== "CANCELLED"&& val.status !== "TREATMENT_DONE")) });
+  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => val.status === "PENDING" || val.status === "APPROVED" || val.status === "TREATMENT") })
 
   const serviceIds = initialAppointment?.dentalServices.map((val) => val.serviceId);
 
@@ -124,6 +124,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
             indexesToRemove.push(begin);
           }
         }
+
         updatedTimeStartList = updatedTimeStartList.filter((_, index) => {
           return !indexesToRemove.includes(index);
         })
@@ -131,7 +132,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
 
       return updatedTimeStartList;
     })
-  }, [timeStartRef.current,appointment.date, appointment.dentistId])
+  }, [timeStartRef.current,appointment.date,appointment.dentistId])
 
   const handleOnChange = (e) => {
     if (e.target.name === "dentist") {
@@ -188,9 +189,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
     //   return alert("You can't select previous date")
     // }
     const end = calculateTotalTime();
-    const data = {
-      timeEnd: end,
-    }
+    console.log(end);
 
     const timeTotal = calculateTotalServiceTime();
     const totalTimeDuration = moment('00:00:00', 'HH:mm:ss');
@@ -199,7 +198,6 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
     while (start.isBefore(moment(end, "HH:mm:ss").add(30, 'minutes'))) {
       const startTime = start.format('HH:mm:ss');
       const matchingTime = timeStartList.find(time => time.timeStart === startTime);
-      console.log("start time", startTime);
       if (startTime === "12:30:00" || startTime === "16:30:00") {
         toastHandler("error", `Kindly select ${totalTimeDuration.format('HH:mm:ss') === "01:00:00"
           ? '30 minutes'
@@ -247,7 +245,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
       total += durationInMillis;
     }
 
-    const convertTotalTime = moment.duration("00:30:00");
+    const convertTotalTime = moment.duration(total);
     return moment.utc(convertTotalTime.asMilliseconds()).format('HH:mm:ss');
   }
   const calculateTotalTime = () => {
@@ -259,7 +257,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
   const btnClose = () => setModal(false);
 
   return initialAppointment && (
-    <div className={`w-full h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
+    <div className={`w-full h-screen bg-gray-900 bg-opacity-75 absolute top-0 left-0 z-10 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>
       <div className="m-auto w-[900px] min-h-max bg-zinc-100 rounded overflow-auto ">
         <ToastContainer limit={1} autoClose={1500} />
 
@@ -433,4 +431,4 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
   )
 }
 
-export default UpdateAppointmentModal
+export default React.memo(UpdateTreatmentModal)

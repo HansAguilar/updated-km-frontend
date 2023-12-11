@@ -6,8 +6,6 @@ import adminReducer from "../reducer/AdminReducer";
 import serviceReducer from "../reducer/ServiceReducer";
 import paymentReducer from "../reducer/PaymentReducer";
 import announcementReducer from "../reducer/AnnouncementReducer";
-import installmentReducer from "../reducer/InstallmentReducer";
-import historyReducer from "../reducer/HistoryReducer";
 import notificationReducer from "../reducer/NotificationReducer";
 import messageReducer from "../reducer/MessageReducer";
 import feeReducer from "../reducer/AppointmentFeeReducer";
@@ -24,8 +22,6 @@ const store = configureStore({
         service: serviceReducer,
         payment: paymentReducer,
         announcement:announcementReducer,
-        installment:installmentReducer,
-        history:historyReducer,
         notification: notificationReducer,
         messages:messageReducer,
         fee:feeReducer,

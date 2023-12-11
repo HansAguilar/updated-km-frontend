@@ -30,8 +30,8 @@ function UpdatePaymentModal({ show, setModal, updateData, setUpdateData, }) {
   }
 
   const btnSubmit = async () => {
-    if (!updateData.totalPayment) return toastHandler("error", "Fill up empty field")
-
+    if (!updateData.totalPayment) return toastHandler("error", "Fill up empty field");
+    if (updateData.totalPayment<0) return toastHandler("error", "Invalid total amount");
     if(updateData.insurance && hmoList.length > 0){
       const dataResult = { ...hmoInfo, totalPayment:updateData.totalPayment};
       dispatch(updatePayment(dataResult));

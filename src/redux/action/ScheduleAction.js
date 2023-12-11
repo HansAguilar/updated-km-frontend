@@ -6,7 +6,6 @@ import { toastHandler } from "../../ToastHandler";
 export const fetchSchedule = () =>{
     return async dispatch=>{
         try {
-            dispatch({type: FETCH_SCHEDULE_REQUEST});
             const response = await axios.get(`${SCHEDULE_LINK}/`);
             dispatch({
                 type:FETCH_SCHEDULE_SUCCESS,
