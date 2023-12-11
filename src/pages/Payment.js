@@ -111,7 +111,7 @@ function Payments() {
   return (
     <>
       {
-        !payload ? <div className=' w-full h-screen justify-center items-center '><LoadingSpinner loading={true} /></div>
+        !payload ? <div className=' w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></div>
         : (
           <div className=' h-screen overflow-hidden relative bg-gray-200 '>
             <Modal show={show} setModal={setModal} type="patient" />

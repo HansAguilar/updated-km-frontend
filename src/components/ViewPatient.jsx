@@ -7,6 +7,7 @@ import { TEETH_LINK } from '../ApiLinks';
 import axios from 'axios';
 import PDFPatientRecord from "../components/PDFPatientRecord";
 import { fetchPayments } from '../redux/action/PaymentAction';
+import LoadingSpinner from './LoadingSpinner';
 
 function ViewPatient(props) {
 	const dispatch = useDispatch();
@@ -282,87 +283,96 @@ function ViewPatient(props) {
 
 
 	{/*//~ OVERVIEW */ }
-	return teethList && treatmentRenderData && (
-		<section className='w-full'>
+	return (
+		<>
+			{
+				!teethList || !treatmentRenderData ? (
+					<div className=' w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></div>
+				) : (
+					<section className='w-full'>
 
-			{/*//~ HEADER */}
-			<div className='w-full flex justify-between items-center p-4'>
-				<div className='text-slate-600 font-bold flex justify-center items-center gap-1 cursor-pointer' onClick={() => navigate("/admin/dashboard/patient")}>
-					<IoArrowBackSharp size={24} />
-					<span className='text-xl'>Back</span>
-				</div>
-
-				<div className='flex rounded border-2 border-blue-500 divide-x divide-blue-500'>
-					<p className={`px-6 w-fit py-2 cursor-pointer font-medium transition-all ease-linear duration-150 ${headerNavigation === "overview" ? "bg-blue-500 text-white" : " text-blue-600"}`} onClick={() => setHeaderNavigation("overview")} >Overview</p>
-					<p className={`px-6 w-fit py-2 cursor-pointer font-medium transition-all ease-linear duration-150 ${headerNavigation === "history" ? "bg-blue-500 text-white" : " text-blue-600"}`} onClick={() => setHeaderNavigation("history")}>Dental history</p>
-					<p className={`px-6 w-fit py-2 cursor-pointer font-medium transition-all ease-linear duration-150 ${headerNavigation === "treatment" ? "bg-blue-500 text-white" : " text-blue-600"}`} onClick={() => setHeaderNavigation("treatment")} >Treatment</p>
-				</div>
-			</div>
-			{/*//~ HEADER */}
-
-
-			<div className='p-4 flex gap-4 w-full'>
-
-				{/*//~ PROFILE */}
-				<div className='w-1/4 shadow rounded p-5 bg-white flex flex-col justify-center items-center gap-4'>
-
-					{/*//~ IMAGE AND NAME */}
-					<div className='flex flex-col gap-2 items-center'>
-						<img src={patient.profile} className='w-44 h-44 rounded-full aspect-auto mx-auto' alt='patient profile' />
-						<div className='flex flex-col gap-2 items-center'>
-							<h3 className='text-3xl font-semibold text-cyan-900'>{patient.firstname.charAt(0).toUpperCase() + patient.firstname.substring(1)} {patient.lastname.charAt(0).toUpperCase() + patient.lastname.substring(1)}</h3>
+					{/*//~ HEADER */}
+					<div className='w-full flex justify-between items-center p-4'>
+						<div className='text-slate-600 font-bold flex justify-center items-center gap-1 cursor-pointer' onClick={() => navigate("/admin/dashboard/patient")}>
+							<IoArrowBackSharp size={24} />
+							<span className='text-xl'>Back</span>
 						</div>
-						<PDFPatientRecord patient={patient} tableHeaderList={headerTreatment} data={treatmentRenderData} type="patient" />
+
+						<div className='flex rounded border-2 border-blue-500 divide-x divide-blue-500'>
+							<p className={`px-6 w-fit py-2 cursor-pointer font-medium transition-all ease-linear duration-150 ${headerNavigation === "overview" ? "bg-blue-500 text-white" : " text-blue-600"}`} onClick={() => setHeaderNavigation("overview")} >Overview</p>
+							<p className={`px-6 w-fit py-2 cursor-pointer font-medium transition-all ease-linear duration-150 ${headerNavigation === "history" ? "bg-blue-500 text-white" : " text-blue-600"}`} onClick={() => setHeaderNavigation("history")}>Dental history</p>
+							<p className={`px-6 w-fit py-2 cursor-pointer font-medium transition-all ease-linear duration-150 ${headerNavigation === "treatment" ? "bg-blue-500 text-white" : " text-blue-600"}`} onClick={() => setHeaderNavigation("treatment")} >Treatment</p>
+						</div>
 					</div>
-					{/*//~ IMAGE AND NAME */}
+					{/*//~ HEADER */}
 
 
-					<div className='divide-y flex items-center flex-col justify-between w-full gap-4'>
-						{/*//~ GENDER */}
-						<div className=' w-full flex justify-between p-2 border-gray-300 '>
-							<p className='text-slate-800 font-medium'>Gender</p>
-							<p className='capitalize text-slate-600'>{patient.gender}</p>
+					<div className='p-4 flex gap-4 w-full'>
+
+						{/*//~ PROFILE */}
+						<div className='w-1/4 shadow rounded p-5 bg-white flex flex-col justify-center items-center gap-4'>
+
+							{/*//~ IMAGE AND NAME */}
+							<div className='flex flex-col gap-2 items-center'>
+								<img src={patient.profile} className='w-44 h-44 rounded-full aspect-auto mx-auto' alt='patient profile' />
+								<div className='flex flex-col gap-2 items-center'>
+									<h3 className='text-3xl font-semibold text-cyan-900'>{patient.firstname.charAt(0).toUpperCase() + patient.firstname.substring(1)} {patient.lastname.charAt(0).toUpperCase() + patient.lastname.substring(1)}</h3>
+								</div>
+								<PDFPatientRecord patient={patient} tableHeaderList={headerTreatment} data={treatmentRenderData} type="patient" />
+							</div>
+							{/*//~ IMAGE AND NAME */}
+
+
+							<div className='divide-y flex items-center flex-col justify-between w-full gap-4'>
+								{/*//~ GENDER */}
+								<div className=' w-full flex justify-between p-2 border-gray-300 '>
+									<p className='text-slate-800 font-medium'>Gender</p>
+									<p className='capitalize text-slate-600'>{patient.gender}</p>
+								</div>
+								{/*//~ GENDER */}
+
+								{/*//~ EMAIL */}
+								<div className=' w-full flex justify-between p-2 border-gray-300 '>
+									<p className='text-slate-800 font-medium'>Email</p>
+									<p className='text-slate-600'>{patient.email.toLowerCase()}</p>
+								</div>
+								{/*//~ EMAIL */}
+
+								{/*//~ BIRTHDAY */}
+								<div className=' w-full flex justify-between p-2 border-gray-300 '>
+									<p className='text-slate-800 font-medium'>Birthday</p>
+									<p className='capitalize text-slate-600'>{moment(patient.birthday).format("MMM DD, YYYY")}</p>
+								</div>
+								{/*//~ BIRTHDAY */}
+
+								{/*//~ PHONE */}
+								<div className=' w-full flex justify-between p-2 border-gray-300 '>
+									<p className='text-slate-800 font-medium'>Phone</p>
+									<p className='capitalize text-slate-600'>{patient.contactNumber}</p>
+								</div>
+								{/*//~ PHONE */}
+
+								{/*//~ ADDRESS */}
+								<div className=' w-full flex justify-between p-2 border-gray-300'>
+									<p className='text-slate-800 font-medium'>Address</p>
+									<p className='capitalize text-slate-600'>{patient.address}</p>
+								</div>
+								{/*//~ ADDRESS */}
+							</div>
 						</div>
-						{/*//~ GENDER */}
+						{/*//~ PROFILE */}
 
-						{/*//~ EMAIL */}
-						<div className=' w-full flex justify-between p-2 border-gray-300 '>
-							<p className='text-slate-800 font-medium'>Email</p>
-							<p className='text-slate-600'>{patient.email.toLowerCase()}</p>
+						<div className='w-9/12'>
+							{headerNavigation === "overview" ? <OverviewPage /> : headerNavigation === "history" ? <HistoryPage /> : <TreatementPage />}
 						</div>
-						{/*//~ EMAIL */}
-
-						{/*//~ BIRTHDAY */}
-						<div className=' w-full flex justify-between p-2 border-gray-300 '>
-							<p className='text-slate-800 font-medium'>Birthday</p>
-							<p className='capitalize text-slate-600'>{moment(patient.birthday).format("MMM DD, YYYY")}</p>
-						</div>
-						{/*//~ BIRTHDAY */}
-
-						{/*//~ PHONE */}
-						<div className=' w-full flex justify-between p-2 border-gray-300 '>
-							<p className='text-slate-800 font-medium'>Phone</p>
-							<p className='capitalize text-slate-600'>{patient.contactNumber}</p>
-						</div>
-						{/*//~ PHONE */}
-
-						{/*//~ ADDRESS */}
-						<div className=' w-full flex justify-between p-2 border-gray-300'>
-							<p className='text-slate-800 font-medium'>Address</p>
-							<p className='capitalize text-slate-600'>{patient.address}</p>
-						</div>
-						{/*//~ ADDRESS */}
 					</div>
-				</div>
-				{/*//~ PROFILE */}
-
-				<div className='w-9/12'>
-					{headerNavigation === "overview" ? <OverviewPage /> : headerNavigation === "history" ? <HistoryPage /> : <TreatementPage />}
-				</div>
-			</div>
 
 
-		</section>
+				</section>
+				)
+			}
+		</>
+		
 	);
 }
 

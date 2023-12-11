@@ -50,15 +50,14 @@ function Dashboard() {
     data: null,
     isShow: false
   });
-  const patient = useSelector(state => state?.patient);
-  const payment = useSelector(state => state?.payment);
-  const service = useSelector(state => state?.service);
-  const dentist = useSelector(state => state?.dentist);
-  const admin = useSelector(state => state?.admin);
-  const appointment = useSelector(state => state?.appointment);
-  const notification = useSelector((state) => state?.notification)
-  const appointmentFee = useSelector((state) => state?.fee)
-  const schedule = useSelector((state) => state?.schedule)
+  const patient = useSelector(state => state?.patient );
+  const service = useSelector(state => state?.service );
+  const dentist = useSelector(state => state?.dentist );
+  const admin = useSelector(state => state?.admin );
+  const appointment = useSelector(state => state?.appointment );
+  const notification = useSelector((state)=>state?.notification)
+  const appointmentFee = useSelector((state)=>state?.fee)
+  const schedule= useSelector((state)=>state?.schedule)
 
   useEffect(() => {
     const token = localStorage.getItem('token');
