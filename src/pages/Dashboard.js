@@ -51,7 +51,6 @@ function Dashboard() {
     isShow:false
   });
   const patient = useSelector(state => state?.patient );
-  const payment = useSelector(state => state?.payment );
   const service = useSelector(state => state?.service );
   const dentist = useSelector(state => state?.dentist );
   const admin = useSelector(state => state?.admin );

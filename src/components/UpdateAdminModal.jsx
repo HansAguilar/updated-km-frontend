@@ -41,8 +41,7 @@ function UpdateAdminModal({ show, setModal, setAdminInfo, adminInfo, type }) {
     const age = Math.abs(ageDate.getUTCFullYear - 1970);
     return age < 18;
   }
-  const btnSubmit = async () => {
-    try {
+  const btnSubmit =() => {
       if (
         !adminInfo.firstname ||
         !adminInfo.lastname ||
@@ -82,10 +81,6 @@ function UpdateAdminModal({ show, setModal, setAdminInfo, adminInfo, type }) {
       } else {
         dispatch(updateAdmin(adminInfo.userId, data,toastHandler,setModal));
       }
-      
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   return (
@@ -193,4 +188,4 @@ function UpdateAdminModal({ show, setModal, setAdminInfo, adminInfo, type }) {
   )
 }
 
-export default UpdateAdminModal
+export default React.memo(UpdateAdminModal)
