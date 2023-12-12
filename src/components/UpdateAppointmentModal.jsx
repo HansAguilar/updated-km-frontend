@@ -32,8 +32,8 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
   const dispatch = useDispatch();
   const dentist = useSelector((state) => { return state.dentist; });
   const service = useSelector((state) => { return state.service; });
-  const schedule = useSelector((state)=>state.schedule.payload);
-  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => (val.status !== "DONE" && val.status !== "CANCELLED"&& val.status !== "TREATMENT_DONE")) });
+  const schedule = useSelector((state) => state.schedule.payload);
+  const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => (val.status !== "DONE" && val.status !== "CANCELLED" && val.status !== "TREATMENT_DONE")) });
 
   const serviceIds = initialAppointment?.dentalServices.map((val) => val.serviceId);
 
@@ -47,7 +47,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
     timeEnd: initialAppointment?.timeEnd,
     timeSubmitted: initialAppointment?.timeSubmitted,
   });
-  const initialTime = timeStartList.filter(v=>v.timeStart===initialAppointment?.timeStart).map((v)=>v.timeValue)
+  const initialTime = timeStartList.filter(v => v.timeStart === initialAppointment?.timeStart).map((v) => v.timeValue)
   const timeStartRef = useRef(`${initialTime[0]}`);
   const [active, setActive] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -108,8 +108,8 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
     setTimeStartList(prevTimeStartList => {
       let updatedTimeStartList = [...prevTimeStartList];
       const getAppointmentDate = filteredAppointments.filter((value) => {
-        return moment(value.appointmentDate, "YYYY-MM-DD").isSame(moment(appointment.date)) 
-        && value.patient.patientId !== initialAppointment.patient.patientId
+        return moment(value.appointmentDate, "YYYY-MM-DD").isSame(moment(appointment.date))
+          && value.patient.patientId !== initialAppointment.patient.patientId
       });
       if (getAppointmentDate.length > 0) {
         const indexesToRemove = [];
@@ -131,7 +131,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
 
       return updatedTimeStartList;
     })
-  }, [timeStartRef.current,appointment.date, appointment.dentistId])
+  }, [timeStartRef.current, appointment.date, appointment.dentistId])
 
   const handleOnChange = (e) => {
     if (e.target.name === "dentist") {
@@ -156,12 +156,12 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
       setSuggestions(filteredService)
       setActive("service")
     }
-    if(e.target.name === "timeValue"){
-      const timeStartValue = timeStartList.filter((v)=>v.timeValue===e.target.value);
-      setAppointment({ ...appointment, ["timeStart"]:timeStartValue[0].timeStart });
+    if (e.target.name === "timeValue") {
+      const timeStartValue = timeStartList.filter((v) => v.timeValue === e.target.value);
+      setAppointment({ ...appointment, ["timeStart"]: timeStartValue[0].timeStart });
       timeStartRef.current = e.target.value;
     }
-    else{ setAppointment({ ...appointment, [e.target.name]: e.target.value }); }
+    else { setAppointment({ ...appointment, [e.target.name]: e.target.value }); }
   };
 
   const nextButton = () => {
@@ -177,7 +177,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
       && val.patient.patientId === initialAppointment.patient.patientId
       && val.appointmentId !== initialAppointment.appointmentId
     );
-    if(checkIfPatientAlreadyHaveAppointment.length > 0){
+    if (checkIfPatientAlreadyHaveAppointment.length > 0) {
       return toastHandler("error", "You already have existing appointment in this date!")
     }
     // const current = new Date();
@@ -224,7 +224,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
       dentalServices: appointment.serviceSelected,
       date: appointment.date,
       timeStart: appointment.timeStart,
-      timeEnd:end
+      timeEnd: end
     }
     dispatch(updateAppointment(initialAppointment.appointmentId, result));
     setModal(false);
@@ -286,8 +286,8 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
           {/*//~ DENTIST NAME */}
           <div className='mb-2 flex flex-col gap-1 relative w-full'>
             <BiSearchAlt className="absolute left-2 top-9 text-slate-400" size={24} />
-            <label htmlFor='patient' className='font-medium text-slate-600'>Dentist Name</label>
-            <input type='search' name='dentist' value={appointment.dentist} className={`${inputStyle} indent-8`} onChange={(e) => handleOnChange(e)} />
+            <label htmlFor='dentist' className='font-medium text-slate-600'>Dentist Name</label>
+            <input type='search' name='dentist' id='dentist' value={appointment.dentist} className={`${inputStyle} indent-8`} onChange={(e) => handleOnChange(e)} />
 
             <ul className={`relative z-10 bg-white outline-none font-medium shadow-md min-w-full ${active === "dentist" && appointment.dentist !== "" ? 'border border-slate-400' : ''}`}>
               {
@@ -405,13 +405,9 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
                       return val.timeStart !== "12:00:00" && val.timeStart !== "16:00:00";
                     })
                     .map((val, index) => (
-                      <>
-                      {
-                        val.timeValue === timeStartRef.current
+                      val.timeValue === timeStartRef.current
                         ? <option value={val.timeValue} key={index} disabled>{val.timeValue}</option>
-                        :<option value={val.timeValue} key={index}>{val.timeValue}</option>
-                      }
-                      </>
+                        : <option value={val.timeValue} key={index}>{val.timeValue}</option>
                     ))
                 }
               </select>
@@ -424,7 +420,7 @@ function UpdateAppointmentModal({ show, setModal, initialAppointment }) {
 
         {/*//~ BUTTONS */}
         <div className='flex gap-2 p-4 justify-end mt-auto'>
-          <button className="py-2 px-4 font-medium bg-red-500 text-white rounded hover:bg-red-700" onClick={btnClose}>Cancel</button>
+          <button className="py-2 px-4 font-medium bg-gray-300 text-gray-700 rounded hover:bg-gray-400" onClick={btnClose}>Cancel</button>
           <button className="py-2 px-4 font-medium bg-blue-500 text-white rounded hover:bg-blue-700" onClick={nextButton}>Save Changes</button>
         </div>
         {/*//~ BUTTONS */}

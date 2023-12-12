@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
-import { AiFillEdit, AiOutlineFolderView, AiFillDelete } from 'react-icons/ai';
-import { MdCancel } from "react-icons/md";
+import { AiFillEdit, AiOutlineFolderView } from 'react-icons/ai';
 import UpdateAppointmentModal from './UpdateTreatment';
 import CancelModal from './CancelModal';
 import ViewAppointment from './ViewAppointment';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { toastHandler } from "../ToastHandler";
-import { approvedAppointment, deleteAppointment } from "../redux/action/AppointmentAction";
-import { fetchPaymentDetails } from "../redux/action/PaymentAction";
-import { sendNotification } from "../redux/action/NotificationAction";
+import { deleteAppointment } from "../redux/action/AppointmentAction";
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
-import { AiFillCheckSquare } from "react-icons/ai"
-
 
 function TreatmentTable({ tableHeaders, results, search, currentPage, type }) {
 	const dispatch = useDispatch();
@@ -72,13 +67,9 @@ function TreatmentTable({ tableHeaders, results, search, currentPage, type }) {
 						<tr>
 							{
 								tableHeaders.map((header, index) => (
-									<>
-										{
-												<th className="p-2 uppercase text-slate-100 cursor-pointer" key={index} onClick={() => setStatusValue({ ...statusValue, isClick: true })}>
-													<p className={`${statusValue.isClick ? "hidden" : ""}`}>{header}</p>
-												</th>
-										}
-									</>
+									<th className="p-2 uppercase text-slate-100 cursor-pointer" key={index} onClick={() => setStatusValue({ ...statusValue, isClick: true })}>
+										<p className={`${statusValue.isClick ? "hidden" : ""}`}>{header}</p>
+									</th>
 								))
 							}
 						</tr>
@@ -100,7 +91,7 @@ function TreatmentTable({ tableHeaders, results, search, currentPage, type }) {
 										<td className='text-center capitalize'>
 											{result.patient.firstname} {result.patient.middlename ? result.patient.middlename.charAt(0).concat(".") : ""} {result.patient.lastname}
 										</td>
-                                        <td className='text-center capitalize'>
+										<td className='text-center capitalize'>
 											Dr. {result.dentist.fullname}
 										</td>
 										<td className='text-center'>
@@ -116,7 +107,7 @@ function TreatmentTable({ tableHeaders, results, search, currentPage, type }) {
 											{moment(result.timeEnd, 'HH:mm:ss').format('h:mm A')}
 										</td>
 										<td className='text-center capitalize'>
-											{ result.status === "TREATMENT" ? "TREATMENT" : "PROCESSING" }
+											{result.status === "TREATMENT" ? "TREATMENT" : "PROCESSING"}
 										</td>
 										<td className='text-center p-4'>
 											<div className='flex items-center justify-center gap-2 text-white'>

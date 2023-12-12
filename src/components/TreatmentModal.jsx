@@ -425,7 +425,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
                 <div className=' flex flex-col gap-1 relative w-full '>
                   <label htmlFor='type' className='font-medium text-slate-600'>Select Treatment Type</label>
                   <select name="treatmentType" id='type' onChange={(e) => handleOnChange(e)} className={inputStyle}>
-                    <option value="" selected disabled>Select treatment Type...</option>
+                    <option value="" disabled>Select treatment Type...</option>
                     <option value="days" >Days</option>
                     <option value="weeks">Weeks</option>
                     <option value="Months">Months</option>
@@ -486,7 +486,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
                 <div className=' flex flex-col gap-1 relative w-full '>
                   <label htmlFor='ptype' className='font-medium text-slate-600'>Payment Type</label>
                   <select name="type" id='ptype' value={appointment.type} onChange={(e) => handleOnChange(e)} className={inputStyle}>
-                    <option value="" disabled selected>Select payment type...</option>
+                    <option value="" disabled>Select payment type...</option>
                     <option value="full-payment">Full Payment</option>
                     {
                       appointment.method !== "hmo" && appointment.totalAmount >= 40000 ? <option value="installment">Installment</option> : ""

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FETCH_FEE_FAILED, FETCH_FEE_REQUEST, FETCH_FEE_SUCCESS, UPDATE_FEE_SUCCESS } from "../ActionTypes"
+import { FETCH_FEE_FAILED, FETCH_FEE_SUCCESS, UPDATE_FEE_SUCCESS } from "../ActionTypes"
 import { FEE_LINK } from "../../ApiLinks";
 
 export const fetchAppointmentFee = () =>{

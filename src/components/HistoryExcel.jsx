@@ -24,48 +24,85 @@ function ExcelButton({ users, title }) {
         header: field.toUpperCase(),
         key: field,
         width: 40, // Set the width to 40 for each column
-        style: { font: { size: 12 } },
+        style: { font: { bold: true } }, // Make the header bold
       };
     });
 
     worksheet.columns = tableHeader;
 
-    const fieldRow = worksheet.addRow(fields.map(field => field.toUpperCase()));
-      fieldRow.eachCell({ includeEmpty: true }, (cell) => {
+    // Add data to the worksheet starting from row 3
+    const dataStartingRow = 3;
+    filteredPatients.forEach((user, index) => {
+      const dataRow = worksheet.getRow(dataStartingRow + index);
+      dataRow.values = Object.values(user);
+      dataRow.eachCell((cell) => {
         cell.width = 40;
-        cell.font = { bold: true }; // Set the font to bold
+        cell.font = { size: 14, bold: false }; // Set the font to bold
+        cell.alignment = { horizontal: "left", wrapText: true, vertical: "top" };
+        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "DAEEF3" } };
+        cell.style = {
+          ...cell.style,
+          border: { top: { style: 'thin' }, right: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' } },
+          // Add padding (adjust as needed)
+          top: { style: 'thin' },
+          right: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+        };
       });
+    });
 
 
-    // Add data to the worksheet (replace this with your actual data)
-    filteredPatients.forEach((user) => {
-      worksheet.addRow(user);
+    // Set headers in row 2
+    const headerRow = worksheet.getRow(2);
+    headerRow.values = fields.map(field => field.toUpperCase());
+    headerRow.eachCell((cell, index) => {
+      cell.width = 40;
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "92CDDC" } }
+      cell.font = { size: 16, bold: true }; // Set the font to bold
+      cell.style = {
+        ...cell.style,
+        border: { top: { style: 'thin' }, right: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' } },
+        // Add padding (adjust as needed)
+        top: { style: 'thin' },
+        right: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+      };
     });
 
     // Calculate the width for the merged cell
-    const mergedWidth = fields.length * 10; // Assuming each column has a width of 40
+    const mergedWidth = fields.length * 40; // Assuming each column has a width of 40
 
     // Merge cells for the header title and center-align it
-    worksheet.mergeCells('A1', `E1`);
+    worksheet.mergeCells(`A1:${String.fromCharCode(64 + fields.length)}1`);
     worksheet.getCell('A1').value = 'KM GERONIMO DENTAL CLINIC';
-    worksheet.getCell('A1').font = { size: 14, bold: true };
-    worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'center' };
+    worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' }; // Use 'middle' for vertical alignment
+    worksheet.getCell('A1').fill = { type: "pattern", pattern: "solid", fgColor: { argb: "31869B" } }
+    worksheet.getCell('A1').font = { color: { argb: 'FFFFFFFF' }, size: 28, bold: true }
+
 
     // Set the width for the merged cell
-    worksheet.getColumn('A').width = mergedWidth;
+    worksheet.getColumn('A').width = 40;
 
     // Generate the Excel file
     const buffer = await workbook.xlsx.writeBuffer();
+
+    // Date file name
+    const currentDate = new Date();
+    const options = { timeZone: 'Asia/Manila', month: 'short', day: 'numeric', year: 'numeric' };
+    const formattedDate = currentDate.toLocaleDateString('en-US', options).replace(/ /g, '-'); // Format date as "Nov-25-2023"
+    const fileName = `KmGeronimoDentalClinic-${formattedDate}-${title}.xlsx`;
 
     // Create a Blob from the buffer and create a download link
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${title}.xlsx`;
+    a.download = fileName;
     a.click();
     window.URL.revokeObjectURL(url);
-  };
+  }
 
   return (
     <FileIcons Icon={RiFileExcel2Fill} title={"Excel"} eventHandler={printExcel} />

@@ -19,7 +19,7 @@ function ViewPatient(props) {
 	const appointment = useSelector((state) => state.appointment.payload.filter((val) => val.patient.patientId === id));
 
 	// TREATMENT
-	const headerTreatment = useMemo(()=>["Date", "Tooth No.","Dentist", "Procedure", "Amount Charged", "Amount Paid", "Balance","status"],[]);
+	const headerTreatment = useMemo(() => ["Date", "Tooth No.", "Dentist", "Procedure", "Amount Charged", "Amount Paid", "Balance", "status"], []);
 	const history = appointment.filter(val => val.status === "DONE" || val.status === "CANCELLED")
 		.map(val => {
 			return {
@@ -39,36 +39,36 @@ function ViewPatient(props) {
 		}
 	});
 	const [teethHistory, setHistory] = useState([]);
-	const teethHeader = useMemo(()=>["Appointment Start", "Appointment End", "Services", "Status"],[]);
+	const teethHeader = useMemo(() => ["Appointment Start", "Appointment End", "Services", "Status"], []);
 	const [treatmentRenderData, setTreatmentRenderData] = useState([]);
 
-	const fetchData = useCallback(()=>{
+	const fetchData = useCallback(() => {
 		const result = payment
-		?.filter((val)=>(val.appointment.status==="TREATMENT" || val.appointment.status==="TREATMENT_DONE"))
-		?.map((paymentData)=>{
-			const teethResult = teethList?.filter((val)=>val.appointment.appointmentId===paymentData.appointment.appointmentId).map((val)=>val.teethNumber);
-			let procedure="";
-			for(let x = 0; x < paymentData.appointment.dentalServices.length; x++){
-				procedure = procedure.concat(paymentData.appointment.dentalServices[x].name+ ", ");
-			}
-			let teethPrinter="";
-			for(let x = 0; x < teethResult.length; x++){
-				teethPrinter = teethPrinter.concat(teethResult[x]+ " ");
-			}
-			return {
-				date:paymentData.appointment.appointmentDate,
-				procedure: procedure,
-				teeth: teethPrinter,
-				dentist: `Dr. ${paymentData.appointment.dentist.fullname}`,
-				amountCharged: paymentData.amountCharge,
-				amountPaid: paymentData.totalPayment,
-				balance:paymentData.balance,
-				status:paymentData.appointment.status
-			};
-		})
+			?.filter((val) => (val.appointment.status === "TREATMENT" || val.appointment.status === "TREATMENT_DONE"))
+			?.map((paymentData) => {
+				const teethResult = teethList?.filter((val) => val.appointment.appointmentId === paymentData.appointment.appointmentId).map((val) => val.teethNumber);
+				let procedure = "";
+				for (let x = 0; x < paymentData.appointment.dentalServices.length; x++) {
+					procedure = procedure.concat(paymentData.appointment.dentalServices[x].name + ", ");
+				}
+				let teethPrinter = "";
+				for (let x = 0; x < teethResult.length; x++) {
+					teethPrinter = teethPrinter.concat(teethResult[x] + " ");
+				}
+				return {
+					date: paymentData.appointment.appointmentDate,
+					procedure: procedure,
+					teeth: teethPrinter,
+					dentist: `Dr. ${paymentData.appointment.dentist.fullname}`,
+					amountCharged: paymentData.amountCharge,
+					amountPaid: paymentData.totalPayment,
+					balance: paymentData.balance,
+					status: paymentData.appointment.status
+				};
+			})
 		setTreatmentRenderData(result);
 	})
-	
+
 	const selectTeethButton = (idx) => {
 		const filteredSelectedTeeth = teethList.filter((val) => val.teethNumber === idx);
 		setHistory(filteredSelectedTeeth);
@@ -79,8 +79,12 @@ function ViewPatient(props) {
 				const response = await axios.get(`${TEETH_LINK}/${id}`);
 				setTeethList(response.data);
 			} catch (error) {
-
+				console.log(error);
 			}
+		}
+
+		if (!payment) {
+			dispatch(fetchPayments());
 		}
 		fetchTeeth();
 	}, []);
@@ -94,7 +98,8 @@ function ViewPatient(props) {
 	useEffect(()=>{ 
 		fetchData();
 	},[payment])
-	
+
+
 	const OverviewPage = () => {
 		return (
 			<section className='w-full h-full bg-white flex flex-col gap-4'>
@@ -249,8 +254,6 @@ function ViewPatient(props) {
 								{
 									treatmentRenderData
 										.map((val, idx) => (
-
-
 											<tr key={idx} className='font-medium border text-slate-900 even:bg-slate-100'>
 												<td>{moment(val.date).format("MMMM DD YYYY")}</td>
 												<td>{val.teeth}</td>
@@ -265,7 +268,7 @@ function ViewPatient(props) {
 								}
 							</tbody>
 							:
-							<h2 className='absolute top-1/2 text-center text-xl text-slate-400 w-full'>Sorry, no data found!</h2>
+							<span className='absolute top-1/2 text-center text-xl text-slate-400 w-full'>Sorry, no data found!</span>
 					}
 				</table>
 				{/* <div className=' w-full px-6 py-3 text-cyan-900 flex justify-between items-center'>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
+import { AiFillEdit } from 'react-icons/ai';
 import moment from 'moment/moment';
 
 function PaymentTable({ tableHeaders, results, search, currentPage, setUpdateModal, updateData, setUpdateData, acceptData, setAcceptData }) {

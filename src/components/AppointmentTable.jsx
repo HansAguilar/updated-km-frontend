@@ -106,13 +106,9 @@ function AppointmentTable({ tableHeaders, results, search, currentPage, type }) 
 						<tr>
 							{
 								tableHeaders.map((header, index) => (
-									<>
-										{
-												<th className="p-2 uppercase text-slate-100 cursor-pointer" key={index} onClick={() => setStatusValue({ ...statusValue, isClick: true })}>
-													<p className={`${statusValue.isClick ? "hidden" : ""}`}>{header}</p>
-												</th>
-										}
-									</>
+									<th className="p-2 uppercase text-slate-100 cursor-pointer" key={index} onClick={() => setStatusValue({ ...statusValue, isClick: true })}>
+										<p className={`${statusValue.isClick ? "hidden" : ""}`}>{header}</p>
+									</th>
 								))
 							}
 						</tr>

@@ -71,7 +71,7 @@ function Login() {
               autoFocus
               className=' peer appearance-none indent-2 p-3 text-sm w-full rounded bg-transparent outline-none placeholder-transparent border  placeholder-shown:border-[#c2c8d0] focus:border-sky-400 border-[#c2c8d0] font-normal text-[#3a332d]' />
             <label htmlFor="username"
-              class="absolute left-4 px-1 peer-placeholder-shown:text-[#6f7780] text-black/50 bg-white text-xs peer-focus:text-xs peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:text-sky-400 peer-focus:-top-2 -top-2 transition-all ease-linear duration-100 font-normal">Username*</label>
+              className="absolute left-4 px-1 peer-placeholder-shown:text-[#6f7780] text-black/50 bg-white text-xs peer-focus:text-xs peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:text-sky-400 peer-focus:-top-2 -top-2 transition-all ease-linear duration-100 font-normal">Username*</label>
           </div>
 
           {/*Password*/}
