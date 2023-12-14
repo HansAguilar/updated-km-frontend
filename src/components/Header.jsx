@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { IoNotificationsSharp } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchNewNotification, readPatientNotification } from "../redux/action/NotificationAction";
+import { fetchAllNotification, fetchNewNotification, readPatientNotification } from "../redux/action/NotificationAction";
 import * as io from "socket.io-client";
 import { SOCKET_LINK } from '../ApiLinks';
 import { BsCalendar2Check } from "react-icons/bs";
@@ -15,18 +15,23 @@ function Header({ toggleBar, setToggleBar, setNotificationToggleModal, notificat
   const { loginAdmin } = useSelector((state) => { return state.admin; });
 
   const notificationCounter = useSelector((state) => {
-    return state.notification.payload.filter(val => {
+    return state?.notification?.payload?.filter(val => {
       return val.status === "UNREAD";
     });
   });
 
-  const notification = useSelector((state) => { return state.notification.payload });
+  const notification = useSelector((state) => { return state?.notification?.payload });
+  
   const dispatch = useDispatch();
   const toggleMenuEvent = () => {
     if (toggleBar) return setToggleBar(false);
     setToggleBar(true)
   }
-
+  useEffect(()=>{
+    if(!notification){
+      dispatch(fetchAllNotification());
+    }
+  },[loginAdmin])
   useEffect(() => {
     socket.on("receive_notification", (data) => {
       const parseData = JSON.parse(data);
@@ -51,7 +56,7 @@ function Header({ toggleBar, setToggleBar, setNotificationToggleModal, notificat
           <div className=' relative h-12 flex justify-center items-center max-w-max cursor-pointer' onClick={() => setNotificationToggle((state) => { return !state; })}>
             <IoNotificationsSharp size={30} className=' text-blue-500 ' />
             {
-              notificationCounter.length > 0 && (
+              notificationCounter?.length > 0 && (
                 <div className=' w-4 h-4 absolute bg-red-600 p-1 rounded-full flex items-center justify-center bottom-2 right-1 '>
                 </div>
               )
@@ -63,7 +68,7 @@ function Header({ toggleBar, setToggleBar, setNotificationToggleModal, notificat
 
       {/* NOTIFICATION BOX */}
       {
-        isNotificationToggle && (
+        notification && isNotificationToggle && (
           <div className=' bg-slate-100 w-96 h-96 max-h-96 overflow-auto absolute rounded shadow-xl top-16 right-5 z-30 flex flex-col border-2 border-[#BEBEBE]'>
             {
               notification.map((data, idx) => (

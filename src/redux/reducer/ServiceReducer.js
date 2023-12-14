@@ -2,8 +2,6 @@ import { CREATE_SERVICES_SUCCESS, DELETE_SERVICES_SUCCESS, FETCH_SERVICES_FAILED
 
 const reducer = (state={}, action) =>{
     switch(action.type){
-        case FETCH_SERVICES_REQUEST:
-            return { ...state, loading:true,}
         case FETCH_SERVICES_SUCCESS:
             return { ...state, payload:action.payload, loading:false };
         case CREATE_SERVICES_SUCCESS:

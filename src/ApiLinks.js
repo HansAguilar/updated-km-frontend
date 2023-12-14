@@ -36,5 +36,3 @@ export const SOCKET_LINK = "https://socket-kmgeronimo-0bfe0b875638.herokuapp.com
 
 // const PORT = `localhost`;
 // export const SOCKET_LINK = `http://${PORT}:8081/`;
-
-// export const SOCKET_LINK = `http://localhost:8081/`;

@@ -2,8 +2,6 @@ import { ACCEPT_PAYMENT_SUCCESS, APPROVED_PAYMENT_SUCCESS, CANCELLED_PAYMENT_SUC
 
 const reducer = (state={}, action) =>{
     switch(action.type){
-        case FETCH_PAYMENT_REQUEST:
-            return { ...state, loading:true };
         case FETCH_PAYMENT_SUCCESS: 
             return { ...state, payload:action.payload, loading:false };
         case CREATE_PAYMENT_SUCCESS:

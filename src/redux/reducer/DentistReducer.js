@@ -2,8 +2,6 @@ import { CREATE_DENTIST_SUCCESS, DELETE_DENTIST_SUCCESS, FETCH_DENTIST_FAILED, F
 
 const reducer = (state={}, action)=>{
     switch(action.type){
-        case FETCH_DENTIST_REQUEST:
-            return {...state, loading:true};
         case FETCH_DENTIST_SUCCESS:
             return {...state, payload:action.payload, loading:false };
         case CREATE_DENTIST_SUCCESS:

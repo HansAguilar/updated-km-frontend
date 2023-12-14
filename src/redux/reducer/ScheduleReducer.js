@@ -2,8 +2,6 @@ import { CREATE_SCHEDULE_SUCCESS, DELETE_SCHEDULE_SUCCESS, FETCH_SCHEDULE_FAILED
 
 const reducer = (state = {}, action)=>{
     switch(action.type){
-        case FETCH_SCHEDULE_REQUEST:
-            return { ...state, loading:true }
         case FETCH_SCHEDULE_SUCCESS:
             return { ...state, payload:action.payload, loading:false }
         case CREATE_SCHEDULE_SUCCESS:

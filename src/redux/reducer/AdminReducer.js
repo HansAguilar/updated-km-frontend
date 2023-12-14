@@ -2,8 +2,6 @@ import { ADMIN_CHANGE_STATUS_SUCCESS, CREATE_ADMIN_SUCCESS, DELETE_ADMIN_SUCCESS
 
 const reducer = (state={}, action)=>{
     switch(action.type){
-        case FETCH_ADMIN_REQUEST:
-            return { ...state, loading:true };
         case FETCH_ADMIN_SUCCESS:
             return { ...state, payload:action.payload, loading:false };
         case CREATE_ADMIN_SUCCESS:

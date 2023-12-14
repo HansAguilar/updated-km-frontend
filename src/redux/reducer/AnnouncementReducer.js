@@ -2,8 +2,6 @@ import { CREATE_ANNOUNCEMENT_SUCCESS, DELETE_ANNOUNCEMENT_SUCCESS, FETCH_ANNOUNC
 
 const reducer = (state = {}, action)=>{
     switch(action.type){
-        case FETCH_ANNOUNCEMENT_REQUEST:
-            return { ...state, loading:true }
         case FETCH_ANNOUNCEMENT_SUCCESS:
             return { ...state, payload:action.payload, loading:false }
         case CREATE_ANNOUNCEMENT_SUCCESS:

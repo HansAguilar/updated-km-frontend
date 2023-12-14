@@ -39,12 +39,12 @@ function Sidebar({ toggleBar, children }) {
 					name: 'Patient Account',
 					icon: <SidebarIcon Icon={FaUserAlt} />
 				},
-				loginAdmin.role === "ADMIN" && {
+				loginAdmin?.role === "ADMIN" && {
 					path: '/admin/dashboard/dentist',
 					name: 'Dentist Account',
 					icon: <SidebarIcon Icon={FaUserMd} />
 				},
-				loginAdmin.role === "ADMIN" && {
+				loginAdmin?.role === "ADMIN" && {
 					path: '/admin/dashboard/admin',
 					name: 'Admin Account',
 					icon: <SidebarIcon Icon={FaUserCog} />
@@ -69,7 +69,7 @@ function Sidebar({ toggleBar, children }) {
 				},
 			]
 		},
-		loginAdmin.role === "ADMIN" && {
+		loginAdmin?.role === "ADMIN" && {
 			path: '/admin/dashboard/services',
 			name: 'Services',
 			icon: <SidebarIcon Icon={MdMedicalServices} />
@@ -79,7 +79,7 @@ function Sidebar({ toggleBar, children }) {
 			name: 'Treatment',
 			icon: <SidebarIcon Icon={GiHealthNormal} />
 		},
-		loginAdmin.role !== "ADMIN" && {
+		loginAdmin?.role !== "ADMIN" && {
 			path: '/admin/dashboard/messages',
 			name: 'Messages',
 			icon: <SidebarIcon Icon={AiFillMessage} />
@@ -110,7 +110,7 @@ function Sidebar({ toggleBar, children }) {
 					name: 'Profile',
 					icon: <SidebarIcon Icon={CgProfile} />
 				},
-				loginAdmin.role === "ADMIN" && {
+				loginAdmin?.role === "ADMIN" && {
 					path: '/admin/dashboard/appointmentFee',
 					name: 'Appointment Fee',
 					icon: <SidebarIcon Icon={CgProfile} />
