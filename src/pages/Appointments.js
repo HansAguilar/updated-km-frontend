@@ -111,9 +111,9 @@ function Appointments() {
   }
 
   useEffect(()=>{
-    // if(!appointmentData){
-    //   dispatch(fetchAppointment());
-    // }
+    if(!appointmentData){
+      dispatch(fetchAppointment());
+    }
     if(!patient){
       dispatch(fetchPatient());
     }

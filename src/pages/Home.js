@@ -22,7 +22,7 @@ function Home() {
     return appointment?.filter(val=>val.status==="APPROVED");
   },[appointment]);
   const pending = useMemo(()=>{
-    return appointment?.filter(val=>val.status==="APPROVED");
+    return appointment?.filter(val=>val.status==="PENDING");
   },[appointment]);
   const cancelled = useMemo(()=>{
     return appointment?.filter(val=>val.status==="CANCELLED");

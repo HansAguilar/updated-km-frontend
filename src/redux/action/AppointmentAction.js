@@ -162,7 +162,7 @@ export const responseToCancelledAppointment = (data) => {
         }
     }
 }
-export const acceptAppointment = (id) => {
+export const acceptAppointment = (id,backToDashBoard) => {
     return async dispatch => {
         try {
             const response = await axios.put(`${APPOINTMENT_LINK}/status/accept/${id}`);
@@ -172,6 +172,7 @@ export const acceptAppointment = (id) => {
             })
             socket.emit("appointment_changes", { value: response.data });
             toastHandler("success", "Verified appointment successfully");
+            backToDashBoard();
         } catch (error) {
 
         }
@@ -181,10 +182,10 @@ export const acceptTreatmentAppointment = (id) => {
     return async dispatch => {
         try {
             const response = await axios.put(`${APPOINTMENT_LINK}/status/accept/treatment/${id}`);
-            // dispatch({
-            //     type: DONE_APPOINTMENT_SUCCESS,
-            //     payload: response.data
-            // })
+            dispatch({
+                type: DONE_APPOINTMENT_SUCCESS,
+                payload: response.data
+            })
         } catch (error) {
 
         }

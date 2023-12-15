@@ -70,9 +70,9 @@ function Appointments() {
   },[appointmentList])
 
   useEffect(()=>{
-    // if(!appointmentList){
-    //   dispatch(fetchAppointment);
-    // }
+    if(!appointmentData){
+      dispatch(fetchAppointment());
+    }
     if(!patient){
       dispatch(fetchPatient());
     }
