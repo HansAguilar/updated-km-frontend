@@ -170,7 +170,7 @@ export const acceptAppointment = (id,backToDashBoard) => {
                 type: DONE_APPOINTMENT_SUCCESS,
                 payload: response.data
             })
-            socket.emit("appointment_changes", { value: response.data });
+            // socket.emit("appointment_changes", { value: response.data });
             toastHandler("success", "Verified appointment successfully");
             backToDashBoard();
         } catch (error) {

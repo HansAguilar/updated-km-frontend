@@ -108,7 +108,8 @@ function UpdateTreatmentModal({ show, setModal, initialAppointment }) {
     setTimeStartList(prevTimeStartList => {
       let updatedTimeStartList = [...prevTimeStartList];
       const getAppointmentDate = filteredAppointments.filter((value) => {
-        return moment(value.appointmentDate, "YYYY-MM-DD").isSame(moment(appointment.date)) 
+        return moment(value.appointmentDate, "YYYY-MM-DD").isSame(moment(appointment.date))
+        && (appointment.status !== "DONE" ||  appointment.status !== "CANCELLED")
         && value.patient.patientId !== initialAppointment.patient.patientId
       });
       if (getAppointmentDate.length > 0) {
@@ -391,8 +392,9 @@ function UpdateTreatmentModal({ show, setModal, initialAppointment }) {
             {/*//^ APPOINTMENT RAW STYLE */}
             <div className=' mb-2 flex flex-col gap-1 relative w-full'>
               <label htmlFor='date' className='font-medium text-slate-600'>Appointment Date</label>
-              <input type='date' name='date' id='date' min={minDate} value={appointment.date} className={inputStyle} onChange={(e) => handleOnChange(e)} />
+              <input type='date' name='date' min={minDate}  id='date' value={appointment.date} className={inputStyle} onChange={(e) => handleOnChange(e)} />
             </div>
+            {/* min={minDate} */}
 
             <div className=' mb-2 flex flex-col gap-1 relative w-full'>
               <label htmlFor='time' className='font-medium text-slate-600'>Appointment Time</label>

@@ -1,24 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import { Routes, Route } from 'react-router-dom';
-import Home from './Home';
-import Admin from './Admin';
-import Appointments from './Appointments';
-import Dentist from './Dentist';
-import Patients from './Patients';
-import Profile from './Profile';
-import Services from './Services';
-import Messages from './Messages';
-import Header from '../components/Header';
-import PageNotFound from './PageNotFound';
-import History from './History';
-import AppointmentInformation from './AppointmentInformation';
-import Announcement from './Announcement';
-import AppointmentCalendar from './AppointmentCalendar';
-import ViewPatient from '../components/ViewPatient';
-import Treatment from "./Treatment";
-import Payment from "./Payment";
-import Schedule from "./Schedule";
+
+// REDUX FUNCTION
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPatient } from '../redux/action/PatientAction';
 import { fetchDentist } from '../redux/action/DentistAction';
@@ -30,16 +14,37 @@ import { fetchNewAdminMessage } from '../redux/action/MessageAction';
 import { fetchAppointmentFee } from '../redux/action/AppointmentFeeAction';
 import LoadingSpinner from "../components/LoadingSpinner";
 import { AiOutlineScan } from 'react-icons/ai';
-import QRScanPage from './QRScanPage';
-import QRCodeModal from '../components/QRCodeModal';
 import * as io from "socket.io-client";
 import { SOCKET_LINK } from '../ApiLinks';
 import { fetchPatientPayments, fetchPaymentDetails } from "../redux/action/PaymentAction";
 import { fetchIncomingMessage } from "../redux/action/MessageAction";
 import NotificationModal from '../components/NotificationModal';
-import AppointmentFee from './AppointmentFee';
 import { fetchInsurance } from '../redux/action/InsuranceAction';
 import { fetchSchedule } from '../redux/action/ScheduleAction';
+
+import Header from '../components/Header';
+import QRCodeModal from '../components/QRCodeModal'; 
+
+// ROUTE COMPONENT
+const Home = React.lazy(()=>import('./Home'));
+const Admin = React.lazy(()=>import('./Admin'));
+const Appointments = React.lazy(()=>import('./Appointments'));
+const Dentist = React.lazy(()=>import('./Dentist'));
+const Patients = React.lazy(()=>import('./Patients'));
+const Profile = React.lazy(()=>import('./Profile'));
+const Services = React.lazy(()=>import('./Services'));
+const Messages = React.lazy(()=>import('./Messages'));
+const PageNotFound = React.lazy(()=>import('./PageNotFound'));
+const History = React.lazy(()=>import('./History'));
+const AppointmentInformation = React.lazy(()=>import('./AppointmentInformation'));
+const Announcement = React.lazy(()=>import('./Announcement'));
+const AppointmentCalendar = React.lazy(()=>import('./AppointmentCalendar'));
+const ViewPatient = React.lazy(()=>import('../components/ViewPatient'));
+const Treatment = React.lazy(()=>import('./Treatment'));
+const Payment = React.lazy(()=>import('./Payment'));
+const Schedule = React.lazy(()=>import('./Schedule'));
+const QRScanPage = React.lazy(()=>import('./QRScanPage')); 
+const AppointmentFee = React.lazy(()=>import('./AppointmentFee')); 
 
 const socket = io.connect(SOCKET_LINK);
 function Dashboard() {
@@ -65,10 +70,18 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-      dispatch(fetchServices());
-      dispatch(fetchAppointmentFee());
-      dispatch(fetchInsurance());
-      dispatch(fetchSchedule());
+      if(!service.payload){
+        dispatch(fetchServices());
+      }
+      if(!appointmentFee.payload){
+        dispatch(fetchAppointmentFee());
+      }
+      if(!insurance.payload){
+        dispatch(fetchInsurance());
+      }
+      if(!schedule.payload){
+        dispatch(fetchSchedule());
+      }
   }, [admin.loginAdmin]);
 
   useEffect(() => {
@@ -103,7 +116,7 @@ function Dashboard() {
     })
 
     return () => { socket.off() }
-  }, [socket]);
+  }, [SOCKET_LINK]);
 
   // if 
   return (
@@ -119,73 +132,135 @@ function Dashboard() {
                 {notificationToggle.isShow && (<NotificationModal notificationToggle={notificationToggle} setNotificationToggle={setNotificationToggle} />)}
 
                 <Header toggleBar={toggleBar} setToggleBar={setToggleBar} setNotificationToggleModal={setNotificationToggle} notificationToggle={notificationToggle} />
+
                 <Routes>
+
                   <Route element={
-                    <Home />}
+                    <React.Suspense>
+                      <Home />
+                    </React.Suspense>
+                    }
                     path='/' />
 
                   <Route element={
-                    <Admin />
+                    <React.Suspense>
+                      <Admin />
+                    </React.Suspense>
                   } path='/admin' />
 
                   <Route path='/appointment'>
-                    <Route element={<Appointments />} path='/appointment/' />
-                    <Route element={<AppointmentCalendar />} path='/appointment/calendar' />
-                    <Route path='/appointment/details/:id' element={<AppointmentInformation />} />
-                    <Route path='*' element={<PageNotFound />} />
+
+                    <Route element={
+                      <React.Suspense>
+                        <Appointments />
+                      </React.Suspense>
+                    } path='/appointment/' />
+
+                    <Route element={
+                      <React.Suspense>
+                        <AppointmentCalendar />
+                      </React.Suspense>
+                    } path='/appointment/calendar' />
+
+                    <Route path='/appointment/details/:id' element={
+                      <React.Suspense>
+                        <AppointmentInformation />
+                      </React.Suspense>
+                    } />
+
+                    <Route path='*' element={
+                        <PageNotFound />
+                    } />
                   </Route>
 
                   <Route element={
-                    <Messages />
+                    <React.Suspense>
+                      <Messages />
+                    </React.Suspense>
                   } path='/messages' />
 
                   <Route element={
-                    <Dentist />
+                    <React.Suspense>
+                      <Dentist />
+                    </React.Suspense>
                   } path='/dentist' />
 
                   <Route
                     path='/patient' >
-                    <Route element={<Patients />} path='/patient/' />
-                    <Route element={<ViewPatient />} path='/patient/:id' />
+
+                    <Route element={
+                      <React.Suspense>
+                        <Patients />
+                      </React.Suspense>
+                    } path='/patient/' />
+
+                    <Route element={
+                      <React.Suspense>
+                        <ViewPatient />
+                      </React.Suspense>
+                    } path='/patient/:id' />
                   </Route>
 
                   <Route element={
-                    <Profile />
+                    <React.Suspense>
+                      <Profile />
+                    </React.Suspense>
                   } path='/profile' />
 
                   <Route element={
-                    <History />
+                    <React.Suspense>
+                      <History />
+                    </React.Suspense>
                   } path='/history' />
 
                   <Route element={
-                    <Treatment />
+                    <React.Suspense>
+                      <Treatment />
+                    </React.Suspense>
                   } path='/treatment' />
 
                   <Route element={
-                    <Services />
+                    <React.Suspense>
+                      <Services />
+                    </React.Suspense>
                   } path='/services' />
 
                   <Route element={
-                    <Schedule />
+                    <React.Suspense>
+                      <Schedule />
+                    </React.Suspense>
                   } path='/schedule' />
 
                   <Route element={
-                    <Payment />
+                    <React.Suspense>
+                      <Payment />
+                    </React.Suspense>
                   } path='/payment' />
 
                   <Route element={
-                    <Announcement />
+                    <React.Suspense>
+                      <Announcement />
+                    </React.Suspense>
                   } path='/announcement' />
 
                   <Route element={
-                    <AppointmentFee />
+                    <React.Suspense>
+                      <AppointmentFee />
+                    </React.Suspense>
                   } path='/appointmentFee' />
 
-                  <Route element={<QRScanPage />}
+                  <Route element={
+                    <React.Suspense>
+                      <QRScanPage />
+                    </React.Suspense>
+                  }
                     path='/scan/:id' />
 
 
-                  <Route path='*' element={<PageNotFound />} />
+                  <Route path='*' element={
+                      <PageNotFound />
+                  } />
+
                 </Routes>
 
 
@@ -204,4 +279,4 @@ function Dashboard() {
   )
 }
 
-export default React.memo(Dashboard)
+export default Dashboard

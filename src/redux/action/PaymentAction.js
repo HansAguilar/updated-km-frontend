@@ -78,7 +78,7 @@ export const approvedPayment = (id) => {
             dispatch({
                 type: APPROVED_PAYMENT_SUCCESS,
                 payload: response.data
-            })
+            });
         } catch (error) {
         }
     }

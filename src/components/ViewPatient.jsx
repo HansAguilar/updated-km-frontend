@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoArrowBackSharp } from "react-icons/io5";
-import { TEETH_LINK } from '../ApiLinks';
+import { APPOINTMENT_LINK, PATIENT_LINK, PAYMENT_LINK, TEETH_LINK } from '../ApiLinks';
 import axios from 'axios';
 import PDFPatientRecord from "../components/PDFPatientRecord";
 import { fetchPayments } from '../redux/action/PaymentAction';
@@ -14,13 +14,13 @@ function ViewPatient(props) {
 	const [headerNavigation, setHeaderNavigation] = useState("overview");
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const patient = useSelector((state) => { return state.patient.payload.find((val) => { return val.patientId === id }); });
-	const payment = useSelector((state) => state?.payment?.payload?.filter((val) => val.patient.patientId === id));
-	const appointment = useSelector((state) => state.appointment.payload.filter((val) => val.patient.patientId === id));
+	const [payment, setPayment] = useState(null);
+	const [appointment, setAppointment] = useState(null);
+	const [patient, setPatient] = useState(null);
 
 	// TREATMENT
 	const headerTreatment = useMemo(() => ["Date", "Tooth No.", "Dentist", "Procedure", "Amount Charged", "Amount Paid", "Balance", "status"], []);
-	const history = appointment.filter(val => val.status === "DONE" || val.status === "CANCELLED")
+	const history = appointment?.filter(val => val.status === "DONE" || val.status === "CANCELLED")
 		.map(val => {
 			return {
 				date: moment(val.appointmentDate).format("L"),
@@ -30,12 +30,12 @@ function ViewPatient(props) {
 			}
 		});
 
-	const [teethList, setTeethList] = useState([]);
+	const [teethList, setTeethList] = useState(null);
 	const toothChart = [...Array(32)].map((_, idx) => {
-		const filterTeeth = teethList.filter((val) => val.teethNumber === idx + 1 && val.status === "UNDER_TREATMENT");
+		const filterTeeth = teethList?.filter((val) => val.teethNumber === idx + 1 && val.status === "UNDER_TREATMENT");
 		return {
 			teethNumber: idx + 1,
-			isUnderTreatment: filterTeeth.length > 0 ? true : false,
+			isUnderTreatment: filterTeeth?.length > 0 ? true : false,
 		}
 	});
 	const [teethHistory, setHistory] = useState([]);
@@ -52,7 +52,7 @@ function ViewPatient(props) {
 					procedure = procedure.concat(paymentData.appointment.dentalServices[x].name + ", ");
 				}
 				let teethPrinter = "";
-				for (let x = 0; x < teethResult.length; x++) {
+				for (let x = 0; x < teethResult?.length; x++) {
 					teethPrinter = teethPrinter.concat(teethResult[x] + " ");
 				}
 				return {
@@ -67,33 +67,41 @@ function ViewPatient(props) {
 				};
 			})
 		setTreatmentRenderData(result);
-	})
+	},[payment])
 
 	const selectTeethButton = (idx) => {
-		const filteredSelectedTeeth = teethList.filter((val) => val.teethNumber === idx);
+		const filteredSelectedTeeth = teethList?.filter((val) => val.teethNumber === idx);
 		setHistory(filteredSelectedTeeth);
 	}
+
+
 	useEffect(() => {
 		const fetchTeeth = async () => {
-			try {
-				const response = await axios.get(`${TEETH_LINK}/${id}`);
-				setTeethList(response.data);
-			} catch (error) {
-				console.log(error);
-			}
-		}
-
-		if (!payment) {
-			dispatch(fetchPayments());
+			await axios.get(`${TEETH_LINK}/${id}`)
+			.then((response)=>setTeethList(response.data))
+			.catch((err)=>console.log());
 		}
 		fetchTeeth();
+		const fetchPayment = async () => {
+			await axios.get(`${PAYMENT_LINK}/all/${id}`)
+			.then((response=>setPayment(response.data)))
+			.catch((err)=>console.log());
+		}
+		fetchPayment();
+		const fetchAppointment = async () => {
+			await axios.get(`${APPOINTMENT_LINK}/patient/${id}`)
+			.then((response=>setAppointment(response.data)))
+			.catch((err)=>console.log());
+		}
+		fetchAppointment();
+		const fetchPatient = async () => {
+			await axios.get(`${PATIENT_LINK}/fetch/${id}`)
+			.then((response=>setPatient(response.data)))
+			.catch((err)=>console.log());
+		}
+		fetchPatient();
 	}, []);
 
-	useEffect(() => {
-		if(!payment){
-			dispatch(fetchPayments());
-		}
-	}, [teethList]);
 
 	useEffect(()=>{ 
 		fetchData();
@@ -135,7 +143,7 @@ function ViewPatient(props) {
 								>
 									<p>{val.teethNumber}</p>
 								</div>
-							)).slice(16, toothChart.length)
+							)).slice(16, toothChart?.length)
 						}
 					</div>
 				</div>
@@ -152,7 +160,7 @@ function ViewPatient(props) {
 					</thead>
 
 					{
-						teethHistory.length > 0 ?
+						teethHistory?.length > 0 ?
 							<tbody>
 								{
 									teethHistory.map((val, idx) => (
@@ -196,7 +204,7 @@ function ViewPatient(props) {
 					</thead>
 
 					{
-						history.length > 0 ?
+						history?.length > 0 ?
 							<tbody>
 								{
 									history.map((val, idx) => (
@@ -249,7 +257,7 @@ function ViewPatient(props) {
 					</thead>
 
 					{
-						appointment.length > 0 ?
+						appointment?.length > 0 ?
 							<tbody>
 								{
 									treatmentRenderData
@@ -286,7 +294,7 @@ function ViewPatient(props) {
 	return (
 		<>
 			{
-				!teethList || !treatmentRenderData ? (
+				!teethList || !payment || !appointment || !patient ||!treatmentRenderData ? (
 					<div className=' w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></div>
 				) : (
 					<section className='w-full'>
@@ -379,13 +387,12 @@ function ViewPatient(props) {
 export default React.memo(ViewPatient);
 
 
-
 // import moment from 'moment';
 // import React, { useState, useEffect, useCallback, useMemo } from 'react';
 // import { useDispatch, useSelector } from 'react-redux';
 // import { useNavigate, useParams } from 'react-router-dom';
 // import { IoArrowBackSharp } from "react-icons/io5";
-// import { APPOINTMENT_LINK, PATIENT_LINK, PAYMENT_LINK, TEETH_LINK } from '../ApiLinks';
+// import { TEETH_LINK } from '../ApiLinks';
 // import axios from 'axios';
 // import PDFPatientRecord from "../components/PDFPatientRecord";
 // import { fetchPayments } from '../redux/action/PaymentAction';
@@ -396,13 +403,13 @@ export default React.memo(ViewPatient);
 // 	const [headerNavigation, setHeaderNavigation] = useState("overview");
 // 	const { id } = useParams();
 // 	const navigate = useNavigate();
-// 	const [payment, setPayment] = useState(null);
-// 	const [appointment, setAppointment] = useState(null);
-// 	const [patient, setPatient] = useState(null);
+// 	const patient = useSelector((state) => { return state.patient.payload.find((val) => { return val.patientId === id }); });
+// 	const payment = useSelector((state) => state?.payment?.payload?.filter((val) => val.patient.patientId === id));
+// 	const appointment = useSelector((state) => state.appointment.payload.filter((val) => val.patient.patientId === id));
 
 // 	// TREATMENT
 // 	const headerTreatment = useMemo(() => ["Date", "Tooth No.", "Dentist", "Procedure", "Amount Charged", "Amount Paid", "Balance", "status"], []);
-// 	const history = appointment?.filter(val => val.status === "DONE" || val.status === "CANCELLED")
+// 	const history = appointment.filter(val => val.status === "DONE" || val.status === "CANCELLED")
 // 		.map(val => {
 // 			return {
 // 				date: moment(val.appointmentDate).format("L"),
@@ -412,12 +419,12 @@ export default React.memo(ViewPatient);
 // 			}
 // 		});
 
-// 	const [teethList, setTeethList] = useState(null);
+// 	const [teethList, setTeethList] = useState([]);
 // 	const toothChart = [...Array(32)].map((_, idx) => {
-// 		const filterTeeth = teethList?.filter((val) => val.teethNumber === idx + 1 && val.status === "UNDER_TREATMENT");
+// 		const filterTeeth = teethList.filter((val) => val.teethNumber === idx + 1 && val.status === "UNDER_TREATMENT");
 // 		return {
 // 			teethNumber: idx + 1,
-// 			isUnderTreatment: filterTeeth?.length > 0 ? true : false,
+// 			isUnderTreatment: filterTeeth.length > 0 ? true : false,
 // 		}
 // 	});
 // 	const [teethHistory, setHistory] = useState([]);
@@ -434,7 +441,7 @@ export default React.memo(ViewPatient);
 // 					procedure = procedure.concat(paymentData.appointment.dentalServices[x].name + ", ");
 // 				}
 // 				let teethPrinter = "";
-// 				for (let x = 0; x < teethResult?.length; x++) {
+// 				for (let x = 0; x < teethResult.length; x++) {
 // 					teethPrinter = teethPrinter.concat(teethResult[x] + " ");
 // 				}
 // 				return {
@@ -449,41 +456,35 @@ export default React.memo(ViewPatient);
 // 				};
 // 			})
 // 		setTreatmentRenderData(result);
-// 	},[payment])
+// 	})
 
 // 	const selectTeethButton = (idx) => {
-// 		const filteredSelectedTeeth = teethList?.filter((val) => val.teethNumber === idx);
+// 		const filteredSelectedTeeth = teethList.filter((val) => val.teethNumber === idx);
 // 		setHistory(filteredSelectedTeeth);
+// 		console.log(teethHistory);
 // 	}
-
 
 // 	useEffect(() => {
 // 		const fetchTeeth = async () => {
-// 			await axios.get(`${TEETH_LINK}/${id}`)
-// 			.then((response)=>setTeethList(response.data))
-// 			.catch((err)=>console.log());
+// 			try {
+// 				const response = await axios.get(`${TEETH_LINK}/${id}`);
+// 				setTeethList(response.data);
+// 			} catch (error) {
+// 				console.log(error);
+// 			}
+// 		}
+
+// 		if (!payment) {
+// 			dispatch(fetchPayments());
 // 		}
 // 		fetchTeeth();
-// 		const fetchPayment = async () => {
-// 			await axios.get(`${PAYMENT_LINK}/all/${id}`)
-// 			.then((response=>setPayment(response.data)))
-// 			.catch((err)=>console.log());
-// 		}
-// 		fetchPayment();
-// 		const fetchAppointment = async () => {
-// 			await axios.get(`${APPOINTMENT_LINK}/patient/${id}`)
-// 			.then((response=>setAppointment(response.data)))
-// 			.catch((err)=>console.log());
-// 		}
-// 		fetchAppointment();
-// 		const fetchPatient = async () => {
-// 			await axios.get(`${PATIENT_LINK}/fetch/${id}`)
-// 			.then((response=>setPatient(response.data)))
-// 			.catch((err)=>console.log());
-// 		}
-// 		fetchPatient();
 // 	}, []);
 
+// 	useEffect(() => {
+// 		if(!payment){
+// 			dispatch(fetchPayments());
+// 		}
+// 	}, [teethList]);
 
 // 	useEffect(()=>{ 
 // 		fetchData();
@@ -525,7 +526,7 @@ export default React.memo(ViewPatient);
 // 								>
 // 									<p>{val.teethNumber}</p>
 // 								</div>
-// 							)).slice(16, toothChart?.length)
+// 							)).slice(16, toothChart.length)
 // 						}
 // 					</div>
 // 				</div>
@@ -542,7 +543,7 @@ export default React.memo(ViewPatient);
 // 					</thead>
 
 // 					{
-// 						teethHistory?.length > 0 ?
+// 						teethHistory.length > 0 ?
 // 							<tbody>
 // 								{
 // 									teethHistory.map((val, idx) => (
@@ -586,7 +587,7 @@ export default React.memo(ViewPatient);
 // 					</thead>
 
 // 					{
-// 						history?.length > 0 ?
+// 						history.length > 0 ?
 // 							<tbody>
 // 								{
 // 									history.map((val, idx) => (
@@ -639,7 +640,7 @@ export default React.memo(ViewPatient);
 // 					</thead>
 
 // 					{
-// 						appointment?.length > 0 ?
+// 						appointment.length > 0 ?
 // 							<tbody>
 // 								{
 // 									treatmentRenderData
@@ -676,7 +677,7 @@ export default React.memo(ViewPatient);
 // 	return (
 // 		<>
 // 			{
-// 				!teethList || !payment || !appointment || !patient ||!treatmentRenderData ? (
+// 				!teethList || !treatmentRenderData ? (
 // 					<div className=' w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></div>
 // 				) : (
 // 					<section className='w-full'>
