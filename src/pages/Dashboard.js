@@ -52,10 +52,10 @@ function Dashboard() {
   });
   const patient = useSelector(state => state?.patient );
   const service = useSelector(state => state?.service );
-  const dentist = useSelector(state => state?.dentist );
+  // const dentist = useSelector(state => state?.dentist );
   const admin = useSelector(state => state?.admin );
   const appointment = useSelector(state => state?.appointment );
-  const notification = useSelector((state)=>state?.notification)
+  const insurance = useSelector((state)=>state?.insurance)
   const appointmentFee = useSelector((state)=>state?.fee)
   const schedule= useSelector((state)=>state?.schedule)
 
@@ -65,16 +65,18 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if (admin?.loginAdmin) {
-      dispatch(fetchPatient());
-      dispatch(fetchServices());
-      dispatch(fetchDentist());
-      dispatch(fetchAppointment());
-      dispatch(fetchAllNotification());
-      dispatch(fetchAppointmentFee());
-      dispatch(fetchInsurance());
-      dispatch(fetchSchedule());
-    }
+      if(!service.payload){
+        dispatch(fetchServices());
+      }
+      if(!appointmentFee.payload){
+        dispatch(fetchAppointmentFee());
+      }
+      if(!insurance.payload){
+        dispatch(fetchInsurance());
+      }
+      if(!schedule.payload){
+        dispatch(fetchSchedule());
+      }
   }, [admin.loginAdmin]);
 
   useEffect(() => {
@@ -115,7 +117,7 @@ function Dashboard() {
   return (
     <>
       {
-        (!admin.loginAdmin || !schedule?.payload || !patient?.payload || !service?.payload || !dentist?.payload || !appointment?.payload || !notification?.payload || !appointmentFee?.payload) ? <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></section>
+        (!appointmentFee?.payload || !schedule?.payload || !insurance?.payload || !service.payload ) ? <section className='w-full h-screen flex justify-center items-center '><LoadingSpinner loading={true} /></section>
           : (
             <div className='w-full h-screen flex z-10 relative '>
               <Sidebar toggleBar={toggleBar} />

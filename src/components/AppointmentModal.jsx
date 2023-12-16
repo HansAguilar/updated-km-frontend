@@ -3,14 +3,16 @@ import { CiCircleRemove } from "react-icons/ci";
 import { ToastContainer } from 'react-toastify';
 import moment from 'moment/moment';
 import { toastHandler } from '../ToastHandler';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { BiSearchAlt } from 'react-icons/bi';
+import { fetchDentist } from '../redux/action/DentistAction';
 
 const inputStyle = "p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none";
 
 function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppointment, clearData }) {
+  const dispatch = useDispatch();
   const patient = useSelector((state) => { return state.patient; });
-  const dentist = useSelector((state) => { return state.dentist; });
+  const dentist = useSelector((state) => { return state?.dentist; });
   const service = useSelector((state) => { return state.service; });
   const schedule = useSelector((state) => { return state.schedule.payload; });
   const filteredAppointments = useSelector((state) => { return state.appointment.payload.filter((val) => (val.status !== "DONE" && val.status !== "CANCELLED"&& val.status !== "TREATMENT_DONE")) });
@@ -124,7 +126,6 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
             indicesScheduleToRemain.push(i);
           }
         }
-        console.log(indicesScheduleToRemain);
         updatedSchedList = updatedSchedList.filter((_, idx) => { return !indicesScheduleToRemain.includes(idx) });
       }
       return updatedSchedList;
@@ -161,6 +162,7 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
   //   const fetchAllPatientHMO = insurance.filter((val)=>val.patient.patientId===appointment.patientId);
   //   setAvailableHMO(fetchAllPatientHMO);
   // },[appointment.patientId])
+  
 
   const nextButton = async () => {
     // appointment.serviceSelected.length < 1 ||
@@ -268,6 +270,12 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
   const currentDate = new Date();
   currentDate.setDate(currentDate.getDate() + 1); // Subtract one day
   const minDate = currentDate.toISOString().split('T')[0];
+
+  useEffect(()=>{
+    if(!dentist){
+      dispatch(fetchDentist())
+    }
+  },[])
 
   return (
     <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center ${show ? '' : 'hidden'}`}>

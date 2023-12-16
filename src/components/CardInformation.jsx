@@ -14,4 +14,4 @@ function CardInformation({fromBG, toBG, iconColor, number,title,Icon,textColor})
   )
 }
 
-export default CardInformation
+export default React.memo(CardInformation)

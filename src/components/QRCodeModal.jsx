@@ -26,7 +26,7 @@ export default function QRCodeModal({ setToggleQR }) {
     }
 
     function error(err) {
-      console.error('QR Code scan error:', err);
+      console.error();
     }
 
     return () => {

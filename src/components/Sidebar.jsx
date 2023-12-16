@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SidebarIcon from './SidebarIcon';
 import { NavLink } from 'react-router-dom';
@@ -22,103 +22,104 @@ function Sidebar({ toggleBar, children }) {
 		active: false,
 		value: ""
 	});
-	const menuItem = [
-		{
-			path: '/admin/dashboard',
-			name: 'Dashboard',
-			icon: <SidebarIcon Icon={AiFillHome} />,
-		},
-		{
-			path: `${params.pathname}`,
-			name: 'Accounts',
-			icon: <SidebarIcon Icon={MdManageAccounts} />,
-			value: "ACCOUNTS",
-			sublinks: [
-				{
-					path: '/admin/dashboard/patient',
-					name: 'Patient Account',
-					icon: <SidebarIcon Icon={FaUserAlt} />
-				},
-				loginAdmin.role === "ADMIN" && {
-					path: '/admin/dashboard/dentist',
-					name: 'Dentist Account',
-					icon: <SidebarIcon Icon={FaUserMd} />
-				},
-				loginAdmin.role === "ADMIN" && {
-					path: '/admin/dashboard/admin',
-					name: 'Admin Account',
-					icon: <SidebarIcon Icon={FaUserCog} />
-				},
-			]
-		},
-		{
-			path: `${params.pathname}`,
-			name: 'Appointments',
-			icon: <SidebarIcon Icon={BsFillCalendar3Fill} />,
-			value: "APPOINTMENT",
-			sublinks: [
-				{
-					path: '/admin/dashboard/appointment/calendar',
-					name: 'Appointment Calendar',
-					icon: <SidebarIcon Icon={BsCalendarEventFill} />
-				},
-				{
-					path: '/admin/dashboard/appointment',
-					name: 'Appointment List',
-					icon: <SidebarIcon Icon={BsFillCalendarCheckFill} />
-				},
-			]
-		},
-		loginAdmin.role === "ADMIN" && {
-			path: '/admin/dashboard/services',
-			name: 'Services',
-			icon: <SidebarIcon Icon={MdMedicalServices} />
-		},
-		{
-			path: '/admin/dashboard/treatment',
-			name: 'Treatment',
-			icon: <SidebarIcon Icon={GiHealthNormal} />
-		},
-		loginAdmin.role !== "ADMIN" && {
-			path: '/admin/dashboard/messages',
-			name: 'Messages',
-			icon: <SidebarIcon Icon={AiFillMessage} />
-		},
-		{
-			path: '/admin/dashboard/schedule',
-			name: 'Schedule',
-			icon: <SidebarIcon Icon={AiFillSchedule} />
-		},
-		{
-			path: '/admin/dashboard/payment',
-			name: 'Payment',
-			icon: <SidebarIcon Icon={FaMoneyBill} />
-		},
-		{
-			path: `${params.pathname}`,
-			name: 'Settings',
-			icon: <SidebarIcon Icon={AiFillSetting} />,
-			value: "SETTING",
-			sublinks: [
-				{
-					path: '/admin/dashboard/announcement',
-					name: 'Announcement',
-					icon: <SidebarIcon Icon={MdAnnouncement} />,
-				},
-				{
-					path: '/admin/dashboard/profile',
-					name: 'Profile',
-					icon: <SidebarIcon Icon={CgProfile} />
-				},
-				loginAdmin.role === "ADMIN" && {
-					path: '/admin/dashboard/appointmentFee',
-					name: 'Appointment Fee',
-					icon: <SidebarIcon Icon={CgProfile} />
-				},
-			]
-		},
-
-	];
+	const menuItem = useMemo(()=>
+		[
+			{
+				path: '/admin/dashboard',
+				name: 'Dashboard',
+				icon: <SidebarIcon Icon={AiFillHome} />,
+			},
+			{
+				path: `${params.pathname}`,
+				name: 'Accounts',
+				icon: <SidebarIcon Icon={MdManageAccounts} />,
+				value: "ACCOUNTS",
+				sublinks: [
+					{
+						path: '/admin/dashboard/patient',
+						name: 'Patient Account',
+						icon: <SidebarIcon Icon={FaUserAlt} />
+					},
+					loginAdmin?.role === "ADMIN" && {
+						path: '/admin/dashboard/dentist',
+						name: 'Dentist Account',
+						icon: <SidebarIcon Icon={FaUserMd} />
+					},
+					loginAdmin?.role === "ADMIN" && {
+						path: '/admin/dashboard/admin',
+						name: 'Admin Account',
+						icon: <SidebarIcon Icon={FaUserCog} />
+					},
+				]
+			},
+			{
+				path: `${params.pathname}`,
+				name: 'Appointments',
+				icon: <SidebarIcon Icon={BsFillCalendar3Fill} />,
+				value: "APPOINTMENT",
+				sublinks: [
+					{
+						path: '/admin/dashboard/appointment/calendar',
+						name: 'Appointment Calendar',
+						icon: <SidebarIcon Icon={BsCalendarEventFill} />
+					},
+					{
+						path: '/admin/dashboard/appointment',
+						name: 'Appointment List',
+						icon: <SidebarIcon Icon={BsFillCalendarCheckFill} />
+					},
+				]
+			},
+			loginAdmin?.role === "ADMIN" && {
+				path: '/admin/dashboard/services',
+				name: 'Services',
+				icon: <SidebarIcon Icon={MdMedicalServices} />
+			},
+			{
+				path: '/admin/dashboard/treatment',
+				name: 'Treatment',
+				icon: <SidebarIcon Icon={GiHealthNormal} />
+			},
+			loginAdmin?.role !== "ADMIN" && {
+				path: '/admin/dashboard/messages',
+				name: 'Messages',
+				icon: <SidebarIcon Icon={AiFillMessage} />
+			},
+			{
+				path: '/admin/dashboard/schedule',
+				name: 'Schedule',
+				icon: <SidebarIcon Icon={AiFillSchedule} />
+			},
+			{
+				path: '/admin/dashboard/payment',
+				name: 'Payment',
+				icon: <SidebarIcon Icon={FaMoneyBill} />
+			},
+			{
+				path: `${params.pathname}`,
+				name: 'Settings',
+				icon: <SidebarIcon Icon={AiFillSetting} />,
+				value: "SETTING",
+				sublinks: [
+					{
+						path: '/admin/dashboard/announcement',
+						name: 'Announcement',
+						icon: <SidebarIcon Icon={MdAnnouncement} />,
+					},
+					{
+						path: '/admin/dashboard/profile',
+						name: 'Profile',
+						icon: <SidebarIcon Icon={CgProfile} />
+					},
+					loginAdmin?.role === "ADMIN" && {
+						path: '/admin/dashboard/appointmentFee',
+						name: 'Appointment Fee',
+						icon: <SidebarIcon Icon={CgProfile} />
+					},
+				]
+			},
+	
+		],[loginAdmin]);
 
 	const handleHover = (val) => {
 		switch (val) {
@@ -227,4 +228,4 @@ function Sidebar({ toggleBar, children }) {
 	);
 }
 
-export default Sidebar;
+export default React.memo(Sidebar);

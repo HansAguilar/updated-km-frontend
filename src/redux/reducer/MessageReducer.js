@@ -2,8 +2,6 @@ import { CREATE_MESSAGE_SUCCESS, FETCH_MESSAGE_FAILED, FETCH_MESSAGE_REQUEST, FE
 
 const reducer = (state = {}, action)=>{
     switch(action.type){
-        case FETCH_MESSAGE_REQUEST:
-            return { ...state, loading:true }
 
         case FETCH_MESSAGE_SUCCESS:
             return { ...state, payload:action.payload, loading:false }

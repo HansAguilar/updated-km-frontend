@@ -109,7 +109,7 @@ function DenstistModal({ show, setModal }) {
               <div className='flex flex-col w-full'>
                 <div className='flex flex-col gap-1'>
                   <label className='font-medium text-slate-600' htmlFor="fullname">Full Name</label>
-                  <input type="text" name="fullname" id='fullname' value={dentistInfo.fullname} className={inputStyle} onChange={(e) => handleFormChange(e)} />
+                  <input type="text" name="fullname" value={dentistInfo.fullname} className={inputStyle} onChange={(e) => handleFormChange(e)} />
                 </div>
               </div>
               {/*//~ NAME */}
@@ -118,14 +118,14 @@ function DenstistModal({ show, setModal }) {
               <div className='flex flex-col w-full'>
                 <div className='flex flex-col gap-1'>
                   <label className='font-medium text-slate-600' htmlFor="birthday">Birthday</label>
-                  <input type="date" name="birthday" id='birthday' value={dentistInfo.birthday} className={inputStyle} onChange={(e) => handleFormChange(e)} />
+                  <input type="date" name="birthday" value={dentistInfo.birthday} className={inputStyle} onChange={(e) => handleFormChange(e)} />
                 </div>
               </div>
 
               <div className='flex flex-col w-full'>
                 <div className='flex flex-col gap-1'>
                   <label className='font-medium text-slate-600' htmlFor="gender">Gender</label>
-                  <select name="gender" id='gender' value={dentistInfo.gender} className={inputStyle} onChange={(e) => handleFormChange(e)}>
+                  <select name="gender" value={dentistInfo.gender} className={inputStyle} onChange={(e) => handleFormChange(e)}>
                     <option value="" disabled>Select Gender</option>
                     <option value="male" >Male</option>
                     <option value="female">Female</option>
@@ -145,19 +145,19 @@ function DenstistModal({ show, setModal }) {
               <div className='flex flex-col w-full'>
                 <div className='flex flex-col gap-1'>
                   <label className='font-medium text-slate-600' htmlFor="address">Address</label>
-                  <input type="text" id='address' name="address" value={dentistInfo.address} className={inputStyle} onChange={(e) => handleFormChange(e)} />
+                  <input type="text" name="address" value={dentistInfo.address} className={inputStyle} onChange={(e) => handleFormChange(e)} />
                 </div>
               </div>
               <div className='flex flex-col w-full'>
                 <div className='flex flex-col gap-1'>
                   <label className='font-medium text-slate-600' htmlFor="contactNumber">Contact Number</label>
-                  <input type="text" id='contactNumber' name="contactNumber" maxLength={11} value={dentistInfo.contactNumber} className={inputStyle} onChange={(e) => handleFormChange(e)} />
+                  <input type="text" name="contactNumber" maxLength={11} value={dentistInfo.contactNumber} className={inputStyle} onChange={(e) => handleFormChange(e)} />
                 </div>
               </div>
               <div className='flex flex-col w-full'>
                 <div className='flex flex-col gap-1'>
                   <label className='font-medium text-slate-600' htmlFor="email">Email</label>
-                  <input type="email" id='email' name="email" value={dentistInfo.email} className={inputStyle} onChange={(e) => handleFormChange(e)} />
+                  <input type="email" name="email" value={dentistInfo.email} className={inputStyle} onChange={(e) => handleFormChange(e)} />
                 </div>
               </div>
             </div>
@@ -171,15 +171,15 @@ function DenstistModal({ show, setModal }) {
             <div className='flex gap-4'>
               <div className='flex flex-col w-full gap-1'>
                 <label className='font-medium text-slate-600' htmlFor="username">Username</label>
-                <input type="text" id='username' name="username" value={dentistInfo.username} className={inputStyle} onChange={(e) => handleFormChange(e)} />
+                <input type="text" name="username" value={dentistInfo.username} className={inputStyle} onChange={(e) => handleFormChange(e)} />
               </div>
               <div className='flex flex-col w-full gap-1'>
                 <label className='font-medium text-slate-600' htmlFor="password">Password</label>
-                <input type="password" id='password' name="password" value={dentistInfo.password} className={inputStyle} onChange={(e) => handleFormChange(e)} />
+                <input type="password" name="password" value={dentistInfo.password} className={inputStyle} onChange={(e) => handleFormChange(e)} />
               </div>
               <div className='flex flex-col w-full gap-1'>
                 <label className='font-medium text-slate-600' htmlFor="confirmPassword">Confirm Password</label>
-                <input type="password" id='confirmPassword' name="confirmPassword" value={dentistInfo.confirmPassword} className={inputStyle} onChange={(e) => handleFormChange(e)} />
+                <input type="password" name="confirmPassword" value={dentistInfo.confirmPassword} className={inputStyle} onChange={(e) => handleFormChange(e)} />
               </div>
             </div>
           </div>
@@ -192,7 +192,7 @@ function DenstistModal({ show, setModal }) {
 
               <div className='flex flex-col w-full gap-1'>
                 <label className='font-medium text-slate-600' htmlFor="specialty">Doctor Specialty</label>
-                <input type="text" id='specialty' name="specialty" value={dentistInfo.specialty} className={inputStyle} onChange={(e) => handleFormChange(e)} />
+                <input type="text" name="specialty" value={dentistInfo.specialty} className={inputStyle} onChange={(e) => handleFormChange(e)} />
               </div>
 
               <div className="flex flex-col w-full gap-1">

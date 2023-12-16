@@ -2,8 +2,6 @@ import { CREATE_NOTIFICATION_SUCCESS, FETCH_NEW_NOTIFICATION_SUCCESS, FETCH_NOTI
 
 const reducer = (state={}, action)=>{
     switch(action.type){
-        case FETCH_NOTIFICATION_REQUEST:
-            return {...state, loading:true};
         case FETCH_NOTIFICATION_SUCCESS:
             return {...state, payload:action.payload, loading:false };
         case FETCH_NEW_NOTIFICATION_SUCCESS:

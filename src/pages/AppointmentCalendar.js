@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import format from "date-fns/format";
 import getDay from "date-fns/getDay";
 import parse from "date-fns/parse";
@@ -7,10 +7,16 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import PageHeader from '../components/PageHeader';
 import moment from 'moment';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAppointment } from "../redux/action/AppointmentAction";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function AppointmentCalendar({ }) {
-  const appointments = useSelector((state) => state.appointment.payload.filter((val) => val.status === "APPROVED" || val.status === "TREATMENT"))
+  const dispatch = useDispatch();
+  const appointment = useSelector((state) => state?.appointment?.payload);
+  const appointments = useMemo(()=>{
+    return appointment?.filter((val) => val.status === "APPROVED" || val.status === "TREATMENT");
+  },[appointment]);
   const [allAppointment, setAppointment] = useState([]);
   const timeArray = ["12:00", "12:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00", "4:30", "5:00"];
   const locales = { "en-US": require("date-fns/locale/en-US") };
@@ -38,12 +44,22 @@ function AppointmentCalendar({ }) {
       }
     })
     setAppointment([...result])
-  }, [])
+  }, [appointments]);
+
+  useEffect(()=>{
+    if(!appointment){
+      dispatch(fetchAppointment())
+    }
+  },[])
 
   return (
     <>
       {
-        appointments && (
+        !appointments ? (
+          <div className=" w-full h-screen flex justify-center items-center ">
+            <LoadingSpinner loading={true} />
+          </div>
+        ) : (
           <div className='h-screen overflow-hidden relative bg-gray-200'>
             <PageHeader link={'Appointment Calendar'} />
 
