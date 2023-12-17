@@ -30,8 +30,8 @@ export const createNewMessage = (roomKey, data) => {
           key: roomKey,
           payload: response.data
         });
-      
-      socket.emit("create_message_admin", {key: roomKey, patient: data.receiverId});
+      const sendData = JSON.stringify({key: roomKey, patient: data.receiverId})
+      socket.emit("create_message_admin", sendData);
       } catch (error) {
         console.log("send_message", error);
       }
