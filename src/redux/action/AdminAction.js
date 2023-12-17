@@ -1,7 +1,8 @@
 import axios from "axios";
-import { ADMIN_CHANGE_STATUS_SUCCESS, CREATE_ADMIN_SUCCESS, DELETE_ADMIN_SUCCESS, FETCH_ADMIN_FAILED, FETCH_ADMIN_SUCCESS, FETCH_LOGIN_ADMIN_FAILED, FETCH_LOGIN_ADMIN_SUCCESS, LOGOUT_ADMIN_SUCCESS, UPDATE_ADMIN_LOGIN_SUCCESS, UPDATE_ADMIN_SUCCESS } from "../ActionTypes"
+import { ADMIN_CHANGE_STATUS_SUCCESS, CREATE_ADMIN_SUCCESS, DELETE_ADMIN_SUCCESS, FETCH_ADMIN_FAILED, FETCH_ADMIN_SUCCESS, FETCH_LOGIN_ADMIN_FAILED, FETCH_LOGIN_ADMIN_SUCCESS, LOGOUT_ADMIN_SUCCESS, UPDATE_ADMIN_LOGIN_REQUEST, UPDATE_ADMIN_LOGIN_SUCCESS, UPDATE_ADMIN_SUCCESS } from "../ActionTypes"
 import { ADMIN_LINK } from "../../ApiLinks";
 import { toastHandler } from "../../ToastHandler";
+import { logoutMessage } from "./MessageAction";
 
 export const fetchAdmin = () => {
     return async dispatch =>{
@@ -72,6 +73,7 @@ export const updateAdmin = (id,data,toastHandler,setModal) =>{
 export const updateAdminLogin = (id,data) =>{
     return async dispatch=>{
         try {
+            dispatch({type:UPDATE_ADMIN_LOGIN_REQUEST})
             const response = await axios.put(`${ADMIN_LINK}/update/${id}`,data);
             dispatch({
                 type: UPDATE_ADMIN_LOGIN_SUCCESS,
@@ -113,6 +115,7 @@ export const logoutAdmin = () =>{
     return async dispatch=>{
         try {
             dispatch({ type: LOGOUT_ADMIN_SUCCESS,  });
+            dispatch(logoutMessage())
         } catch (error) { }
     }
 }

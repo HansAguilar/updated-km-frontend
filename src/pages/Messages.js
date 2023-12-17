@@ -8,21 +8,22 @@ import MessageBox from "../components/MessageBox";
 import { AiOutlineClose } from "react-icons/ai";
 import { useEffect } from "react";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { fetchPatient } from "../redux/action/PatientAction";
 
 function Messages({ admin }) {
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
   const newMessage = useSelector((state) => { return state?.messages?.payload; });
   const [roomKey, setRoomKey] = useState("");
+  const adminId = localStorage.getItem("adminId");
 
   const selectMessageRoom = (key) => {
     setRoomKey(key);
   }
 
   useEffect(() => {
-    const adminId = localStorage.getItem("adminId");
-    dispatch(fetchMessages(adminId))
-  }, [])
+      dispatch(fetchMessages(adminId));
+  },[adminId])
 
   const MessageModal = () => {
     const admin = useSelector((state) => { return state.admin.loginAdmin; })
@@ -35,7 +36,7 @@ function Messages({ admin }) {
       messageContent: "",
       type: "ADMIN"
     })
-    const patient = useSelector((state) => { return state.patient.payload; })
+    const patient = useSelector((state) => { return state?.patient?.payload; })
 
     const searchPatientOnChangeHandler = (e) => {
       const inputValue = e.target.value.toLowerCase();
@@ -57,72 +58,91 @@ function Messages({ admin }) {
       setModal(false)
     }
 
+    useEffect(()=>{
+      if(!patient){
+        dispatch(fetchPatient())
+      }
+    },[])
+
     return (
-      <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center `}>
-        <div className="relative m-auto w-[500px] h-[500px] bg-zinc-100 rounded p-4">
-          <div className="bg-red-400 absolute top-3 right-3 rounded-full p-2 cursor-pointer hover:bg-red-600" onClick={() => setModal(false)}>
-            <AiOutlineClose className='text-white' size={24} />
-          </div>
-
-          <h3 className="font-bold text-xl border-b-2 py-2">Create Message</h3>
-
-          <div>
-            <div className="w-full my-2 relative">
-              <BiSearchAlt className="absolute left-2 top-2 text-slate-400" size={24} />
-              <input type="search" name="inputHandler" value={messageDetails.inputHandler} placeholder="Search patient..." className="indent-8 w-full p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none" onChange={(e) => searchPatientOnChangeHandler(e)} />
-            </div>
-
-            <div className="w-full max-h-96 overflow-auto">
-              {
-                messageDetails.inputHandler !== "" && suggestions.length > 0 ? (
-                  <ul>
-                    {
-                      suggestions.map((val, idx) => (
-                        <li key={idx} className="border-b-slate-300 border-b transition-all duration-150 w-full p-3 rounded flex gap-4 items-center justify-start hover:bg-blue-500 hover:text-white cursor-pointer "
-                          onClick={() => {
-                            setMessageDetails({
-                              ...messageDetails,
-                              inputHandler: "",
-                              receiverId: val.patientId,
-                              receiverName: `${val.firstname} ${val.lastname}`
-                            });
-                            setSuggestions([]);
-                          }}
-                        >
-                          <img src={val.profile} className=" w-11 h-11 rounded-full aspect-auto" />
-                          <p>{val.firstname} {val.lastname}</p>
-                        </li>
-                      ))
-                    }
-
-                  </ul>
-                )
-                  : messageDetails.inputHandler !== "" ? <h1 className=" w-full py-2 text-zinc-400 font-bold ">No Existing Patient</h1>
-                    : <div></div>
-              }
-              {
-                messageDetails.receiverId !== "" && messageDetails.receiverName !== "" && (
-                  <div className=" mt-2 ">
-                    <p className="w-full py-3 font-medium text-zinc-500 ">
-                      <span className=" bg-emerald-500 text-white py-1 px-5 mr-2 rounded-md ">Patient Name</span>
-                      {messageDetails.receiverName}
-                    </p>
-                    <textarea autoFocus className="p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none w-full resize-none" rows="5" placeholder="Message..." onChange={(e) => setMessageDetails({
-                      ...messageDetails,
-                      messageContent: e.target.value
-                    })}>
-                    </textarea>
-
-                    <div className=" w-full flex justify-end items-start ">
-                      <button className="py-2 px-4 font-medium bg-blue-500 text-white rounded hover:bg-blue-700" onClick={sendMessageButton}>Send Message</button>
+      <>
+            <div className={`w-full min-h-screen bg-gray-900 bg-opacity-75 fixed inset-0 z-50 flex flex-grow justify-center items-center `}>
+            <>
+                {
+                  !patient ? (
+                    <div className=" w-full h-screen flex justify-center items-center ">
+                      <LoadingSpinner loading={true} />
                     </div>
-                  </div>
-                )
-              }
+                  ) : (
+                    <div className="relative m-auto w-[500px] h-[500px] bg-zinc-100 rounded p-4">
+              <div className="bg-red-400 absolute top-3 right-3 rounded-full p-2 cursor-pointer hover:bg-red-600" onClick={() => setModal(false)}>
+                <AiOutlineClose className='text-white' size={24} />
+              </div>
+    
+              <h3 className="font-bold text-xl border-b-2 py-2">Create Message</h3>
+    
+              <div>
+                <div className="w-full my-2 relative">
+                  <BiSearchAlt className="absolute left-2 top-2 text-slate-400" size={24} />
+                  <input type="search" name="inputHandler" value={messageDetails.inputHandler} placeholder="Search patient..." className="indent-8 w-full p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none" onChange={(e) => searchPatientOnChangeHandler(e)} />
+                </div>
+    
+                <div className="w-full max-h-96 overflow-auto">
+                  {
+                    messageDetails.inputHandler !== "" && suggestions.length > 0 ? (
+                      <ul>
+                        {
+                          suggestions.map((val, idx) => (
+                            <li key={idx} className="border-b-slate-300 border-b transition-all duration-150 w-full p-3 rounded flex gap-4 items-center justify-start hover:bg-blue-500 hover:text-white cursor-pointer "
+                              onClick={() => {
+                                setMessageDetails({
+                                  ...messageDetails,
+                                  inputHandler: "",
+                                  receiverId: val.patientId,
+                                  receiverName: `${val.firstname} ${val.lastname}`
+                                });
+                                setSuggestions([]);
+                              }}
+                            >
+                              <img src={val.profile} className=" w-11 h-11 rounded-full aspect-auto" />
+                              <p>{val.firstname} {val.lastname}</p>
+                            </li>
+                          ))
+                        }
+    
+                      </ul>
+                    )
+                      : messageDetails.inputHandler !== "" ? <h1 className=" w-full py-2 text-zinc-400 font-bold ">No Existing Patient</h1>
+                        : <div></div>
+                  }
+                  {
+                    messageDetails.receiverId !== "" && messageDetails.receiverName !== "" && (
+                      <div className=" mt-2 ">
+                        <p className="w-full py-3 font-medium text-zinc-500 ">
+                          <span className=" bg-emerald-500 text-white py-1 px-5 mr-2 rounded-md ">Patient Name</span>
+                          {messageDetails.receiverName}
+                        </p>
+                        <textarea autoFocus className="p-2 border border-slate-300 focus:border-blue-600 rounded text-sm focus:outline-none w-full resize-none" rows="5" placeholder="Message..." onChange={(e) => setMessageDetails({
+                          ...messageDetails,
+                          messageContent: e.target.value
+                        })}>
+                        </textarea>
+    
+                        <div className=" w-full flex justify-end items-start ">
+                          <button className="py-2 px-4 font-medium bg-blue-500 text-white rounded hover:bg-blue-700" onClick={sendMessageButton}>Send Message</button>
+                        </div>
+                      </div>
+                    )
+                  }
+                </div>
+              </div>
             </div>
+                  )
+                }
+            </>
+            
           </div>
-        </div>
-      </div>
+      </>
     )
   }
 

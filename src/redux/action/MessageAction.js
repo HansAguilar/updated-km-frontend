@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CREATE_MESSAGE_SUCCESS, FETCH_MESSAGE_FAILED, FETCH_MESSAGE_SUCCESS, RESPONSE_MESSAGE_SUCCESS, SEND_MESSAGE_SUCCESS } from "../ActionTypes"
+import { CREATE_MESSAGE_SUCCESS, FETCH_MESSAGE_FAILED, FETCH_MESSAGE_SUCCESS, LOGOUT_MESSAGE_SUCCESS, RESPONSE_MESSAGE_SUCCESS, SEND_MESSAGE_SUCCESS } from "../ActionTypes"
 import { MESSAGE_LINK, SOCKET_LINK } from "../../ApiLinks";
 import * as io from "socket.io-client";
 
@@ -30,8 +30,8 @@ export const createNewMessage = (roomKey, data) => {
           key: roomKey,
           payload: response.data
         });
-      
-      socket.emit("create_message_admin", {key: roomKey, patient: data.receiverId});
+      const sendData = JSON.stringify({key: roomKey, patient: data.receiverId})
+      socket.emit("create_message_admin", sendData);
       } catch (error) {
         console.log("send_message", error);
       }
@@ -78,6 +78,14 @@ export const fetchNewAdminMessage = (roomKey) =>{
                 type:CREATE_MESSAGE_SUCCESS,
                 payload:response.data
             })
+        } catch (error) {}
+    }
+}
+
+export const logoutMessage = () =>{
+    return async dispatch=>{
+        try {
+           dispatch({type:LOGOUT_MESSAGE_SUCCESS})
         } catch (error) {}
     }
 }

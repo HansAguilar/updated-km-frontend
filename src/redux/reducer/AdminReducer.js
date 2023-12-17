@@ -1,4 +1,4 @@
-import { ADMIN_CHANGE_STATUS_SUCCESS, CREATE_ADMIN_SUCCESS, DELETE_ADMIN_SUCCESS, FETCH_ADMIN_FAILED, FETCH_ADMIN_REQUEST, FETCH_ADMIN_SUCCESS, FETCH_LOGIN_ADMIN_FAILED, FETCH_LOGIN_ADMIN_SUCCESS, LOGOUT_ADMIN_SUCCESS, UPDATE_ADMIN_LOGIN_SUCCESS, UPDATE_ADMIN_SUCCESS } from "../ActionTypes";
+import { ADMIN_CHANGE_STATUS_SUCCESS, CREATE_ADMIN_SUCCESS, DELETE_ADMIN_SUCCESS, FETCH_ADMIN_FAILED, FETCH_ADMIN_REQUEST, FETCH_ADMIN_SUCCESS, FETCH_LOGIN_ADMIN_FAILED, FETCH_LOGIN_ADMIN_SUCCESS, LOGOUT_ADMIN_SUCCESS, UPDATE_ADMIN_LOGIN_REQUEST, UPDATE_ADMIN_LOGIN_SUCCESS, UPDATE_ADMIN_SUCCESS } from "../ActionTypes";
 
 const reducer = (state={}, action)=>{
     switch(action.type){
@@ -19,8 +19,12 @@ const reducer = (state={}, action)=>{
             return { ...state, error:action.error, loading:false }
         case FETCH_ADMIN_FAILED:
             return { ...state, error:action.error, loading:false }
+
+        case UPDATE_ADMIN_LOGIN_REQUEST:
+            return { ...state, adminLoading:true };
         case UPDATE_ADMIN_LOGIN_SUCCESS:
-            return { ...state, loginAdmin:action.payload, loading:false };
+            return { ...state, loginAdmin:action.payload, adminLoading:false };
+
         case LOGOUT_ADMIN_SUCCESS:
             return {}
         default:
