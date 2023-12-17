@@ -85,9 +85,9 @@ function QRScanPage() {
     setPayment("NA");   
   }
 
-  const backToDashBoard = useCallback(()=>{
+  const backToDashBoard = ()=>{
     window.location.reload(navigate("/admin/dashboard/"));
-  },[])
+  }
 
   const btnSubmitAppointment = () => {
     if(payment){
@@ -95,8 +95,8 @@ function QRScanPage() {
         return toastHandler("error", "Please pay the bill")
       }
     }
-    dispatch(acceptAppointment(id,backToDashBoard()));
-    // backToDashBoard();
+    dispatch(acceptAppointment(id));
+    backToDashBoard()
   }
   
   return (
