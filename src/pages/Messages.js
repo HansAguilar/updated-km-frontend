@@ -14,15 +14,15 @@ function Messages({ admin }) {
   const [modal, setModal] = useState(false);
   const newMessage = useSelector((state) => { return state?.messages?.payload; });
   const [roomKey, setRoomKey] = useState("");
+  const adminId = localStorage.getItem("adminId");
 
   const selectMessageRoom = (key) => {
     setRoomKey(key);
   }
 
   useEffect(() => {
-    const adminId = localStorage.getItem("adminId");
-    dispatch(fetchMessages(adminId))
-  }, [])
+      dispatch(fetchMessages(adminId));
+  },[adminId])
 
   const MessageModal = () => {
     const admin = useSelector((state) => { return state.admin.loginAdmin; })

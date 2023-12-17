@@ -43,21 +43,20 @@ function QRScanPage() {
   const checkIfExistingAppointment = () => {
     if (appointment) {
      if(appointment.status ==="APPROVED" || appointment.status === "TREATMENT"){
-      const appointmentTime = moment(appointment.timeStart, "HH:mm:00").add(10, "minutes");
+      const appointmentTime = moment(appointment.timeStart, "HH:mm:00").add(15, "minutes");
       const appointmentDate = moment(appointment.appointmentDate).format("YYYY-MM-DD");
-      console.log(todaysDate.toString() === appointmentDate.toString() && todaysTime.isBefore(appointmentTime));
       if ((todaysDate.toString() === appointmentDate.toString() && todaysTime.isBefore(appointmentTime))) {
         toastHandler("success", "Successfully scan the QR");
       } else {
-        toastHandler("error", "Invalid Appointment");
+        alert("You have no appointment now");
         return navigate("/admin/dashboard/");
       }
      }else{
-      toastHandler("error", "You have no appointment now");
+      alert("You have no appointment now");
       return navigate("/admin/dashboard/");
     }
     }else{
-      toastHandler("error", "You have no appointment now");
+      alert("You have no appointment now");
       return navigate("/admin/dashboard/");
     }
   }
@@ -83,7 +82,7 @@ function QRScanPage() {
     }
     dispatch(approvedPayment(payment?.paymentId));
     toastHandler("success", "Accept payment successfully!");
-    setPayment(null);   
+    setPayment("NA");   
   }
 
   const backToDashBoard = useCallback(()=>{

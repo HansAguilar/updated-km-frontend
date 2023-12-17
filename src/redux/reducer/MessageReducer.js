@@ -1,4 +1,4 @@
-import { CREATE_MESSAGE_SUCCESS, FETCH_MESSAGE_FAILED, FETCH_MESSAGE_REQUEST, FETCH_MESSAGE_SUCCESS, RESPONSE_MESSAGE_SUCCESS, SEND_MESSAGE_SUCCESS } from "../ActionTypes";
+import { CREATE_MESSAGE_SUCCESS, FETCH_MESSAGE_FAILED, FETCH_MESSAGE_REQUEST, FETCH_MESSAGE_SUCCESS, LOGOUT_MESSAGE_SUCCESS, RESPONSE_MESSAGE_SUCCESS, SEND_MESSAGE_SUCCESS } from "../ActionTypes";
 
 const reducer = (state = {}, action)=>{
     switch(action.type){
@@ -44,6 +44,8 @@ const reducer = (state = {}, action)=>{
             }
         case FETCH_MESSAGE_FAILED:
             return { ...state, error:action.error, loading:false }
+        case LOGOUT_MESSAGE_SUCCESS:
+            return {}
         default:
             return state;
     }
