@@ -95,8 +95,7 @@ function QRScanPage() {
         return toastHandler("error", "Please pay the bill")
       }
     }
-    dispatch(acceptAppointment(id));
-    backToDashBoard()
+    dispatch(acceptAppointment(id,backToDashBoard));
   }
   
   return (
