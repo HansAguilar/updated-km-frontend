@@ -11,9 +11,11 @@ import { useSelector,useDispatch } from 'react-redux';
 import { ToastContainer } from "react-toastify";
 import LoadingSpinner from '../components/LoadingSpinner';
 import { fetchPatient } from '../redux/action/PatientAction';
+import moment from 'moment';
 
 function Patients() {
   const patient = useSelector((state) => { return state?.patient?.payload });
+  const {firstname, lastname} = useSelector((state) => { return state?.admin?.loginAdmin});
   const tableHeaders = useMemo(()=>["profile", "full name", "birthday", "gender", "contact number", "email", "status", "action"],[]);
   const [show, setModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,8 +74,9 @@ function Patients() {
 
                 {/*//~ FILES */}
                 <div className=' inline-flex gap-2  '>
-                  <ExcelButton users={patient} title={"patients"} />
-                  <PDFButton data={patient} type="patients"/>
+                  <ExcelButton users={patient} title={"Patient List"} authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().format('MMMM Do YYYY dddd, h:mm:ss a')}`} />
+                  {/* authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().tz('Asia/Manila').format('YYYY-MM-DD HH:mm:ss')}`} */}
+                  <PDFButton data={patient} type="patients" title={"Patient List Report"} authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().format('MMMM Do YYYY dddd, h:mm:ss a')}`}/>
                   {/* <FileIcons Icon={AiFillPrinter} title={"Print"} /> */}
                 </div>
                 {/*//~ FILES */}
