@@ -10,8 +10,10 @@ import PDFButton from '../components/PDFButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdmin } from '../redux/action/AdminAction';
 import LoadingSpinner from '../components/LoadingSpinner';
+import moment from 'moment';
 
 function Admin() {
+  const {firstname, lastname} = useSelector((state) => { return state?.admin?.loginAdmin});
   const [show, setModal] = useState(false);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,8 +67,8 @@ function Admin() {
 
                   {/*//~ FILES */}
                   <div className=' inline-flex gap-2  '>
-                    <ExcelButton users={adminList} title="admin" />
-                    <PDFButton data={adminList} type="admin"/>
+                    <ExcelButton users={adminList} title="Admin List" authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().format('MMMM Do YYYY dddd, h:mm:ss a')}`}/>
+                    <PDFButton data={adminList} type="admin" title="Admin List" authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().format('MMMM Do YYYY dddd, h:mm:ss a')}`}/>
                     {/* <FileIcons Icon={AiFillPrinter} title={"Print"} /> */}
                   </div>
                   {/*//~ FILES */}

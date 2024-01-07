@@ -171,11 +171,11 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     }
     if (appointment.method === "hmo" && !appointment.insuranceId) return toastHandler("error", "Please select your insurance");
 
-    const current = new Date();
-    current.setHours(0, 0, 0, 0);
-    const selectedDate = new Date(appointment.date);
-    selectedDate.setHours(0, 0, 0, 0);
-    if (selectedDate < current) return toastHandler("error", "You can't select previous date");
+    // const current = new Date();
+    // current.setHours(0, 0, 0, 0);
+    // const selectedDate = new Date(appointment.date);
+    // selectedDate.setHours(0, 0, 0, 0);
+    // if (selectedDate < current) return toastHandler("error", "You can't select previous date");
 
     const checkIfPatientAlreadyHaveAppointment = filteredAppointments.filter((val) => {
       return (
@@ -267,10 +267,8 @@ function TreatmentModal({ show, setModal, setCovidModal, appointment, setAppoint
     setModal(false);
   };
 
-  const currentDate = new Date();
-  currentDate.setDate(currentDate.getDate() + 1); // Subtract one day
-  const minDate = currentDate.toISOString().split('T')[0];
-
+  const [minDate, setMinDate] = useState(new Date().toISOString().split('T')[0]);
+  
   useEffect(()=>{
     if(!dentist){
       dispatch(fetchDentist())

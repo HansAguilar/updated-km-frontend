@@ -9,6 +9,7 @@ import PDFButton from '../components/HistoryPdfButton';
 import moment from 'moment';
 
 function History() {
+  const {firstname, lastname} = useSelector((state) => { return state?.admin?.loginAdmin});
   const tableHeaders = ["Name", "Dentist", "Description", "Date", "Status"];
   const [search, setSearch] = useState("");
   const historyList = useSelector((state) => state.appointment.payload.filter((val) => val.status === "DONE" || val.status === "CANCELLED"))
@@ -66,8 +67,8 @@ function History() {
 
             {/*//~ FILES */}
             <div className=' inline-flex gap-2  '>
-              <ExcelButton users={history} title={"medical-record-list"} />
-              <PDFButton data={history} />
+              <ExcelButton users={history} title={"History Report"} authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().format('MMMM Do YYYY dddd, h:mm:ss a')}`}/>
+              <PDFButton data={history} title={"History Report"} authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().format('MMMM Do YYYY dddd, h:mm:ss a')}`}/>
             </div>
             {/*//~ FILES */}
 

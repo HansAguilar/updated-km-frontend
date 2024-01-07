@@ -10,6 +10,7 @@ import { fetchPayments } from '../redux/action/PaymentAction';
 import LoadingSpinner from './LoadingSpinner';
 
 function ViewPatient(props) {
+	const {firstname, lastname} = useSelector((state) => { return state?.admin?.loginAdmin});
 	const dispatch = useDispatch();
 	const [headerNavigation, setHeaderNavigation] = useState("overview");
 	const { id } = useParams();
@@ -67,7 +68,7 @@ function ViewPatient(props) {
 				};
 			})
 		setTreatmentRenderData(result);
-	},[payment])
+	},[payment,teethList])
 
 	const selectTeethButton = (idx) => {
 		const filteredSelectedTeeth = teethList?.filter((val) => val.teethNumber === idx);
@@ -326,7 +327,7 @@ function ViewPatient(props) {
 								<div className='flex flex-col gap-2 items-center'>
 									<h3 className='text-3xl font-semibold text-cyan-900'>{patient.firstname.charAt(0).toUpperCase() + patient.firstname.substring(1)} {patient.lastname.charAt(0).toUpperCase() + patient.lastname.substring(1)}</h3>
 								</div>
-								<PDFPatientRecord patient={patient} tableHeaderList={headerTreatment} data={treatmentRenderData} type="patient" />
+								<PDFPatientRecord patient={patient} tableHeaderList={headerTreatment} data={treatmentRenderData} authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().format('MMMM Do YYYY dddd, h:mm:ss a')}`} type="patient" />
 							</div>
 							{/*//~ IMAGE AND NAME */}
 

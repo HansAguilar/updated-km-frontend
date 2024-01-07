@@ -28,7 +28,10 @@ function UpdateTreatmentModal({ show, setModal, initialAppointment }) {
       { timeValue: "04:00 Pm", timeStart: "16:00:00" },
     ]
   );
-  const [minDate, setMinDate] = useState(new Date().toISOString().split('T')[0]);
+  const currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() + 1); // Subtract one day
+  const minDate = currentDate.toISOString().split('T')[0];
+
   const dispatch = useDispatch();
   const schedule = useSelector((state)=>state.schedule.payload);
   const dentist = useSelector((state) => { return state.dentist; });
@@ -228,6 +231,7 @@ function UpdateTreatmentModal({ show, setModal, initialAppointment }) {
     dispatch(updateAppointment(initialAppointment.appointmentId, result));
     setModal(false);
   }
+
   const calculateTotalServiceTime = () => {
     const timeEnd = appointment.serviceSelected.map((val) => {
       const result = service.payload.filter((serv) => {
@@ -249,6 +253,7 @@ function UpdateTreatmentModal({ show, setModal, initialAppointment }) {
     const convertTotalTime = moment.duration(total);
     return moment.utc(convertTotalTime.asMilliseconds()).format('HH:mm:ss');
   }
+
   const calculateTotalTime = () => {
     const timeStart = moment(appointment.timeStart, "HH:mm:ss");
     // const timeStart = moment("00:30:00", "HH:mm:ss");

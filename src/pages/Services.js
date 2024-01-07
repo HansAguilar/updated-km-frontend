@@ -9,8 +9,10 @@ import { ToastContainer } from "react-toastify";
 import { BiSearchAlt } from 'react-icons/bi';
 import PDFButton from '../components/PDFButton';
 import ServicesExcelFile from '../components/ServicesExcelFile';
+import moment from 'moment';
 
 function Services() {
+  const {firstname, lastname} = useSelector((state) => { return state?.admin?.loginAdmin});
   const [show, setModal] = useState(false);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,8 +53,8 @@ function Services() {
 
             {/*//~ FILES */}
             <div className=' inline-flex gap-2  '>
-              <ServicesExcelFile users={payload} title="services" />
-              <PDFButton data={payload} type="services" />
+              <ServicesExcelFile users={payload} title="Services List Report" authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().format('MMMM Do YYYY dddd, h:mm:ss a')}`}/>
+              <PDFButton data={payload} type="services" title="Services & Price Report" authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().format('MMMM Do YYYY dddd, h:mm:ss a')}`}/>
             </div>
             {/*//~ FILES */}
 

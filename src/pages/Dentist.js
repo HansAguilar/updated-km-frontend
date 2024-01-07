@@ -11,8 +11,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import { fetchDentist } from '../redux/action/DentistAction';
 import LoadingSpinner from "../components/LoadingSpinner"
+import moment from 'moment';
 
 function Dentist() {
+  const {firstname, lastname} = useSelector((state) => { return state?.admin?.loginAdmin});
   const dispatch = useDispatch();
   const [show, setModal] = useState(false);
   const [search, setSearch] = useState("");
@@ -70,8 +72,8 @@ function Dentist() {
 
                   {/*//~ FILES */}
                   <div className=' inline-flex gap-2  '>
-                    <DentistExcelButton users={dentistList} title={"Dentist"} />
-                    <PDFButton data={dentistList} type="dentist" />
+                    <DentistExcelButton users={dentistList} title={"Dentist List Report"} authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().format('MMMM Do YYYY dddd, h:mm:ss a')}`} />
+                    <PDFButton data={dentistList} type="dentist" title={"Dentist List Report"} authorizedPerson={`Admin ${firstname} ${lastname}`} time={`${moment().format('MMMM Do YYYY dddd, h:mm:ss a')}`}/>
                     {/* <FileIcons Icon={AiFillPrinter} title={"Print"} /> */}
                   </div>
                   {/*//~ FILES */}

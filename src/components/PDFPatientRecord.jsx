@@ -6,13 +6,13 @@ import { AiFillFilePdf } from 'react-icons/ai';
 import PatientFile from './PatientDentistPDFFile';
 
 
-function PDFButton({ patient, data, type,tableHeaderList }) {
+function PDFButton({ patient, data, type,tableHeaderList,authorizedPerson, time  }) {
   const currentDate = new Date();
   const options = { timeZone: 'Asia/Manila', month: 'short', day: 'numeric', year: 'numeric' };
   const formattedDate = currentDate.toLocaleDateString('en-US', options).replace(/ /g, '-');
 
   const processPDF = {
-    "patient": { docs: <PatientFile patient={patient} tableHeaderList={tableHeaderList} data={data} />, fileName: `PatientRecord-KmDental-${formattedDate}` },
+    "patient": { docs: <PatientFile patient={patient} tableHeaderList={tableHeaderList} data={data} authorizedPerson={authorizedPerson} time={time} />, fileName: `PatientRecord-KmDental-${formattedDate}` },
   }
 
   return (

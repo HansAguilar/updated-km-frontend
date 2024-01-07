@@ -7,16 +7,19 @@ import DentistPDFFile from './DentistPDFFile';
 import ServicesPDFFile from './ServicesPDFFile';
 
 
-function PDFButton({ data, type }) {
+function PDFButton({ data, type,title,authorizedPerson, time  }) {
   const currentDate = new Date();
   const options = { timeZone: 'Asia/Manila', month: 'short', day: 'numeric', year: 'numeric' };
   const formattedDate = currentDate.toLocaleDateString('en-US', options).replace(/ /g, '-');
 
   const processPDF = {
-    "dentist": { docs: <DentistPDFFile data={data} />, fileName: `KmGeronimoDentalClinic-${formattedDate}-Dentist` },
-    "admin": { docs: <PDFFile data={data} type="admin"/>, fileName: `KmGeronimoDentalClinic-${formattedDate}-Admin` },
-    "patients": { docs: <PDFFile data={data} type="patient"/>, fileName: `KmGeronimoDentalClinic-${formattedDate}-Patients` },
-    "services": { docs: <ServicesPDFFile data={data} />, fileName: `KmGeronimoDentalClinic-${formattedDate}-Services` },
+    "dentist": { docs: <DentistPDFFile data={data} title={title} time={time} authorizedPerson={authorizedPerson}/>, fileName: `KmGeronimoDentalClinic-${formattedDate}-Dentist` },
+
+    "admin": { docs: <PDFFile data={data} type="admin" title={title} time={time} authorizedPerson={authorizedPerson}/>, fileName: `KmGeronimoDentalClinic-${formattedDate}-Admin` },
+
+    "patients": { docs: <PDFFile data={data} type="patient" title={title} time={time} authorizedPerson={authorizedPerson}/>, fileName: `KmGeronimoDentalClinic-${formattedDate}-Patients` },
+    
+    "services": { docs: <ServicesPDFFile data={data} title={title} time={time} authorizedPerson={authorizedPerson}/>, fileName: `KmGeronimoDentalClinic-${formattedDate}-Services` },
   }
 
   return (

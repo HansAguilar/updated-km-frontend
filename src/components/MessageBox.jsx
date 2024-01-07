@@ -57,14 +57,20 @@ function MessageBox({ roomKey }) {
             }}
           >
             <p className="text-xs">{moment(val.createdDateAndTime).format("LL")}</p>
-            <div
-              className={` h-auto min-w-auto max-w-[400px] flex flex-col whitespace-wrap ${val.type === "CLIENT"
-                ? "bg-blue-400 text-white rounded-tl-xl rounded-tr-xl rounded-bl-xl"
-                : "bg-gray-100 text-zinc-700 rounded-tl-xl rounded-tr-xl rounded-br-xl"
-                } px-5 py-3`}
-            >
-              <p className="whitespace-normal">{val.messageContent}</p>
+           
+            <div className=' flex gap-x-2 items-end '>
+            {val.type !== "ADMIN" && <img src={messageHistory[0].receiverId.profile} className=' w-8 h-8 rounded-full border-2 ' />}
+                <div
+                  className={` h-auto min-w-auto max-w-[400px] flex flex-col whitespace-wrap ${val.type === "CLIENT"
+                    ? "bg-blue-400 text-white rounded-tl-xl rounded-tr-xl rounded-br-xl"
+                    : "bg-gray-100 text-zinc-700 rounded-tl-xl rounded-tr-xl rounded-bl-xl"
+                    } px-5 py-3`}
+                >
+                  <p className="whitespace-normal">{val.messageContent}</p>
+                </div>
+                {val.type === "ADMIN" && <img src={messageHistory[0].adminId.profile} className=' w-8 h-8 rounded-full border-2 ' />}
             </div>
+
           </div>
         ))}
       </div>
